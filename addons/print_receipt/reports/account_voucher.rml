@@ -2,7 +2,7 @@
 <document filename="test.pdf">
   <template pageSize="(595.0,842.0)" title="Test" author="Martin Simon" allowSplitting="20">
     <pageTemplate id="first">
-      <frame id="first" x1="18.0" y1="29.0" width="534" height="584"/>
+      <frame id="first" x1="18.0" y1="29.0" width="534" height="784"/>
     </pageTemplate>
   </template>
   <stylesheet>
@@ -118,7 +118,7 @@
       <blockTable colWidths="405.0,129.0" style="Table4">
         <tr>
           <td>
-            <para style="P8">[[ line['name'] ]]</para>
+            <para style="P8">[[ line['name'] or line['move_line_id'].ref ]]</para>
           </td>
           <td>
             <para style="P7">[[ formatLang(line['amount'],2)  ]]  [[ company.currency_id.symbol ]]</para>
@@ -174,7 +174,12 @@
       <tr>
         <td>
           <para style="P9">Sales: [[ user.name ]]</para>
-        </td>
+	<para fontSize="7.0" fontName="Helvetica" >[[ company.name or  '' ]]</para>
+        <image x="1.3cm" width="120" height="40.0">[[company.logo or removeParentNode('image')]]</image>
+        <para fontSize="7.0" fontName="Helvetica" >[[ display_address(company.partner_id) or  '' ]]</para>
+        <para fontSize="7.0" fontName="Helvetica" >[[ company.email or  '' ]]</para>
+        <para fontSize="7.0" fontName="Helvetica" >[[ company.phone or  '' ]]</para>  
+      </td>
         <td>
           <para style="P9">Signature</para>
         </td>
