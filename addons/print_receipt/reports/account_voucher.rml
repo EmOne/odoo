@@ -81,16 +81,7 @@
     <para style="P2">
       <font color="white"> </font>
     </para>
-    <blockTable colWidths="362.0,172.0" style="Table1">
-      <tr>
-        <td>
-          <para style="P6">[[ ((voucher.type in ['sale','receipt']) or (removeParentNode('para'))) and ('Customer: '+voucher.partner_id.name)  ]]</para>
-          <para style="P6">[[ ((voucher.type in ['purchase','payment']) or (removeParentNode('para'))) and ('Supplier: '+voucher.partner_id.name)  ]]</para>
-        </td>
-        <td>
-          <para style="P6">Date: [[ formatLang(voucher.date,date=True) ]]</para>
-        </td>
-      </tr>
+    <blockTable colWidths="332.0,220.0" style="Table1" showBoundary="1">
       <tr>
         <td>
           <para style="P6">Number: [[ (voucher.state == 'posted' or removeParentNode('para')) and voucher.number ]]</para>
@@ -98,7 +89,26 @@
           <para style="P6">Number: [[ (voucher.state == 'draft' or removeParentNode('para')) and 'Draft' ]]</para>
         </td>
         <td>
-          <para style="P6">Tax Number: [[ company.partner_id.vat ]]</para>
+          <para style="P6" alignment="RIGHT" >Date: [[ formatLang(voucher.date,date=True) ]]</para>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <para style="P6">[[ ((voucher.type in ['sale','receipt']) or (removeParentNode('para'))) and ('Customer: '+voucher.partner_id.name)  ]]</para>
+          <para style="P6">[[ ((voucher.type in ['purchase','payment']) or (removeParentNode('para'))) and ('Supplier: '+voucher.partner_id.name)  ]]</para>
+        
+          <para style="P6" >[[ display_address(voucher.partner_id) or  '' ]]</para>
+          <para style="P6" >Email : [[ voucher.partner_id.email or  '' ]]</para>
+          <para style="P6" >Phone : [[ voucher.partner_id.phone or  '' ]]</para>
+          <para style="P6" >Tax Number: [[ voucher.partner_id.vat or '' ]]</para>
+	</td>
+        <td>
+ 	  <!--<image x="1.3cm" width="120" height="40.0">[[company.logo or removeParentNode('image')]]</image>-->
+	  <para style="P6" >[[ company.name or  '' ]]</para>
+          <para style="P6" >[[ display_address(company.partner_id) or  '' ]]</para>
+          <para style="P6" >Email : [[ company.email or  '' ]]</para>
+          <para style="P6" >Phone : [[ company.phone or  '' ]]</para>
+          <para style="P6" >Tax Number: [[ company.partner_id.vat or '' ]]</para>
         </td>
       </tr>
     </blockTable>
@@ -174,11 +184,6 @@
       <tr>
         <td>
           <para style="P9">Sales: [[ user.name ]]</para>
-	<para fontSize="7.0" fontName="Helvetica" >[[ company.name or  '' ]]</para>
-        <image x="1.3cm" width="120" height="40.0">[[company.logo or removeParentNode('image')]]</image>
-        <para fontSize="7.0" fontName="Helvetica" >[[ display_address(company.partner_id) or  '' ]]</para>
-        <para fontSize="7.0" fontName="Helvetica" >[[ company.email or  '' ]]</para>
-        <para fontSize="7.0" fontName="Helvetica" >[[ company.phone or  '' ]]</para>  
       </td>
         <td>
           <para style="P9">Signature</para>
