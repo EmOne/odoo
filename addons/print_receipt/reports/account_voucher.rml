@@ -76,7 +76,7 @@
   <story>
     <para style="P1">[[repeatIn(objects,'voucher')]]</para>
     <para style="P1">[[setLang(voucher.company_id.partner_id.lang) ]]</para>
-    <para style="P5">[[ ((voucher.type in ['sale','purchase']) or removeParentNode('para')) and 'INVOICE' ]]</para>
+    <para style="P5">[[ ((voucher.type in ['sale','purchase']) or removeParentNode('para')) and 'TAX - INVOICE' ]]</para>
     <para style="P5">[[ ((voucher.type in ['receipt','payment']) or removeParentNode('para')) and 'Payment' ]]</para>
     <para style="P2">
       <font color="white"> </font>
@@ -181,6 +181,17 @@
       <font color="white"> </font>
     </para>
     <blockTable colWidths="368.0,166.0" style="Table5">
+	<tr>
+	<td>
+	<para style="P9">Notes: [[ voucher.notes ]]</para>
+	</td>
+	<td>
+	
+          <para style="P11">
+            <font color="white"> </font>
+          </para>
+	</td>
+	</tr>
       <tr>
         <td>
           <para style="P9">Sales: [[ user.name ]]</para>
