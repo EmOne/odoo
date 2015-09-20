@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        
+        <!-- Configuration Tree -->
+       <record model="ir.ui.view" id="view_ineco_report_config_tree">
+            <field name="name">ineco.report.config.tree</field>
+            <field name="model">ineco.report.config</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Configuration">
+                	<field name="name" />
+                	<field name="report_id" />
+                	<field name="description" />
+                	<field name="type" />
+                	<field name="host" />
+                </tree>
+            </field>
+        </record>
+
+        <!-- Configuration Form -->
+       <record model="ir.ui.view" id="view_ineco_report_config_form">
+            <field name="name">ineco.report.config.form</field>
+            <field name="model">ineco.report.config</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Configuration">
+                	<field name="name" colspan="4" />
+                	<field name="report_id" colspan="4" />
+                	<field name="description" />
+                	<field name="host" />
+                	<field name="report_user" />
+                	<field name="report_password" />
+                	<field name="type" readonly="1" />
+                	<field name="active" />
+                </form>
+            </field>
+        </record>
+        
+        <!-- Configuration Action  -->
+        <record model="ir.actions.act_window" id="action_ineco_report_config">
+            <field name="name">Report List Configuration</field>
+            <field name="res_model">ineco.report.config</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+                	
+      	<menuitem name="Report List Configuration"
+            id="menu_ineco_report_config"
+            parent="base.menu_config"
+            action="action_ineco_report_config"/>
+
+<!--            groups="base.group_ineco_configuration" -->
+                
+  	</data>
+</openerp>

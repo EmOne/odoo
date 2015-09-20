@@ -1,0 +1,45 @@
+<openerp>
+    <data>
+        <record id="act_report_xml_view" model="ir.ui.view">
+            <field name="name">ir.actions.report.xml.inherit</field>
+            <field name="model">ir.actions.report.xml</field>
+            <field name="inherit_id" ref="base.act_report_xml_view"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="/form/notebook/page[@string='Security']" position="before" >          
+                    <page string="Ineco" attrs="{'invisible':[('report_type','!=','ineco')]}">
+                    	<group>
+                    		<group string="Parameters">
+		                        <field name="jasper_url"/>
+		                        <field name="jasper_username" />
+		                        <field name="parameter_name" string="Jasper Report Parameter IDS" />
+		                        <field name="jasper_report_path" />
+		                        <field name="jasper_password" />
+		                        <field name="criteria_field" string="SQL Primary Key"/>
+		                        <div>
+	                        		<button icon="gtk-ok" name="add_report" string="Add Button" type="object"/>
+	                        		<button icon="gtk-ok" name="remove_report" string="Remove Button" type="object"/>
+		                        </div>
+                    		</group>
+                        </group>
+                    </page>
+                    <page string="Stampper" attrs="{'invisible':[('report_type','!=','ineco')]}">
+                    	<group>
+                    		<field name="stamp_ids" nolabel="1">
+                    			<tree string="Stamper" editable="top">
+                    				<field name="seq" />
+                    				<field name="type" />
+                    				<field name="name" />
+                    				<field name="position_x" />
+                    				<field name="position_y" />
+                    				<field name="size_width" />
+                    				<field name="size_height" />
+                    			</tree>
+                    		</field>
+                    	</group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
