@@ -360,14 +360,16 @@ class res_company(osv.osv):
             <lines>1.3cm %s 20cm %s</lines>
             <drawRightString x="20cm" y="%s">[[ company.rml_header1 ]]</drawRightString>
             <drawString x="1.3cm" y="%s">[[ company.partner_id.name ]]</drawString>
-            <place x="1.3cm" y="%s" height="1.8cm" width="15.0cm">
+            <place x="1.3cm" y="%s" height="1.8cm" width="20.0cm">
                 <para style="main_header">[[ display_address(company.partner_id) or  '' ]]</para>
             </place>
             <drawString x="1.3cm" y="%s">Phone:</drawString>
             <drawRightString x="7cm" y="%s">[[ company.partner_id.phone or '' ]]</drawRightString>
             <drawString x="1.3cm" y="%s">Mail:</drawString>
             <drawRightString x="7cm" y="%s">[[ company.partner_id.email or '' ]]</drawRightString>
-            <lines>1.3cm %s 7cm %s</lines>
+            <drawString x="1.3cm" y="%s">TIN:</drawString>
+            <drawRightString x="7cm" y="%s">[[ company.partner_id.vat or '' ]]</drawRightString>
+            <!-- <lines>1.3cm %s 7cm %s</lines>i -->
 
             <!-- left margin -->
             <rotate degrees="90"/>
@@ -386,8 +388,9 @@ class res_company(osv.osv):
     </pageTemplate>
 </header>"""
 
-    _header_a4 = _header_main % ('21.7cm', '27.7cm', '27.7cm', '27.7cm', '27.8cm', '27.3cm', '25.3cm', '25.0cm', '25.0cm', '24.6cm', '24.6cm', '24.5cm', '24.5cm')
-    _header_letter = _header_main % ('20cm', '26.0cm', '26.0cm', '26.0cm', '26.1cm', '25.6cm', '23.6cm', '23.3cm', '23.3cm', '22.9cm', '22.9cm', '22.8cm', '22.8cm')
+    _header_a4 = _header_main % ('22cm', '28cm', '27.9cm', '27.9cm', '27.9cm', '27.5cm', '25.5cm', '25.5cm', '25.5cm', '25.1cm', '25.1cm', '24.7cm', '24.7cm', '24.6cm', '24.6cm')
+    #_header_a4 = _header_main % ('21.7cm', '27.7cm', '27.7cm', '27.7cm', '27.8cm', '27.3cm', '25.3cm', '25.0cm', '25.0cm', '24.6cm', '24.6cm', '24.5cm', '24.5cm')
+    _header_letter = _header_main % ('20cm', '26.0cm', '26.0cm', '26.0cm', '26.1cm', '25.6cm', '23.6cm', '23.3cm', '23.3cm', '22.9cm', '22.9cm', '22.5cm', '22.5cm', '22.4', '22.4')
 
     def onchange_rml_paper_format(self, cr, uid, ids, rml_paper_format, context=None):
         if rml_paper_format == 'us_letter':

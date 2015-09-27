@@ -76,7 +76,7 @@
   <story>
     <para style="P1">[[repeatIn(objects,'voucher')]]</para>
     <para style="P1">[[setLang(voucher.company_id.partner_id.lang) ]]</para>
-    <para style="P5">[[ ((voucher.type in ['sale','purchase']) or removeParentNode('para')) and 'TAX - INVOICE' ]]</para>
+    <para style="P5">[[ ((voucher.type in ['sale','purchase']) or removeParentNode('para')) and 'TAX - INVOICE / RECEIPT' ]]</para>
     <para style="P5">[[ ((voucher.type in ['receipt','payment']) or removeParentNode('para')) and 'Payment' ]]</para>
     <para style="P2">
       <font color="white"> </font>
@@ -128,7 +128,7 @@
       <blockTable colWidths="405.0,129.0" style="Table4">
         <tr>
           <td>
-            <para style="P8">[[ line['name'] or line['move_line_id'].ref ]]</para>
+            <para style="P8">[[ line['name'] or line['move_line_id'].ref  ]]</para>
           </td>
           <td>
             <para style="P7">[[ formatLang(line['amount'],2)  ]]  [[ company.currency_id.symbol ]]</para>
