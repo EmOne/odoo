@@ -1,165 +1,166 @@
-# Norwegian Bokmal translation for openobject-addons
-# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
-# This file is distributed under the same license as the openobject-addons package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
-#
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * sale_crm
+# 
+# Translators:
+# Martin Trigaux, 2018
 msgid ""
 msgstr ""
-"Project-Id-Version: openobject-addons\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2014-08-14 13:09+0000\n"
-"PO-Revision-Date: 2014-08-14 16:10+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Norwegian Bokmal <nb@li.org>\n"
+"Project-Id-Version: Odoo Server saas~11.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-08-24 09:05+0000\n"
+"PO-Revision-Date: 2018-08-24 09:05+0000\n"
+"Last-Translator: Martin Trigaux, 2018\n"
+"Language-Team: Norwegian Bokmål (https://www.transifex.com/odoo/teams/41243/nb/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-08-15 07:49+0000\n"
-"X-Generator: Launchpad (build 17156)\n"
+"Content-Transfer-Encoding: \n"
+"Language: nb\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. module: sale_crm
-#: field:sale.order,campaign_id:0
+#: model:ir.ui.view,arch_db:sale_crm.crm_case_form_view_oppor
+msgid "<span class=\"o_stat_text\"> Orders</span>"
+msgstr "<span class=\"o_stat_text\"> Ordrer</span>"
+
+#. module: sale_crm
+#: model:ir.ui.view,arch_db:sale_crm.crm_case_form_view_oppor
+msgid "<span class=\"o_stat_text\"> Quotation(s) </span>"
+msgstr "<span class=\"o_stat_text\"> Pristilbud </span>"
+
+#. module: sale_crm
+#: model:ir.model.fields,field_description:sale_crm.field_account_invoice__campaign_id
+#: model:ir.model.fields,field_description:sale_crm.field_sale_order__campaign_id
 msgid "Campaign"
+msgstr "Kampanje"
+
+#. module: sale_crm
+#: model:ir.model,name:sale_crm.model_account_invoice
+msgid "Invoice"
+msgstr "Faktura"
+
+#. module: sale_crm
+#: model:ir.model.fields,field_description:sale_crm.field_res_users__target_sales_invoiced
+msgid "Invoiced in Sales Orders Target"
+msgstr "Fakturert i salgsordremål"
+
+#. module: sale_crm
+#: model:ir.model,name:sale_crm.model_crm_lead
+msgid "Lead/Opportunity"
+msgstr "Lead/salgsmulighet"
+
+#. module: sale_crm
+#: model:ir.ui.view,arch_db:sale_crm.sale_view_inherit123
+msgid "Log in the chatter from which opportunity the order originates"
 msgstr ""
 
 #. module: sale_crm
-#: view:crm.make.sale:sale_crm.view_crm_make_sale
-msgid "Cancel"
-msgstr ""
+#: model:ir.ui.view,arch_db:sale_crm.sale_view_inherit123
+msgid "Marketing"
+msgstr "Markedsføring"
 
 #. module: sale_crm
-#: field:sale.order,medium_id:0
-msgid "Channel"
-msgstr ""
+#: model:ir.model.fields,field_description:sale_crm.field_account_invoice__medium_id
+#: model:ir.model.fields,field_description:sale_crm.field_sale_order__medium_id
+msgid "Medium"
+msgstr "Medium"
 
 #. module: sale_crm
-#: help:crm.make.sale,close:0
-msgid ""
-"Check this to close the opportunity after having created the sales order."
-msgstr ""
+#: model:ir.ui.view,arch_db:sale_crm.crm_case_form_view_oppor
+msgid "New Quotation"
+msgstr "Nytt pristilbud"
 
 #. module: sale_crm
-#: view:crm.lead:sale_crm.crm_case_form_view_oppor
-#: view:crm.make.sale:sale_crm.view_crm_make_sale
-msgid "Convert to Quotation"
-msgstr ""
+#: model:ir.model.fields,field_description:sale_crm.field_crm_lead__sale_number
+msgid "Number of Quotations"
+msgstr "Antall pristilbud"
 
 #. module: sale_crm
-#: view:crm.lead:sale_crm.crm_case_form_view_oppor
-msgid "Create Quotation"
-msgstr ""
+#: model:ir.model.fields,field_description:sale_crm.field_sale_order__opportunity_id
+msgid "Opportunity"
+msgstr "Salgsmulighet"
 
 #. module: sale_crm
-#: field:crm.make.sale,create_uid:0
-msgid "Created by"
-msgstr ""
+#: model:ir.model.fields,field_description:sale_crm.field_crm_lead__order_ids
+msgid "Orders"
+msgstr "Ordrer"
 
 #. module: sale_crm
-#: field:crm.make.sale,create_date:0
-msgid "Created on"
-msgstr ""
-
-#. module: sale_crm
-#: field:crm.make.sale,partner_id:0
-msgid "Customer"
-msgstr "Kunde"
-
-#. module: sale_crm
-#: field:crm.make.sale,id:0
-msgid "ID"
-msgstr ""
-
-#. module: sale_crm
-#: code:addons/sale_crm/wizard/crm_make_sale.py:91
+#: code:addons/sale_crm/models/crm_team.py:12
 #, python-format
-msgid "Insufficient Data!"
-msgstr ""
+msgid "Pipeline"
+msgstr "Salgstrakt"
 
 #. module: sale_crm
-#: field:crm.make.sale,write_uid:0
-msgid "Last Updated by"
-msgstr ""
-
-#. module: sale_crm
-#: field:crm.make.sale,write_date:0
-msgid "Last Updated on"
-msgstr ""
-
-#. module: sale_crm
-#: model:ir.actions.act_window,name:sale_crm.action_crm_make_sale
-msgid "Make Quotation"
-msgstr "Lag tilbud"
-
-#. module: sale_crm
-#: model:ir.model,name:sale_crm.model_crm_make_sale
-msgid "Make sales"
-msgstr ""
-
-#. module: sale_crm
-#: field:crm.make.sale,close:0
-msgid "Mark Won"
-msgstr ""
-
-#. module: sale_crm
-#: code:addons/sale_crm/wizard/crm_make_sale.py:91
-#, python-format
-msgid "No address(es) defined for this customer."
-msgstr ""
-
-#. module: sale_crm
-#: code:addons/sale_crm/wizard/crm_make_sale.py:111
-#, python-format
-msgid "Opportunity has been <b>converted</b> to the quotation <em>%s</em>."
-msgstr ""
-
-#. module: sale_crm
-#: code:addons/sale_crm/wizard/crm_make_sale.py:94
-#, python-format
-msgid "Opportunity: %s"
-msgstr ""
-
-#. module: sale_crm
-#: code:addons/sale_crm/wizard/crm_make_sale.py:125
-#: code:addons/sale_crm/wizard/crm_make_sale.py:136
-#, python-format
-msgid "Quotation"
-msgstr ""
-
-#. module: sale_crm
+#: model:ir.actions.act_window,name:sale_crm.sale_action_quotations_new
 #: model:ir.model,name:sale_crm.model_sale_order
-msgid "Sales Order"
-msgstr "Salgsordre"
+msgid "Quotation"
+msgstr "Pristilbud"
 
 #. module: sale_crm
-#: field:sale.order,source_id:0
+#: model:ir.actions.act_window,name:sale_crm.sale_action_quotations
+#: model:ir.ui.menu,name:sale_crm.sale_order_menu_quotations_crm
+msgid "Quotations"
+msgstr "Pristilbud"
+
+#. module: sale_crm
+#: model:ir.actions.act_window,name:sale_crm.sale_action_orders
+msgid "Sale orders"
+msgstr "Salgsordrer"
+
+#. module: sale_crm
+#: model:ir.model,name:sale_crm.model_crm_team
+msgid "Sales Team"
+msgstr "Salgsteam"
+
+#. module: sale_crm
+#: model:ir.model.fields,field_description:sale_crm.field_account_invoice__source_id
+#: model:ir.model.fields,field_description:sale_crm.field_sale_order__source_id
 msgid "Source"
-msgstr ""
+msgstr "Kilde"
 
 #. module: sale_crm
-#: field:sale.order,categ_ids:0
+#: model:ir.model.fields,field_description:sale_crm.field_crm_lead__sale_amount_total
+msgid "Sum of Orders"
+msgstr "Ordresum"
+
+#. module: sale_crm
+#: model:ir.model.fields,field_description:sale_crm.field_sale_order__tag_ids
 msgid "Tags"
-msgstr ""
+msgstr "Tagger"
 
 #. module: sale_crm
-#: help:sale.order,campaign_id:0
+#: model:ir.model.fields,help:sale_crm.field_account_invoice__campaign_id
+#: model:ir.model.fields,help:sale_crm.field_sale_order__campaign_id
 msgid ""
-"This is a name that helps you keep track of your different campaign efforts "
-"Ex: Fall_Drive, Christmas_Special"
+"This is a name that helps you keep track of your different campaign efforts,"
+" e.g. Fall_Drive, Christmas_Special"
 msgstr ""
+"Dette navnet hjelper deg å holde styr på forskjellige kampanjer, som "
+"sommer_tilbud, jule_spesial"
 
 #. module: sale_crm
-#: help:sale.order,medium_id:0
-msgid "This is the method of delivery. Ex: Postcard, Email, or Banner Ad"
-msgstr ""
+#: model:ir.model.fields,help:sale_crm.field_account_invoice__medium_id
+#: model:ir.model.fields,help:sale_crm.field_sale_order__medium_id
+msgid "This is the method of delivery, e.g. Postcard, Email, or Banner Ad"
+msgstr "Dette er leveringsmetoden, som postkort, epost eller bannerannonse"
 
 #. module: sale_crm
-#: help:sale.order,source_id:0
+#: model:ir.model.fields,help:sale_crm.field_account_invoice__source_id
+#: model:ir.model.fields,help:sale_crm.field_sale_order__source_id
 msgid ""
-"This is the source of the link Ex: Search Engine, another domain, or name of "
-"email list"
+"This is the source of the link, e.g. Search Engine, another domain, or name "
+"of email list"
 msgstr ""
+"Dette er kilden til linken, for eksempel en søkemotor, et annet domene eller"
+" navnet på en epostliste"
 
 #. module: sale_crm
-#: view:crm.make.sale:sale_crm.view_crm_make_sale
-msgid "_Create"
-msgstr "_Opprett"
+#: model:ir.model.fields,help:sale_crm.field_crm_lead__sale_amount_total
+msgid "Untaxed Total of Confirmed Orders"
+msgstr "Total uten avgiftsberegning for bekreftede ordrer"
+
+#. module: sale_crm
+#: model:ir.model,name:sale_crm.model_res_users
+msgid "Users"
+msgstr "Brukere"

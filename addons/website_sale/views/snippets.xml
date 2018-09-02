@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-<data>
+<odoo>
 <template id="website_sale" inherit_id="website.snippets" name="Snippet Ecommerce">
 
     <xpath expr="//div[@id='snippet_options']" position="inside">
@@ -10,34 +9,33 @@
 
           <li class='dropdown-submenu'>
             <a tabindex="-1" href="#">Size</a>
-            <ul class="dropdown-menu" name="size">
-              <li><a href="#">
+            <div class="dropdown-menu" role="menu" name="size">
+              <a href="#" role="menuitem" class="dropdown-item">
                 <table>
                   <tr><td class="selected"></td><td></td><td></td><td></td></tr>
                   <tr><td></td><td></td><td></td><td></td></tr>
                   <tr><td></td><td></td><td></td><td></td></tr>
                   <tr><td></td><td></td><td></td><td></td></tr>
                 </table>
-              </a></li>
-            </ul>
+              </a>
+            </div>
           </li>
-          <li class='dropdown-submenu'>
+          <li class='dropdown-submenu' role="menuitem" aria-haspopup="true">
             <a tabindex="-1" href="#">Styles</a>
-            <ul class="dropdown-menu" name="style">
-            </ul>
+            <div class="dropdown-menu" role="menu" name="style">
+            </div>
           </li>
-          <li class='dropdown-submenu'>
+          <li class='dropdown-submenu' role="menuitem" aria-haspopup="true">
               <a tabindex="-1" href="#">Promote</a>
-              <ul class="dropdown-menu">
-                  <li data-go_to="top"><a>Push to top</a></li>
-                  <li data-go_to="up"><a>Push up</a></li>
-                  <li data-go_to="down"><a>Push down</a></li>
-                  <li data-go_to="bottom"><a>Push to bottom</a></li>
-              </ul>
+              <div class="dropdown-menu" role="menu" data-no-preview="true">
+                  <a href="#" class="dropdown-item" role="menuitem" data-go_to="top">Push to top</a>
+                  <a href="#" class="dropdown-item" role="menuitem" data-go_to="up">Push up</a>
+                  <a href="#" class="dropdown-item" role="menuitem" data-go_to="down">Push down</a>
+                  <a href="#" class="dropdown-item" role="menuitem" data-go_to="bottom">Push to bottom</a>
+              </div>
           </li>
         </div>
     </xpath>
 
 </template>
-</data>
-</openerp>
+</odoo>

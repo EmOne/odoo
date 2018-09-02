@@ -1,109 +1,103 @@
-# Finnish translation for openobject-addons
-# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
-# This file is distributed under the same license as the openobject-addons package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
-#
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * google_account
+# 
+# Translators:
+# Jarmo Kortetjärvi <jarmo.kortetjarvi@gmail.com>, 2017
+# Kari Lindgren <kari.lindgren@emsystems.fi>, 2017
+# Tuomo Aura <tuomo.aura@web-veistamo.fi>, 2017
 msgid ""
 msgstr ""
-"Project-Id-Version: openobject-addons\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2012-12-21 17:05+0000\n"
-"PO-Revision-Date: 2014-08-14 16:10+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Finnish <fi@li.org>\n"
+"Project-Id-Version: Odoo Server 10.saas~18\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-09-20 09:53+0000\n"
+"PO-Revision-Date: 2017-09-20 09:53+0000\n"
+"Last-Translator: Tuomo Aura <tuomo.aura@web-veistamo.fi>, 2017\n"
+"Language-Team: Finnish (https://www.transifex.com/odoo/teams/41243/fi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-08-15 07:09+0000\n"
-"X-Generator: Launchpad (build 17156)\n"
+"Content-Transfer-Encoding: \n"
+"Language: fi\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#. module: google_base_account
-#: field:res.users,gmail_user:0
-msgid "Username"
-msgstr "Käyttäjätunnus"
+#. module: google_account
+#: model:ir.model.fields,field_description:google_account.field_google_service_create_uid
+msgid "Created by"
+msgstr "Luonut"
 
-#. module: google_base_account
-#: model:ir.actions.act_window,name:google_base_account.act_google_login_form
-msgid "Google Login"
-msgstr "Google tunnus"
+#. module: google_account
+#: model:ir.model.fields,field_description:google_account.field_google_service_create_date
+msgid "Created on"
+msgstr "Luotu"
 
-#. module: google_base_account
-#: code:addons/google_base_account/wizard/google_login.py:29
+#. module: google_account
+#: model:ir.model.fields,field_description:google_account.field_google_service_display_name
+msgid "Display Name"
+msgstr "Näyttönimi"
+
+#. module: google_account
+#: model:ir.model.fields,field_description:google_account.field_google_service_id
+msgid "ID"
+msgstr "Tunniste (ID)"
+
+#. module: google_account
+#: model:ir.model.fields,field_description:google_account.field_google_service___last_update
+msgid "Last Modified on"
+msgstr "Viimeksi muokattu"
+
+#. module: google_account
+#: model:ir.model.fields,field_description:google_account.field_google_service_write_uid
+msgid "Last Updated by"
+msgstr "Viimeksi päivittänyt"
+
+#. module: google_account
+#: model:ir.model.fields,field_description:google_account.field_google_service_write_date
+msgid "Last Updated on"
+msgstr "Viimeksi päivitetty"
+
+#. module: google_account
+#: code:addons/google_account/models/google_service.py:171
 #, python-format
-msgid "Google Contacts Import Error!"
-msgstr "Google kontaktien tuontivirhe!"
-
-#. module: google_base_account
-#: model:ir.model,name:google_base_account.model_res_users
-msgid "Users"
+msgid "Method not supported [%s] not in [GET, POST, PUT, PATCH or DELETE]!"
 msgstr ""
 
-#. module: google_base_account
-#: view:google.login:0
-msgid "or"
-msgstr ""
-
-#. module: google_base_account
-#: view:google.login:0
-msgid "Google login"
-msgstr "Google tunnus"
-
-#. module: google_base_account
-#: field:google.login,password:0
-msgid "Google Password"
-msgstr "Google salasana"
-
-#. module: google_base_account
-#: code:addons/google_base_account/wizard/google_login.py:77
-#, python-format
-msgid "Error!"
-msgstr ""
-
-#. module: google_base_account
-#: view:res.users:0
-msgid "Google Account"
-msgstr "Google tili"
-
-#. module: google_base_account
-#: view:res.users:0
-msgid "Synchronization"
-msgstr ""
-
-#. module: google_base_account
-#: code:addons/google_base_account/wizard/google_login.py:77
-#, python-format
-msgid "Authentication failed. Check the user and password."
-msgstr ""
-
-#. module: google_base_account
-#: code:addons/google_base_account/wizard/google_login.py:29
+#. module: google_account
+#: code:addons/google_account/models/google_service.py:119
 #, python-format
 msgid ""
-"Please install gdata-python-client from http://code.google.com/p/gdata-"
-"python-client/downloads/list"
+"Something went wrong during your token generation. Maybe your Authorization "
+"Code is invalid"
 msgstr ""
 
-#. module: google_base_account
-#: model:ir.model,name:google_base_account.model_google_login
-msgid "Google Contact"
-msgstr "Google kontakti"
-
-#. module: google_base_account
-#: view:google.login:0
-msgid "Cancel"
+#. module: google_account
+#: code:addons/google_account/models/google_service.py:55
+#, python-format
+msgid ""
+"Something went wrong during your token generation. Maybe your Authorization "
+"Code is invalid or already expired"
 msgstr ""
 
-#. module: google_base_account
-#: field:google.login,user:0
-msgid "Google Username"
-msgstr "Google käyttäjätunnus"
+#. module: google_account
+#: code:addons/google_account/models/google_service.py:149
+#, python-format
+msgid ""
+"Something went wrong during your token generation. Maybe your Authorization "
+"Code is invalid or already expired [%s]"
+msgstr ""
 
-#. module: google_base_account
-#: field:res.users,gmail_password:0
-msgid "Password"
-msgstr "Salasana"
+#. module: google_account
+#: code:addons/google_account/models/google_service.py:192
+#, python-format
+msgid "Something went wrong with your request to google"
+msgstr "Jotakin meni vikaan google pyynnössäsi"
 
-#. module: google_base_account
-#: view:google.login:0
-msgid "_Login"
+#. module: google_account
+#: code:addons/google_account/models/google_service.py:130
+#, python-format
+msgid "The account for the Google service '%s' is not configured"
+msgstr ""
+
+#. module: google_account
+#: model:ir.model,name:google_account.model_google_service
+msgid "google.service"
 msgstr ""

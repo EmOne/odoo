@@ -1,7 +1,9 @@
-from openerp.addons.account.tests.account_test_users import AccountTestUsers
+from odoo.addons.account.tests.account_test_users import AccountTestUsers
 import datetime
+from odoo.tests import tagged
 
 
+@tagged('post_install', '-at_install')
 class TestAccountCustomerInvoice(AccountTestUsers):
 
     def test_customer_invoice(self):
@@ -46,7 +48,6 @@ class TestAccountCustomerInvoice(AccountTestUsers):
 
         self.account_invoice_customer0 = self.account_invoice_obj.sudo(self.account_user.id).create(dict(
             name="Test Customer Invoice",
-            reference_type="none",
             payment_term_id=self.payment_term.id,
             journal_id=self.journalrec.id,
             partner_id=self.partner3.id,
@@ -65,20 +66,16 @@ class TestAccountCustomerInvoice(AccountTestUsers):
         tax = self.env['account.invoice.tax'].create(invoice_tax_line)
         assert tax, "Tax has not been assigned correctly"
 
+        total_before_confirm = self.partner3.total_invoiced
+
         # I check that Initially customer invoice is in the "Draft" state
         self.assertEquals(self.account_invoice_customer0.state, 'draft')
-
-        # I change the state of invoice to "Proforma2" by clicking PRO-FORMA button
-        self.account_invoice_customer0.signal_workflow('invoice_proforma2')
-
-        # I check that the invoice state is now "Proforma2"
-        self.assertEquals(self.account_invoice_customer0.state, 'proforma2')
 
         # I check that there is no move attached to the invoice
         self.assertEquals(len(self.account_invoice_customer0.move_id), 0)
 
         # I validate invoice by creating on
-        self.account_invoice_customer0.signal_workflow('invoice_open')
+        self.account_invoice_customer0.action_invoice_open()
 
         # I check that the invoice state is "Open"
         self.assertEquals(self.account_invoice_customer0.state, 'open')
@@ -92,13 +89,17 @@ class TestAccountCustomerInvoice(AccountTestUsers):
         # I verify that invoice is now in Paid state
         assert (self.account_invoice_customer0.state == 'paid'), "Invoice is not in Paid state"
 
-        # I refund the invoice Using Refund Button
+        self.partner3.invalidate_cache(ids=self.partner3.ids)
+        total_after_confirm = self.partner3.total_invoiced
+        self.assertEquals(total_after_confirm - total_before_confirm, self.account_invoice_customer0.amount_untaxed_signed)
+
+        # I created a credit note Using Add Credit Note Button
         invoice_refund_obj = self.env['account.invoice.refund']
         self.account_invoice_refund_0 = invoice_refund_obj.create(dict(
-            description='Refund To China Export',
+            description='Credit Note for China Export',
             date=datetime.date.today(),
             filter_refund='refund'
         ))
 
-        # I clicked on refund button.
+        # I clicked on Add Credit Note button.
         self.account_invoice_refund_0.invoice_refund()

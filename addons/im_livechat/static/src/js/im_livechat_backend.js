@@ -1,52 +1,24 @@
-odoo.define('im_livechat.chat_backend', function (require) {
+odoo.define('im_livechat.Discuss', function (require) {
 "use strict";
 
-var mail_chat_backend = require('mail.chat_backend');
+var Discuss = require('mail.Discuss');
 
-
-/**
- * Patch for the client action to integrate Livechat Mail Channel in a particular slot
- */
-mail_chat_backend.ChatMailThread.include({
-    init: function(parent, action){
-        this._super.apply(this, arguments);
-        this.set('channel_livechat', []);
-    },
-    start: function(){
-        var self = this;
-        this.on("change:channel_livechat", this, function(){
-            self.channel_render('channel_livechat');
+Discuss.include({
+    _renderSidebar: function (options) {
+        // Override to sort livechat threads by last message's date
+        var threadPartition = _.partition(options.threads, function (thread) {
+            return thread.getType() === 'livechat';
         });
-            self.$el.on('click', '.o_mail_chat_channel_unpin', _.bind(self.on_click_channel_unpin, self));
-        return this._super.apply(this, arguments).then(function(){
-        });
-    },
-    on_click_channel_unpin: function(event){
-        var self = this;
-        var channel_id = this.$(event.currentTarget).data('channel-id');
-        var channel = this.channels[channel_id];
-        return this.channel_pin(channel.uuid, false).then(function(){
-            self.channel_remove(channel_id);
-            // if unpin current channel, switch to inbox
-            if(self.get('current_channel_id') === channel_id){
-                self.set('current_channel_id', 'channel_inbox');
+        threadPartition[0].sort(function (c1, c2) {
+            if (!c1.hasMessages()) {
+                return -1;
+            } else if (!c2.hasMessages()) {
+                return 1;
             }
+            return c2.getLastMessage().getDate().diff(c1.getLastMessage().getDate());
         });
-    },
-    channel_change: function(){
-        // update the default username
-        var current_channel = this.channels[this.get('current_channel_id')];
-        if(current_channel){
-            this.options.default_username = current_channel.anonymous_name || this.options.default_username
-        }
-        return this._super.apply(this, arguments);
-    },
-    // utils function
-    get_channel_slot: function(channel){
-        if(channel.channel_type === 'livechat'){
-            return 'channel_livechat';
-        }
-        return this._super.apply(this, arguments);
+        options.threads = threadPartition[0].concat(threadPartition[1]);
+        return this._super(options);
     },
 });
 

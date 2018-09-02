@@ -43,7 +43,7 @@ can take the following attributes:
 ``report_name``
     the name of your report (which will be the name of the PDF output)
 ``groups``
-    :class:`~openerp.fields.Many2many` field to the groups allowed to view/use
+    :class:`~odoo.fields.Many2many` field to the groups allowed to view/use
     the current report
 ``attachment_use``
     if set to True, the report will be stored as an attachment of the record
@@ -53,16 +53,9 @@ can take the following attributes:
 ``attachment``
     python expression that defines the name of the report; the record is
     acessible as the variable ``object``
-
-.. warning::
-
-   The paper format cannot currently be declared via the ``<report>``
-   shortcut, it must be added afterwards using a ``<record>`` extension on the
-   report action itself::
-
-       <record id="<report_id>" model="ir.actions.report.xml">
-           <field name="paperformat_id" ref="<paperformat>"/>
-       </record>
+``paperformat``
+    external id of the paperformat you wish to use (defaults to the company's
+    paperformat if not specified)
 
 Example::
 
@@ -90,9 +83,9 @@ Minimal viable template
 A minimal template would look like::
 
     <template id="report_invoice">
-        <t t-call="report.html_container">
+        <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="report.external_layout">
+                <t t-call="web.external_layout">
                     <div class="page">
                         <h2>Report title</h2>
                         <p>This object's name is <span t-field="o.name"/></p>
@@ -150,7 +143,7 @@ For example, let's look at the Sale Order report from the Sale module::
 
     <!-- Main template -->
     <template id="report_saleorder">
-        <t t-call="report.html_container">
+        <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
                 <t t-call="sale.report_saleorder_document" t-lang="doc.partner_id.lang"/>
             </t>
@@ -161,14 +154,14 @@ For example, let's look at the Sale Order report from the Sale module::
     <template id="report_saleorder_document">
         <!-- Re-browse of the record with the partner lang -->
         <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})" />
-        <t t-call="report.external_layout">
+        <t t-call="web.external_layout">
             <div class="page">
                 <div class="oe_structure"/>
                 <div class="row">
-                    <div class="col-xs-6">
+                    <div class="col-6">
                         <strong t-if="doc.partner_shipping_id == doc.partner_invoice_id">Invoice and shipping address:</strong>
                         <strong t-if="doc.partner_shipping_id != doc.partner_invoice_id">Invoice address:</strong>
-                        <div t-field="doc.partner_invoice_id" t-field-options="{&quot;no_marker&quot;: true}"/>
+                        <div t-field="doc.partner_invoice_id" t-options="{&quot;no_marker&quot;: True}"/>
                     <...>
                 <div class="oe_structure"/>
             </div>
@@ -182,7 +175,7 @@ each Sale Order will be printed in the language of the corresponding customer. I
 to translate only the body of the document, but keep the header and footer in a default 
 language, you could call the report's external layout this way::
 
-    <t t-call="report.external_layout" t-lang="en_US">
+    <t t-call="web.external_layout" t-lang="en_US">
 
 .. tip::
 
@@ -197,7 +190,7 @@ Barcodes
 --------
 
 Barcodes are images returned by a controller and can easily be embedded in
-reports thanks to the QWeb syntax:
+reports thanks to the QWeb syntax (e.g. see :ref:`reference/qweb/attributes`):
 
 .. code-block:: html
 
@@ -216,19 +209,20 @@ Useful Remarks
 * Twitter Bootstrap and FontAwesome classes can be used in your report
   template
 * Local CSS can be put directly in the template
-
 * Global CSS can be inserted in the main report layout by inheriting its
   template and inserting your CSS::
 
-    <template id="report_saleorder_style" inherit_id="report.layout">
-      <xpath expr="//style" position="after">
-        <style type="text/css">
+    <template id="report_saleorder_style" inherit_id="report.style">
+      <xpath expr=".">
+        <t>
           .example-css-class {
             background-color: red;
           }
-        </style>
+        </t>
       </xpath>
     </template>
+* If it appears that your PDF report is missing the styles, please check
+  :ref:`these instructions <reference/backend/reporting/printed-reports/pdf-without-styles>`.
 
 .. _reference/reports/paper_formats:
 
@@ -288,20 +282,20 @@ named :samp:`report.{module.report_name}`. If it exists, it will use it to
 call the QWeb engine; otherwise a generic function will be used. If you wish
 to customize your reports by including more things in the template (like
 records of others models, for example), you can define this model, overwrite
-the function ``render_html`` and pass objects in the ``docargs`` dictionnary:
+the function ``render_html`` and pass objects in the ``docargs`` dictionary:
 
 .. code-block:: python
 
-    from openerp import api, models
+    from odoo import api, models
 
     class ParticularReport(models.AbstractModel):
         _name = 'report.module.report_name'
-        @api.multi
-        def render_html(self, data=None):
+        @api.model
+        def render_html(self, docids, data=None):
             report_obj = self.env['report']
             report = report_obj._get_report_from_name('module.report_name')
             docargs = {
-                'doc_ids': self._ids,
+                'doc_ids': docids,
                 'doc_model': report.model,
                 'docs': self,
             }

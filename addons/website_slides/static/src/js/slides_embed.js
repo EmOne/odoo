@@ -50,12 +50,12 @@ $(document).ready(function () {
             },
             // page switching
             render_page: function (page_number) {
-                this.pdf_viewer.renderPage(page_number).then(this.on_rendered_page);
+                this.pdf_viewer.renderPage(page_number).then(this.on_rendered_page.bind(this));
             },
             change_page: function () {
                 var page_asked = parseInt(this.$('#page_number').val(), 10);
                 if(1 <= page_asked && page_asked <= this.pdf_viewer.pdf_page_total){
-                    this.pdf_viewer.changePage(page_asked).then(this.on_rendered_page);
+                    this.pdf_viewer.changePage(page_asked).then(this.on_rendered_page.bind(this));
                 }else{
                     // if page number out of range, reset the page_counter to the actual page
                     this.$('#page_number').val(this.pdf_viewer.pdf_page_current);
@@ -73,7 +73,7 @@ $(document).ready(function () {
                     }
                 });
             },
-            previous: function (ev) {
+            previous: function () {
                 var self = this;
                 this.pdf_viewer.previousPage().then(function(page_num){
                     if(page_num){
@@ -82,14 +82,14 @@ $(document).ready(function () {
                     self.$("#slide_suggest").hide();
                 });
             },
-            first: function (ev) {
+            first: function () {
                 var self = this;
                 this.pdf_viewer.firstPage().then(function(page_num){
                     self.on_rendered_page(page_num);
                     self.$("#slide_suggest").hide();
                 });
             },
-            last: function (ev) {
+            last: function () {
                 var self = this;
                 this.pdf_viewer.lastPage().then(function(page_num){
                     self.on_rendered_page(page_num);
@@ -97,8 +97,13 @@ $(document).ready(function () {
                 });
             },
             // full screen mode
-            fullscreen: function (ev) {
+            fullscreen: function () {
                 this.pdf_viewer.toggleFullScreen();
+            },
+            fullScreenFooter: function (ev) {
+                if (ev.target.id === "PDFViewerCanvas") {
+                    this.pdf_viewer.toggleFullScreenFooter();
+                }
             },
             // display suggestion displayed after last slide
             display_suggested_slides: function () {
@@ -128,13 +133,16 @@ $(document).ready(function () {
         $('#fullscreen').on('click',function(){
             embedded_viewer.fullscreen();
         });
+        $('#PDFViewer').on('click',function (ev){
+            embedded_viewer.fullScreenFooter(ev);
+        });
 
         // switching slide with keyboard
         $(document).keydown(function (ev) {
-            if (ev.keyCode === 37) {
+            if (ev.keyCode === 37 || ev.keyCode === 38) {
                 embedded_viewer.previous();
             }
-            if (ev.keyCode === 39) {
+            if (ev.keyCode === 39 || ev.keyCode === 40) {
                  embedded_viewer.next();
             }
         });
@@ -160,7 +168,7 @@ $(document).ready(function () {
         );
 
         // embed widget page selector
-        $('.oe_slide_js_embed_code_widget input').on('change', function (e) {
+        $('.oe_slide_js_embed_code_widget input').on('change', function () {
             var page = parseInt($(this).val());
             if (!(page > 0 && page <= embedded_viewer.pdf_viewer.pdf_page_total)) {
                 page = 1;
@@ -176,7 +184,7 @@ $(document).ready(function () {
             var input = widget.find('input');
             var slide_id = widget.find('button').data('slide-id');
             if(input.val() && input[0].checkValidity()){
-                widget.removeClass('has-error');
+                widget.removeClass('o_has_error').find('.form-control, .custom-select').removeClass('is-invalid');
                 $.ajax({
                     type: "POST",
                     dataType: 'json',
@@ -191,7 +199,7 @@ $(document).ready(function () {
                     }
                 });
             }else{
-                widget.addClass('has-error');
+                widget.addClass('o_has_error').find('.form-control, .custom-select').addClass('is-invalid');
                 input.focus();
             }
         });

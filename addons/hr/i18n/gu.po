@@ -1,330 +1,362 @@
-# Gujarati translation for openobject-addons
-# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
-# This file is distributed under the same license as the openobject-addons package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
-#
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * hr
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: openobject-addons\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2014-08-14 13:08+0000\n"
-"PO-Revision-Date: 2014-08-14 16:10+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Gujarati <gu@li.org>\n"
+"Project-Id-Version: Odoo Server saas~11.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-08-24 09:04+0000\n"
+"PO-Revision-Date: 2018-08-24 09:04+0000\n"
+"Language-Team: Gujarati (https://www.transifex.com/odoo/teams/41243/gu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-08-15 07:10+0000\n"
-"X-Generator: Launchpad (build 17156)\n"
+"Content-Transfer-Encoding: \n"
+"Language: gu\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. module: hr
-#: code:addons/hr/hr.py:158
+#: code:addons/hr/models/hr.py:76
 #, python-format
 msgid "%s (copy)"
 msgstr ""
 
 #. module: hr
-#: model:ir.actions.act_window,help:hr.open_view_employee_list_my
+#: model:ir.ui.view,arch_db:hr.hr_job_view_kanban
+msgid "&amp;nbsp;"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.hr_department_view_kanban
+msgid "<span>Reporting</span>"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.hr_department_view_kanban
+msgid "<span>To Approve</span>"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.hr_department_view_kanban
+msgid "<span>To Do</span>"
+msgstr ""
+
+#. module: hr
+#: model:mail.template,body_html:hr.mail_template_data_unknown_employee_email_address
 msgid ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Click to add a new employee.\n"
-"              </p><p>\n"
-"                With just a quick glance on the Odoo employee screen, you\n"
-"                can easily find all the information you need for each "
-"person;\n"
-"                contact data, job position, availability, etc.\n"
-"              </p>\n"
+"<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding-top: 16px; background-color: #F1F1F1; font-family:Verdana, Arial,sans-serif; color: #454748; width: 100%; border-collapse:separate;\"><tr><td align=\"center\">\n"
+"<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"padding: 16px; background-color: white; color: #454748; border-collapse:separate;\">\n"
+"<tbody>\n"
+"    <tr>\n"
+"        <td align=\"center\" style=\"min-width: 590px;\">\n"
+"            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;\">\n"
+"                <tr><td valign=\"top\" style=\"font-size: 13px;\">\n"
+"                    <div>\n"
+"                        Hi,<br/>\n"
+"                        Your document has not been created because your email address is not recognized. Please send emails with the email address recorded on your employee information, or contact your HR manager.\n"
+"                    </div>\n"
+"                </td></tr>\n"
+"            </table>\n"
+"    </td></tr>\n"
+"</tbody>\n"
+"</table>\n"
+"</td></tr>\n"
+"<!-- POWERED BY -->\n"
+"<tr><td align=\"center\" style=\"min-width: 590px;\">\n"
+"    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" style=\"min-width: 590px; background-color: #F1F1F1; color: #454748; padding: 8px; border-collapse:separate;\">\n"
+"      <tr><td style=\"text-align: center; font-size: 13px;\">\n"
+"        Powered by <a target=\"_blank\" href=\"https://www.odoo.com?utm_source=db&amp;utm_medium=hr\" style=\"color: #875A7B;\">Odoo</a>\n"
+"      </td></tr>\n"
+"    </table>\n"
+"</td></tr>\n"
+"</table>\n"
 "            "
 msgstr ""
 
 #. module: hr
-#: model:ir.actions.act_window,help:hr.open_module_tree_department
-msgid ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Click to create a department.\n"
-"              </p><p>\n"
-"                Odoo's department structure is used to manage all documents\n"
-"                related to employees by departments: expenses, timesheets,\n"
-"                leaves and holidays, recruitments, etc.\n"
-"              </p>\n"
-"            "
+#: model:ir.model.fields,field_description:hr.field_hr_department__message_needaction
+#: model:ir.model.fields,field_description:hr.field_hr_employee__message_needaction
+#: model:ir.model.fields,field_description:hr.field_hr_job__message_needaction
+msgid "Action Needed"
 msgstr ""
 
 #. module: hr
-#: model:ir.actions.act_window,help:hr.view_department_form_installer
-msgid ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Click to define a new department.\n"
-"              </p><p>\n"
-"                Your departments structure is used to manage all documents\n"
-"                related to employees by departments: expenses and "
-"timesheets,\n"
-"                leaves and holidays, recruitments, etc.\n"
-"              </p>\n"
-"            "
-msgstr ""
-
-#. module: hr
-#: model:ir.actions.act_window,help:hr.action_hr_job
-msgid ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Click to define a new job position.\n"
-"              </p><p>\n"
-"                Job Positions are used to define jobs and their "
-"requirements.\n"
-"                You can keep track of the number of employees you have per "
-"job\n"
-"                position and follow the evolution according to what you "
-"planned\n"
-"                for the future.\n"
-"              </p><p>\n"
-"                You can attach a survey to a job position. It will be used "
-"in\n"
-"                the recruitment process to evaluate the applicants for this "
-"job\n"
-"                position.\n"
-"              </p>\n"
-"            "
-msgstr ""
-
-#. module: hr
-#: view:hr.employee:hr.view_employee_form
+#: model:ir.model.fields,field_description:hr.field_hr_department__active
+#: model:ir.model.fields,field_description:hr.field_hr_employee__active
 msgid "Active"
-msgstr "સક્રિય"
-
-#. module: hr
-#: view:hr.config.settings:hr.view_human_resources_configuration
-msgid "Additional Features"
 msgstr ""
 
 #. module: hr
-#: field:hr.config.settings,module_account_analytic_analysis:0
-msgid ""
-"Allow invoicing based on timesheets (the sale application will be installed)"
+#: model:ir.model.fields,field_description:hr.field_hr_employee__activity_ids
+msgid "Activities"
 msgstr ""
 
 #. module: hr
-#: field:hr.config.settings,module_hr_timesheet_sheet:0
-msgid "Allow timesheets validation by managers"
+#: model:ir.model.fields,field_description:hr.field_hr_employee__activity_state
+msgid "Activity State"
 msgstr ""
 
 #. module: hr
-#: view:hr.config.settings:hr.view_human_resources_configuration
-msgid "Apply"
+#: model:ir.actions.act_window,help:hr.act_employee_from_department
+#: model:ir.actions.act_window,help:hr.open_view_employee_list_my
+msgid "Add a new employee"
 msgstr ""
 
 #. module: hr
-#: model:ir.ui.menu,name:hr.menu_open_view_attendance_reason_new_config
-msgid "Attendance"
+#: model:ir.model.fields,field_description:hr.field_hr_employee__additional_note
+msgid "Additional Note"
 msgstr ""
 
 #. module: hr
-#: field:hr.employee,bank_account_id:0
+#: model:ir.model.fields,field_description:hr.field_mail_alias__alias_contact
+msgid "Alias Contact Security"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.view_department_filter
+#: model:ir.ui.view,arch_db:hr.view_employee_filter
+msgid "Archived"
+msgstr ""
+
+#. module: hr
+#: selection:mail.alias,alias_contact:0
+msgid "Authenticated Employees"
+msgstr ""
+
+#. module: hr
+#: selection:mail.alias,alias_contact:0
+msgid "Authenticated Partners"
+msgstr ""
+
+#. module: hr
+#: selection:hr.employee,certificate:0
+msgid "Bachelor"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__bank_account_id
 msgid "Bank Account Number"
 msgstr ""
 
 #. module: hr
-#: view:hr.employee:hr.view_employee_form
+#: model:ir.ui.view,arch_db:hr.view_employee_form
 msgid "Birth"
 msgstr ""
 
 #. module: hr
-#: help:hr.job,state:0
-msgid ""
-"By default 'Closed', set it to 'In Recruitment' if recruitment process is "
-"going on for this job position."
+#: model:ir.model.fields,field_description:hr.field_hr_employee__certificate
+msgid "Certificate Level"
 msgstr ""
 
 #. module: hr
-#: view:hr.config.settings:hr.view_human_resources_configuration
-msgid "Cancel"
-msgstr ""
-
-#. module: hr
-#: field:hr.employee.category,child_ids:0
-msgid "Child Categories"
-msgstr "વંશજ વર્ગ(શ્રેણી)"
-
-#. module: hr
-#: field:hr.department,child_ids:0
+#: model:ir.model.fields,field_description:hr.field_hr_department__child_ids
 msgid "Child Departments"
 msgstr ""
 
 #. module: hr
-#: view:hr.employee:hr.view_employee_form
-msgid "Citizenship & Other Info"
+#: model:ir.ui.view,arch_db:hr.view_employee_form
+msgid "Citizenship & Other Information"
 msgstr ""
 
 #. module: hr
-#: field:hr.employee,city:0
-msgid "City"
-msgstr ""
-
-#. module: hr
-#: view:hr.employee:hr.view_employee_filter
-#: field:hr.employee,coach_id:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__coach_id
+#: model:ir.ui.view,arch_db:hr.view_employee_filter
 msgid "Coach"
 msgstr ""
 
 #. module: hr
-#: field:hr.employee,color:0
+#: model:ir.model.fields,field_description:hr.field_hr_department__color
+#: model:ir.model.fields,field_description:hr.field_hr_employee__color
+#: model:ir.model.fields,field_description:hr.field_hr_employee_category__color
 msgid "Color Index"
 msgstr ""
 
 #. module: hr
-#: view:hr.department:hr.view_department_tree
+#: model:ir.ui.view,arch_db:hr.view_department_tree
 msgid "Companies"
-msgstr "કંપનીઓ"
+msgstr ""
 
 #. module: hr
-#: field:hr.department,company_id:0
-#: view:hr.employee:hr.view_employee_filter
-#: view:hr.job:hr.view_job_filter
-#: field:hr.job,company_id:0
+#: model:ir.model.fields,field_description:hr.field_hr_department__company_id
+#: model:ir.model.fields,field_description:hr.field_hr_employee__company_id
+#: model:ir.model.fields,field_description:hr.field_hr_job__company_id
+#: model:ir.ui.view,arch_db:hr.view_employee_filter
+#: model:ir.ui.view,arch_db:hr.view_job_filter
 msgid "Company"
-msgstr "કંપની"
+msgstr ""
 
 #. module: hr
-#: model:ir.ui.menu,name:hr.menu_hr_configuration
+#: model:ir.model.fields,field_description:hr.field_res_config_settings__resource_calendar_id
+msgid "Company Working Hours"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_department__complete_name
+msgid "Complete Name"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.menu,name:hr.menu_human_resources_configuration
 msgid "Configuration"
-msgstr "રુપરેખાંકન"
-
-#. module: hr
-#: view:hr.config.settings:hr.view_human_resources_configuration
-#: model:ir.actions.act_window,name:hr.action_human_resources_configuration
-msgid "Configure Human Resources"
 msgstr ""
 
 #. module: hr
-#: view:hr.employee:hr.view_employee_form
+#: model:ir.model,name:hr.model_res_partner
+msgid "Contact"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.view_employee_form
 msgid "Contact Information"
-msgstr "સંપર્ક જાણકારી"
-
-#. module: hr
-#: view:hr.config.settings:hr.view_human_resources_configuration
-msgid "Contracts"
 msgstr ""
 
 #. module: hr
-#: model:ir.actions.act_window,name:hr.view_department_form_installer
-msgid "Create Your Departments"
-msgstr "તમારા વિભાગો બનાવો"
+#: model:ir.model.fields,field_description:hr.field_hr_employee__country_of_birth
+msgid "Country of Birth"
+msgstr ""
 
 #. module: hr
-#: field:hr.config.settings,create_uid:0
-#: field:hr.department,create_uid:0
-#: field:hr.employee,create_uid:0
-#: field:hr.employee.category,create_uid:0
-#: field:hr.job,create_uid:0
+#: model:ir.actions.act_window,help:hr.open_module_tree_department
+msgid "Create a new department"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_department__create_uid
+#: model:ir.model.fields,field_description:hr.field_hr_employee__create_uid
+#: model:ir.model.fields,field_description:hr.field_hr_employee_category__create_uid
+#: model:ir.model.fields,field_description:hr.field_hr_job__create_uid
 msgid "Created by"
 msgstr ""
 
 #. module: hr
-#: field:hr.config.settings,create_date:0
-#: field:hr.department,create_date:0
-#: field:hr.employee,create_date:0
-#: field:hr.employee.category,create_date:0
-#: field:hr.job,create_date:0
+#: model:ir.model.fields,field_description:hr.field_hr_department__create_date
+#: model:ir.model.fields,field_description:hr.field_hr_employee__create_date
+#: model:ir.model.fields,field_description:hr.field_hr_employee_category__create_date
+#: model:ir.model.fields,field_description:hr.field_hr_job__create_date
 msgid "Created on"
 msgstr ""
 
 #. module: hr
-#: field:hr.job,no_of_employee:0
+#: model:ir.model.fields,field_description:hr.field_hr_job__no_of_employee
 msgid "Current Number of Employees"
 msgstr ""
 
 #. module: hr
-#: field:hr.employee,birthday:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__birthday
 msgid "Date of Birth"
-msgstr "જન્મની તારીખ"
-
-#. module: hr
-#: help:hr.employee,message_last_post:0
-#: help:hr.job,message_last_post:0
-msgid "Date of the last message posted on the record."
 msgstr ""
 
 #. module: hr
-#: view:hr.department:hr.view_department_filter
-#: view:hr.employee:hr.view_employee_filter
-#: field:hr.employee,department_id:0
-#: view:hr.job:hr.view_job_filter
-#: field:hr.job,department_id:0
-msgid "Department"
-msgstr "વિભાગ"
+#: model:ir.model.fields,help:hr.field_hr_employee__resource_calendar_id
+msgid "Define the schedule of resource"
+msgstr ""
 
 #. module: hr
-#: field:hr.department,name:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__department_id
+#: model:ir.model.fields,field_description:hr.field_hr_job__department_id
+#: model:ir.ui.view,arch_db:hr.view_department_filter
+#: model:ir.ui.view,arch_db:hr.view_employee_filter
+#: model:ir.ui.view,arch_db:hr.view_job_filter
+msgid "Department"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_department__name
 msgid "Department Name"
 msgstr ""
 
 #. module: hr
-#: view:hr.department:hr.view_department_filter
 #: model:ir.actions.act_window,name:hr.open_module_tree_department
 #: model:ir.ui.menu,name:hr.menu_hr_department_tree
+#: model:ir.ui.view,arch_db:hr.view_department_filter
 msgid "Departments"
-msgstr "વિભાગો"
+msgstr ""
 
 #. module: hr
-#: field:res.users,display_employees_suggestions:0
-msgid "Display Employees Suggestions"
+#: model:ir.model.fields,field_description:hr.field_hr_department__display_name
+#: model:ir.model.fields,field_description:hr.field_hr_employee__display_name
+#: model:ir.model.fields,field_description:hr.field_hr_employee_category__display_name
+#: model:ir.model.fields,field_description:hr.field_hr_job__display_name
+msgid "Display Name"
 msgstr ""
 
 #. module: hr
 #: selection:hr.employee,marital:0
 msgid "Divorced"
-msgstr "છુટાછેડા લીધેલ"
-
-#. module: hr
-#: field:hr.config.settings,module_hr_gamification:0
-msgid "Drive engagement with challenges and badges"
 msgstr ""
 
 #. module: hr
-#: view:hr.employee:hr.view_employee_form
-#: model:ir.model,name:hr.model_hr_employee
-msgid "Employee"
-msgstr "કર્મચારી"
+#: model:ir.ui.view,arch_db:hr.view_employee_form
+msgid "Education"
+msgstr ""
 
 #. module: hr
-#: view:hr.employee.category:hr.view_employee_category_form
+#: model:ir.model,name:hr.model_mail_alias
+msgid "Email Aliases"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__emergency_contact
+msgid "Emergency Contact"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__emergency_phone
+msgid "Emergency Phone"
+msgstr ""
+
+#. module: hr
+#: model:ir.model,name:hr.model_hr_employee
+#: model:ir.ui.view,arch_db:hr.view_employee_form
+msgid "Employee"
+msgstr ""
+
+#. module: hr
 #: model:ir.model,name:hr.model_hr_employee_category
 msgid "Employee Category"
 msgstr ""
 
 #. module: hr
-#: field:hr.employee.category,name:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__google_drive_link
+msgid "Employee Documents"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee_category__name
 msgid "Employee Tag"
 msgstr ""
 
 #. module: hr
 #: model:ir.actions.act_window,name:hr.open_view_categ_form
 #: model:ir.ui.menu,name:hr.menu_view_employee_category_form
+#: model:ir.ui.view,arch_db:hr.view_employee_category_form
 msgid "Employee Tags"
 msgstr ""
 
 #. module: hr
-#: help:hr.employee,bank_account_id:0
+#: model:ir.model.fields,help:hr.field_hr_employee__bank_account_id
 msgid "Employee bank salary account"
 msgstr ""
 
 #. module: hr
-#: view:hr.employee:hr.view_employee_filter
-#: view:hr.employee:hr.view_employee_tree
-#: view:hr.employee:hr.view_partner_tree2
-#: field:hr.employee.category,employee_ids:0
-#: field:hr.job,employee_ids:0
-#: model:ir.actions.act_window,name:hr.hr_employee_normal_action_tree
-#: model:ir.actions.act_window,name:hr.open_view_employee_list
-#: model:ir.actions.act_window,name:hr.open_view_employee_list_my
-#: model:ir.ui.menu,name:hr.menu_open_view_employee_list_my
-msgid "Employees"
-msgstr "કર્મચારીઓ"
+#: model:ir.ui.view,arch_db:hr.view_employee_form
+msgid "Employee's Name"
+msgstr ""
 
 #. module: hr
-#: view:hr.employee.category:hr.view_employee_category_list
-#: view:hr.employee.category:hr.view_employee_category_tree
-msgid "Employees Categories"
+#: model:ir.actions.act_window,name:hr.act_employee_from_department
+#: model:ir.actions.act_window,name:hr.open_view_employee_list
+#: model:ir.actions.act_window,name:hr.open_view_employee_list_my
+#: model:ir.model.fields,field_description:hr.field_hr_employee_category__employee_ids
+#: model:ir.model.fields,field_description:hr.field_hr_job__employee_ids
+#: model:ir.ui.menu,name:hr.menu_hr_root
+#: model:ir.ui.menu,name:hr.menu_open_view_employee_list_my
+#: model:ir.ui.view,arch_db:hr.hr_department_view_kanban
+#: model:ir.ui.view,arch_db:hr.res_config_settings_view_form
+#: model:ir.ui.view,arch_db:hr.view_employee_filter
+#: model:ir.ui.view,arch_db:hr.view_employee_tree
+#: model:ir.ui.view,arch_db:hr.view_partner_tree2
+msgid "Employees"
 msgstr ""
 
 #. module: hr
@@ -333,27 +365,29 @@ msgid "Employees Structure"
 msgstr ""
 
 #. module: hr
-#: constraint:hr.employee.category:0
-msgid "Error! You cannot create recursive Categories."
+#: model:ir.ui.view,arch_db:hr.view_employee_category_list
+msgid "Employees Tags"
 msgstr ""
 
 #. module: hr
-#: constraint:hr.department:0
-msgid "Error! You cannot create recursive departments."
+#: model:ir.model.fields,help:hr.field_hr_employee__address_home_id
+msgid ""
+"Enter here the private address of the employee, not the one linked to your "
+"company."
 msgstr ""
 
 #. module: hr
-#: constraint:hr.employee:0
-msgid "Error! You cannot create recursive hierarchy of Employee(s)."
+#: selection:mail.alias,alias_contact:0
+msgid "Everyone"
 msgstr ""
 
 #. module: hr
-#: field:hr.job,no_of_recruitment:0
+#: model:ir.model.fields,field_description:hr.field_hr_job__no_of_recruitment
 msgid "Expected New Employees"
 msgstr ""
 
 #. module: hr
-#: help:hr.job,expected_employees:0
+#: model:ir.model.fields,help:hr.field_hr_job__expected_employees
 msgid ""
 "Expected number of employees for this job position after new recruitment."
 msgstr ""
@@ -361,257 +395,245 @@ msgstr ""
 #. module: hr
 #: selection:hr.employee,gender:0
 msgid "Female"
-msgstr "સ્ત્રી"
-
-#. module: hr
-#. openerp-web
-#: code:addons/hr/static/src/xml/suggestions.xml:29
-#: view:hr.employee:hr.hr_kanban_view_employees
-#, python-format
-msgid "Follow"
 msgstr ""
 
 #. module: hr
-#: field:hr.employee,message_follower_ids:0
-#: field:hr.job,message_follower_ids:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__study_field
+msgid "Field of Study"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_department__message_follower_ids
+#: model:ir.model.fields,field_description:hr.field_hr_employee__message_follower_ids
+#: model:ir.model.fields,field_description:hr.field_hr_job__message_follower_ids
 msgid "Followers"
 msgstr ""
 
 #. module: hr
-#: view:hr.employee:hr.hr_kanban_view_employees
-msgid "Following"
+#: model:ir.model.fields,field_description:hr.field_hr_department__message_channel_ids
+#: model:ir.model.fields,field_description:hr.field_hr_employee__message_channel_ids
+#: model:ir.model.fields,field_description:hr.field_hr_job__message_channel_ids
+msgid "Followers (Channels)"
 msgstr ""
 
 #. module: hr
-#: field:hr.employee,gender:0
-msgid "Gender"
-msgstr "લિંગ"
+#: model:ir.model.fields,field_description:hr.field_hr_department__message_partner_ids
+#: model:ir.model.fields,field_description:hr.field_hr_employee__message_partner_ids
+#: model:ir.model.fields,field_description:hr.field_hr_job__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
 
 #. module: hr
-#: view:hr.employee:hr.view_employee_filter
-#: view:hr.job:hr.view_job_filter
+#: selection:mail.alias,alias_contact:0
+msgid "Followers only"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__gender
+msgid "Gender"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.view_employee_filter
+#: model:ir.ui.view,arch_db:hr.view_job_filter
 msgid "Group By"
 msgstr ""
 
 #. module: hr
-#: view:hr.employee:hr.view_employee_form
+#: model:ir.model,name:hr.model_hr_department
+msgid "HR Department"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.view_employee_form
 msgid "HR Settings"
 msgstr ""
 
 #. module: hr
-#: field:hr.job,no_of_hired_employee:0
+#: model:ir.model.fields,field_description:hr.field_hr_job__no_of_hired_employee
 msgid "Hired Employees"
 msgstr ""
 
 #. module: hr
-#: help:hr.employee,message_summary:0
-#: help:hr.job,message_summary:0
-msgid ""
-"Holds the Chatter summary (number of messages, ...). This summary is "
-"directly in html format in order to be inserted in kanban views."
-msgstr ""
-
-#. module: hr
-#: field:hr.employee,address_home_id:0
-msgid "Home Address"
-msgstr "ઘરનું સરનામું"
-
-#. module: hr
+#: model:ir.model.fields,field_description:hr.field_res_users__group_hr_user
 #: model:ir.ui.menu,name:hr.menu_hr_main
-#: model:ir.ui.menu,name:hr.menu_hr_reporting
-#: model:ir.ui.menu,name:hr.menu_hr_root
-#: model:ir.ui.menu,name:hr.menu_human_resources_configuration
 msgid "Human Resources"
-msgstr "માનવ સંશાધન"
-
-#. module: hr
-#: view:hr.config.settings:hr.view_human_resources_configuration
-msgid "Human Resources Management"
 msgstr ""
 
 #. module: hr
-#: field:hr.config.settings,id:0
-#: field:hr.department,id:0
-#: field:hr.employee,id:0
-#: field:hr.employee.category,id:0
-#: field:hr.job,id:0
+#: model:ir.model.fields,field_description:hr.field_hr_department__id
+#: model:ir.model.fields,field_description:hr.field_hr_employee__id
+#: model:ir.model.fields,field_description:hr.field_hr_employee_category__id
+#: model:ir.model.fields,field_description:hr.field_hr_job__id
 msgid "ID"
 msgstr ""
 
 #. module: hr
-#: field:hr.employee,identification_id:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__identification_id
 msgid "Identification No"
-msgstr "ઓળખ નંબર"
+msgstr ""
 
 #. module: hr
-#: help:hr.employee,message_unread:0
-#: help:hr.job,message_unread:0
+#: model:ir.model.fields,help:hr.field_hr_department__message_unread
+#: model:ir.model.fields,help:hr.field_hr_employee__message_unread
+#: model:ir.model.fields,help:hr.field_hr_job__message_unread
 msgid "If checked new messages require your attention."
 msgstr ""
 
 #. module: hr
-#: view:hr.job:hr.view_job_filter
+#: model:ir.model.fields,help:hr.field_hr_department__message_needaction
+#: model:ir.model.fields,help:hr.field_hr_employee__message_needaction
+#: model:ir.model.fields,help:hr.field_hr_job__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,help:hr.field_hr_department__message_has_error
+#: model:ir.model.fields,help:hr.field_hr_employee__message_has_error
+#: model:ir.model.fields,help:hr.field_hr_job__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,help:hr.field_hr_employee__active
+msgid ""
+"If the active field is set to False, it will allow you to hide the resource "
+"record without removing it."
+msgstr ""
+
+#. module: hr
+#: code:addons/hr/models/hr.py:279
+#, python-format
+msgid "Import Template for Employees"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.view_job_filter
 msgid "In Position"
 msgstr ""
 
 #. module: hr
-#: view:hr.job:hr.view_job_filter
+#: model:ir.ui.view,arch_db:hr.view_job_filter
 msgid "In Recruitment"
 msgstr ""
 
 #. module: hr
-#: field:hr.config.settings,module_hr_attendance:0
-msgid "Install attendances feature"
+#: model:ir.model.fields,field_description:hr.field_hr_department__message_is_follower
+#: model:ir.model.fields,field_description:hr.field_hr_employee__message_is_follower
+#: model:ir.model.fields,field_description:hr.field_hr_job__message_is_follower
+msgid "Is Follower"
 msgstr ""
 
 #. module: hr
-#: view:hr.config.settings:hr.view_human_resources_configuration
-msgid "Install your country's payroll"
-msgstr ""
-
-#. module: hr
-#: field:hr.employee,message_is_follower:0
-#: field:hr.job,message_is_follower:0
-msgid "Is a Follower"
-msgstr ""
-
-#. module: hr
-#: view:hr.employee:hr.view_employee_filter
-#: view:hr.job:hr.view_hr_job_form
-#: view:hr.job:hr.view_hr_job_tree
-#: view:hr.job:hr.view_job_filter
+#: model:ir.ui.view,arch_db:hr.view_employee_filter
+#: model:ir.ui.view,arch_db:hr.view_hr_job_form
+#: model:ir.ui.view,arch_db:hr.view_hr_job_tree
+#: model:ir.ui.view,arch_db:hr.view_job_filter
 msgid "Job"
-msgstr "કાર્ય"
+msgstr ""
 
 #. module: hr
-#: field:hr.job,description:0
+#: model:ir.model.fields,field_description:hr.field_hr_job__description
 msgid "Job Description"
-msgstr "કાર્યની વિગત"
-
-#. module: hr
-#: field:hr.job,name:0
-msgid "Job Name"
 msgstr ""
 
 #. module: hr
 #: model:ir.model,name:hr.model_hr_job
+#: model:ir.model.fields,field_description:hr.field_hr_employee__job_id
+#: model:ir.model.fields,field_description:hr.field_hr_job__name
 msgid "Job Position"
 msgstr ""
 
 #. module: hr
 #: model:ir.actions.act_window,name:hr.action_hr_job
-#: model:ir.ui.menu,name:hr.menu_hr_job_position
 msgid "Job Positions"
 msgstr ""
 
 #. module: hr
-#: field:hr.employee,job_id:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__job_title
 msgid "Job Title"
 msgstr ""
 
 #. module: hr
-#: field:hr.department,jobs_ids:0
-#: view:hr.job:hr.view_job_filter
+#: model:ir.model.fields,field_description:hr.field_hr_department__jobs_ids
+#: model:ir.ui.view,arch_db:hr.view_job_filter
 msgid "Jobs"
-msgstr "કાર્યો"
-
-#. module: hr
-#: field:hr.employee,message_last_post:0
-#: field:hr.job,message_last_post:0
-msgid "Last Message Date"
 msgstr ""
 
 #. module: hr
-#: field:hr.config.settings,write_uid:0
-#: field:hr.department,write_uid:0
-#: field:hr.employee,write_uid:0
-#: field:hr.employee.category,write_uid:0
-#: field:hr.job,write_uid:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__km_home_work
+msgid "Km home-work"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_department____last_update
+#: model:ir.model.fields,field_description:hr.field_hr_employee____last_update
+#: model:ir.model.fields,field_description:hr.field_hr_employee_category____last_update
+#: model:ir.model.fields,field_description:hr.field_hr_job____last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_department__write_uid
+#: model:ir.model.fields,field_description:hr.field_hr_employee__write_uid
+#: model:ir.model.fields,field_description:hr.field_hr_employee_category__write_uid
+#: model:ir.model.fields,field_description:hr.field_hr_job__write_uid
 msgid "Last Updated by"
 msgstr ""
 
 #. module: hr
-#: field:hr.config.settings,write_date:0
-#: field:hr.department,write_date:0
-#: field:hr.employee,write_date:0
-#: field:hr.employee.category,write_date:0
+#: model:ir.model.fields,field_description:hr.field_hr_department__write_date
+#: model:ir.model.fields,field_description:hr.field_hr_employee__write_date
+#: model:ir.model.fields,field_description:hr.field_hr_employee_category__write_date
+#: model:ir.model.fields,field_description:hr.field_hr_job__write_date
 msgid "Last Updated on"
 msgstr ""
 
 #. module: hr
-#: field:hr.employee,last_login:0
-msgid "Latest Connection"
+#: selection:hr.employee,marital:0
+msgid "Legal Cohabitant"
 msgstr ""
 
 #. module: hr
-#: view:hr.job:hr.view_hr_job_form
-msgid "Launch Recruitment"
-msgstr ""
-
-#. module: hr
-#: model:ir.ui.menu,name:hr.menu_open_view_attendance_reason_config
-msgid "Leaves"
-msgstr ""
-
-#. module: hr
-#: field:hr.employee,login:0
-msgid "Login"
+#: model:ir.actions.act_window,help:hr.action_hr_job
+msgid "Let's create a job position."
 msgstr ""
 
 #. module: hr
 #: selection:hr.employee,gender:0
 msgid "Male"
-msgstr "પુરુષ"
-
-#. module: hr
-#: field:hr.config.settings,module_hr_expense:0
-msgid "Manage employees expenses"
 msgstr ""
 
 #. module: hr
-#: field:hr.config.settings,module_hr_holidays:0
-msgid "Manage holidays, leaves and allocation requests"
-msgstr ""
-
-#. module: hr
-#: field:hr.config.settings,module_hr_payroll:0
-msgid "Manage payroll"
-msgstr ""
-
-#. module: hr
-#: field:hr.config.settings,module_hr_recruitment:0
-msgid "Manage the recruitment process"
-msgstr ""
-
-#. module: hr
-#: field:hr.config.settings,module_hr_timesheet:0
-msgid "Manage timesheets"
-msgstr ""
-
-#. module: hr
-#: field:hr.department,manager_id:0
-#: view:hr.employee:hr.view_employee_filter
-#: field:hr.employee,parent_id:0
+#: model:ir.model.fields,field_description:hr.field_hr_department__manager_id
+#: model:ir.model.fields,field_description:hr.field_hr_employee__parent_id
+#: model:ir.ui.view,arch_db:hr.view_employee_filter
+#: model:res.groups,name:hr.group_hr_manager
 msgid "Manager"
 msgstr ""
 
 #. module: hr
-#: field:hr.employee,marital:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__marital
 msgid "Marital Status"
-msgstr "લગ્ન સ્થિતિ"
+msgstr ""
 
 #. module: hr
 #: selection:hr.employee,marital:0
 msgid "Married"
-msgstr "પરિણીત"
+msgstr ""
 
 #. module: hr
-#: field:hr.employee,image_medium:0
+#: selection:hr.employee,certificate:0
+msgid "Master"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__image_medium
 msgid "Medium-sized photo"
 msgstr ""
 
 #. module: hr
-#: help:hr.employee,image_medium:0
+#: model:ir.model.fields,help:hr.field_hr_employee__image_medium
 msgid ""
 "Medium-sized photo of the employee. It is automatically resized as a "
 "128x128px image, with aspect ratio preserved. Use this field in form views "
@@ -619,140 +641,212 @@ msgid ""
 msgstr ""
 
 #. module: hr
-#: field:hr.department,member_ids:0
+#: model:ir.model.fields,field_description:hr.field_hr_department__member_ids
 msgid "Members"
-msgstr "સભ્યો"
+msgstr ""
 
 #. module: hr
-#: field:hr.employee,message_ids:0
-#: field:hr.job,message_ids:0
+#: model:ir.model.fields,field_description:hr.field_hr_department__message_has_error
+#: model:ir.model.fields,field_description:hr.field_hr_employee__message_has_error
+#: model:ir.model.fields,field_description:hr.field_hr_job__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_department__message_ids
+#: model:ir.model.fields,field_description:hr.field_hr_employee__message_ids
+#: model:ir.model.fields,field_description:hr.field_hr_job__message_ids
 msgid "Messages"
 msgstr ""
 
 #. module: hr
-#: help:hr.employee,message_ids:0
-#: help:hr.job,message_ids:0
-msgid "Messages and communication history"
-msgstr ""
-
-#. module: hr
-#: field:hr.department,complete_name:0
-#: field:hr.employee,name_related:0
-#: field:hr.employee.category,complete_name:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__name
 msgid "Name"
-msgstr "નામ"
-
-#. module: hr
-#: field:hr.employee,country_id:0
-msgid "Nationality"
 msgstr ""
 
 #. module: hr
-#: field:hr.department,note:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__country_id
+msgid "Nationality (Country)"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: hr
+#: selection:hr.job,state:0
+msgid "Not Recruiting"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_department__note
 msgid "Note"
-msgstr "નોંધ"
+msgstr ""
 
 #. module: hr
-#: field:hr.employee,notes:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__notes
 msgid "Notes"
-msgstr "નોંધો"
+msgstr ""
 
 #. module: hr
-#: help:hr.job,no_of_employee:0
+#: model:ir.model.fields,field_description:hr.field_hr_department__message_needaction_counter
+#: model:ir.model.fields,field_description:hr.field_hr_employee__message_needaction_counter
+#: model:ir.model.fields,field_description:hr.field_hr_job__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__children
+msgid "Number of Children"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,help:hr.field_hr_job__no_of_employee
 msgid "Number of employees currently occupying this job position."
 msgstr ""
 
 #. module: hr
-#: sql_constraint:hr.job:0
-msgid ""
-"Number of hired employee must be less than expected number of employee in "
-"recruitment."
+#: model:ir.model.fields,field_description:hr.field_hr_department__message_has_error_counter
+#: model:ir.model.fields,field_description:hr.field_hr_employee__message_has_error_counter
+#: model:ir.model.fields,field_description:hr.field_hr_job__message_has_error_counter
+msgid "Number of error"
 msgstr ""
 
 #. module: hr
-#: help:hr.job,no_of_hired_employee:0
+#: model:ir.model.fields,help:hr.field_hr_job__no_of_hired_employee
 msgid ""
 "Number of hired employees for this job position during recruitment phase."
 msgstr ""
 
 #. module: hr
-#: help:hr.job,no_of_recruitment:0
+#: model:ir.model.fields,help:hr.field_hr_department__message_needaction_counter
+#: model:ir.model.fields,help:hr.field_hr_employee__message_needaction_counter
+#: model:ir.model.fields,help:hr.field_hr_job__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,help:hr.field_hr_department__message_has_error_counter
+#: model:ir.model.fields,help:hr.field_hr_employee__message_has_error_counter
+#: model:ir.model.fields,help:hr.field_hr_job__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,help:hr.field_hr_job__no_of_recruitment
 msgid "Number of new employees you expect to recruit."
 msgstr ""
 
 #. module: hr
-#: field:hr.employee,work_location:0
-msgid "Office Location"
-msgstr "કાર્યાલયનું સ્થાન"
-
-#. module: hr
-#: model:ir.actions.client,name:hr.action_client_hr_menu
-msgid "Open HR Menu"
+#: model:ir.model.fields,help:hr.field_hr_department__message_unread_counter
+#: model:ir.model.fields,help:hr.field_hr_employee__message_unread_counter
+#: model:ir.model.fields,help:hr.field_hr_job__message_unread_counter
+msgid "Number of unread messages"
 msgstr ""
 
 #. module: hr
-#: field:hr.config.settings,module_hr_evaluation:0
-msgid "Organize employees periodic evaluation"
+#: model:ir.actions.act_window,help:hr.open_module_tree_department
+msgid ""
+"Odoo's department structure is used to manage all documents\n"
+"                related to employees by departments: expenses, timesheets,\n"
+"                leaves, recruitments, etc."
 msgstr ""
 
 #. module: hr
-#: field:hr.employee,otherid:0
-msgid "Other Id"
+#: model:res.groups,name:hr.group_hr_user
+msgid "Officer"
 msgstr ""
 
 #. module: hr
-#: view:hr.employee:hr.view_employee_form
+#: model:ir.model.fields,help:hr.field_res_users__group_hr_user
+msgid ""
+"Officer: The user will be able to approve document created by employees.\n"
+"Manager: The user will have an access to the human resources configuration as well as statistic reports."
+msgstr ""
+
+#. module: hr
+#: selection:hr.employee,certificate:0 selection:hr.employee,gender:0
+msgid "Other"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.view_employee_form
 msgid "Other Information ..."
 msgstr ""
 
 #. module: hr
-#: field:hr.department,parent_id:0
+#: selection:hr.employee,activity_state:0
+msgid "Overdue"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_department__parent_id
 msgid "Parent Department"
 msgstr ""
 
 #. module: hr
-#: field:hr.employee.category,parent_id:0
-msgid "Parent Employee Tag"
-msgstr ""
-
-#. module: hr
-#: field:hr.employee,passport_id:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__passport_id
 msgid "Passport No"
 msgstr ""
 
 #. module: hr
-#: model:ir.actions.act_window,name:hr.open_payroll_modules
-msgid "Payroll"
-msgstr ""
-
-#. module: hr
-#: view:hr.employee:hr.view_employee_form
-msgid "Personal Information"
-msgstr "અંગત માહિતી"
-
-#. module: hr
-#: field:hr.employee,image:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__image
 msgid "Photo"
 msgstr ""
 
 #. module: hr
-#: view:hr.employee:hr.view_employee_form
+#: model:ir.model.fields,field_description:hr.field_hr_employee__place_of_birth
+msgid "Place of Birth"
+msgstr ""
+
+#. module: hr
+#: selection:hr.employee,activity_state:0
+msgid "Planned"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,help:hr.field_mail_alias__alias_contact
+msgid ""
+"Policy to post a message on the document using the mailgateway.\n"
+"- everyone: everyone can post\n"
+"- partners: only authenticated partners\n"
+"- followers: only followers of the related document or members of following channels\n"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.view_employee_form
 msgid "Position"
-msgstr "સ્થાન"
-
-#. module: hr
-#: view:hr.employee:hr.view_employee_form
-msgid "Public Information"
 msgstr ""
 
 #. module: hr
-#: field:hr.config.settings,module_hr_contract:0
-msgid "Record contracts per employee"
+#: model:ir.model.fields,field_description:hr.field_hr_employee__address_home_id
+msgid "Private Address"
 msgstr ""
 
 #. module: hr
-#: selection:hr.job,state:0
-msgid "Recruitment Closed"
+#: model:ir.ui.view,arch_db:hr.view_employee_form
+msgid "Private Information"
+msgstr ""
+
+#. module: hr
+#: model:ir.actions.act_window,help:hr.action_hr_job
+msgid "Ready to recruit more efficiently?"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.view_hr_job_form
+msgid "Recruitment"
 msgstr ""
 
 #. module: hr
@@ -761,207 +855,253 @@ msgid "Recruitment in Progress"
 msgstr ""
 
 #. module: hr
-#: view:hr.employee:hr.view_employee_form
+#: model:ir.ui.view,arch_db:hr.view_employee_form
 msgid "Related User"
 msgstr ""
 
 #. module: hr
-#: field:res.users,employee_ids:0
+#: model:ir.model.fields,field_description:hr.field_res_users__employee_ids
 msgid "Related employees"
 msgstr ""
 
 #. module: hr
-#: model:ir.ui.menu,name:hr.menu_hr_reporting_timesheet
-msgid "Reports"
+#: model:ir.model.fields,help:hr.field_hr_employee__user_id
+msgid "Related user name for the resource to manage its access."
 msgstr ""
 
 #. module: hr
-#: field:hr.job,requirements:0
+#: model:ir.ui.menu,name:hr.menu_hr_reporting_timesheet
+msgid "Reporting"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_job__requirements
 msgid "Requirements"
-msgstr "જરૂરીયાતો"
+msgstr ""
 
 #. module: hr
-#: field:hr.employee,resource_id:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__resource_id
 msgid "Resource"
-msgstr "સ્ત્રોત"
+msgstr ""
 
 #. module: hr
-#: field:hr.employee,sinid:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__sinid
 msgid "SIN No"
 msgstr ""
 
 #. module: hr
-#: field:hr.employee,ssnid:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__ssnid
 msgid "SSN No"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__study_school
+msgid "School"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.res_config_settings_view_form
+msgid ""
+"Set default calendar used to compute time allocation for leaves, timesheets,"
+" ..."
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,help:hr.field_hr_job__state
+msgid ""
+"Set whether the recruitment process is open or closed for this job position."
+msgstr ""
+
+#. module: hr
+#: model:ir.actions.act_window,name:hr.hr_config_settings_action
+#: model:ir.ui.menu,name:hr.hr_menu_configuration
+#: model:ir.ui.view,arch_db:hr.hr_department_view_kanban
+msgid "Settings"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_res_config_settings__module_hr_org_chart
+msgid "Show Organizational Chart"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.res_config_settings_view_form
+msgid "Show organizational chart on employee form"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.res_config_settings_view_form
+msgid "Show organizational chart on employee form."
 msgstr ""
 
 #. module: hr
 #: selection:hr.employee,marital:0
 msgid "Single"
-msgstr "અપરિણીત"
+msgstr ""
 
 #. module: hr
-#: field:hr.employee,image_small:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__image_small
 msgid "Small-sized photo"
 msgstr ""
 
 #. module: hr
-#: help:hr.employee,image_small:0
+#: model:ir.model.fields,help:hr.field_hr_employee__image_small
 msgid ""
 "Small-sized photo of the employee. It is automatically resized as a 64x64px "
-"image, with aspect ratio preserved. Use this field anywhere a small image is "
-"required."
+"image, with aspect ratio preserved. Use this field anywhere a small image is"
+" required."
 msgstr ""
 
 #. module: hr
-#: help:hr.employee,sinid:0
+#: model:ir.model.fields,help:hr.field_hr_employee__sinid
 msgid "Social Insurance Number"
 msgstr ""
 
 #. module: hr
-#: help:hr.employee,ssnid:0
+#: model:ir.model.fields,help:hr.field_hr_employee__ssnid
 msgid "Social Security Number"
 msgstr ""
 
 #. module: hr
-#: view:hr.employee:hr.view_employee_form
-#: view:hr.job:hr.view_job_filter
-#: field:hr.job,state:0
-msgid "Status"
-msgstr "સ્થિતિ"
+#: model:ir.model.fields,field_description:hr.field_hr_employee__spouse_birthdate
+msgid "Spouse Birthdate"
+msgstr ""
 
 #. module: hr
-#: view:hr.job:hr.view_hr_job_form
+#: model:ir.model.fields,field_description:hr.field_hr_employee__spouse_complete_name
+msgid "Spouse Complete Name"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.view_hr_job_form
+msgid "Start Recruitment"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_job__state
+#: model:ir.ui.view,arch_db:hr.view_employee_form
+#: model:ir.ui.view,arch_db:hr.view_job_filter
+msgid "Status"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,help:hr.field_hr_employee__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.view_hr_job_form
 msgid "Stop Recruitment"
 msgstr ""
 
 #. module: hr
-#: model:ir.actions.act_window,name:hr.action2
+#: model:ir.actions.act_window,name:hr.hr_employee_action_subordinate_hierachy
 msgid "Subordinate Hierarchy"
 msgstr ""
 
 #. module: hr
-#: field:hr.employee,child_ids:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__child_ids
 msgid "Subordinates"
 msgstr ""
 
 #. module: hr
-#. openerp-web
-#: code:addons/hr/static/src/xml/suggestions.xml:15
-#, python-format
-msgid "Suggested Employees"
+#: sql_constraint:hr.employee.category:0
+msgid "Tag name already exists !"
 msgstr ""
 
 #. module: hr
-#: field:hr.employee,message_summary:0
-#: field:hr.job,message_summary:0
-msgid "Summary"
-msgstr ""
-
-#. module: hr
-#: field:hr.employee,category_ids:0
+#: model:ir.model.fields,field_description:hr.field_hr_employee__category_ids
 msgid "Tags"
 msgstr ""
 
 #. module: hr
-#: view:hr.config.settings:hr.view_human_resources_configuration
-msgid "Talent Management"
+#: model:ir.model.fields,field_description:hr.field_hr_employee__is_address_home_a_company
+msgid "The employee adress has a company linked"
 msgstr ""
 
 #. module: hr
 #: sql_constraint:hr.job:0
-msgid ""
-"The name of the job position must be unique per department in company!"
+msgid "The name of the job position must be unique per department in company!"
 msgstr ""
 
 #. module: hr
-#: help:hr.employee,image:0
+#: model:res.groups,comment:hr.group_hr_user
+msgid "The user will be able to approve document created by employees."
+msgstr ""
+
+#. module: hr
+#: model:res.groups,comment:hr.group_hr_manager
+msgid ""
+"The user will have an access to the human resources configuration as well as"
+" statistic reports."
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,help:hr.field_hr_employee__image
 msgid ""
 "This field holds the image used as photo for the employee, limited to "
 "1024x1024px."
 msgstr ""
 
 #. module: hr
-#: help:hr.config.settings,module_account_analytic_analysis:0
+#: model:ir.model.fields,help:hr.field_hr_employee__tz
 msgid ""
-"This installs the module account_analytic_analysis, which will install sales "
-"management too."
+"This field is used in order to define in which timezone the resources will "
+"work."
 msgstr ""
 
 #. module: hr
-#: help:hr.config.settings,module_hr_attendance:0
-msgid "This installs the module hr_attendance."
+#: model:ir.model.fields,field_description:hr.field_hr_employee__tz
+msgid "Timezone"
 msgstr ""
 
 #. module: hr
-#: help:hr.config.settings,module_hr_contract:0
-msgid "This installs the module hr_contract."
+#: selection:hr.employee,activity_state:0
+msgid "Today"
 msgstr ""
 
 #. module: hr
-#: help:hr.config.settings,module_hr_evaluation:0
-msgid "This installs the module hr_evaluation."
-msgstr ""
-
-#. module: hr
-#: help:hr.config.settings,module_hr_expense:0
-msgid "This installs the module hr_expense."
-msgstr ""
-
-#. module: hr
-#: help:hr.config.settings,module_hr_gamification:0
-msgid "This installs the module hr_gamification."
-msgstr ""
-
-#. module: hr
-#: help:hr.config.settings,module_hr_holidays:0
-msgid "This installs the module hr_holidays."
-msgstr ""
-
-#. module: hr
-#: help:hr.config.settings,module_hr_payroll:0
-msgid "This installs the module hr_payroll."
-msgstr ""
-
-#. module: hr
-#: help:hr.config.settings,module_hr_recruitment:0
-msgid "This installs the module hr_recruitment."
-msgstr ""
-
-#. module: hr
-#: help:hr.config.settings,module_hr_timesheet:0
-msgid "This installs the module hr_timesheet."
-msgstr ""
-
-#. module: hr
-#: help:hr.config.settings,module_hr_timesheet_sheet:0
-msgid "This installs the module hr_timesheet_sheet."
-msgstr ""
-
-#. module: hr
-#: view:hr.config.settings:hr.view_human_resources_configuration
-msgid "Time Tracking"
-msgstr ""
-
-#. module: hr
-#: field:hr.job,expected_employees:0
+#: model:ir.model.fields,field_description:hr.field_hr_job__expected_employees
 msgid "Total Forecasted Employees"
 msgstr ""
 
 #. module: hr
-#: view:hr.employee:hr.hr_kanban_view_employees
-msgid "Unfollow"
-msgstr ""
-
-#. module: hr
-#: field:hr.employee,message_unread:0
-#: field:hr.job,message_unread:0
+#: model:ir.model.fields,field_description:hr.field_hr_department__message_unread
+#: model:ir.model.fields,field_description:hr.field_hr_employee__message_unread
+#: model:ir.model.fields,field_description:hr.field_hr_job__message_unread
+#: model:ir.ui.view,arch_db:hr.view_department_filter
+#: model:ir.ui.view,arch_db:hr.view_employee_filter
+#: model:ir.ui.view,arch_db:hr.view_job_filter
 msgid "Unread Messages"
 msgstr ""
 
 #. module: hr
-#: field:hr.job,write_date:0
-msgid "Update Date"
+#: model:ir.model.fields,field_description:hr.field_hr_department__message_unread_counter
+#: model:ir.model.fields,field_description:hr.field_hr_employee__message_unread_counter
+#: model:ir.model.fields,field_description:hr.field_hr_job__message_unread_counter
+msgid "Unread Messages Counter"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.view_employee_form
+msgid ""
+"Use here the home address of the employee.\n"
+"                                            This private address is used in the expense report reimbursement document.\n"
+"                                            It should be different from the work address."
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__user_id
+msgid "User"
 msgstr ""
 
 #. module: hr
@@ -970,52 +1110,122 @@ msgid "Users"
 msgstr ""
 
 #. module: hr
-#: code:addons/hr/hr.py:273
-#, python-format
-msgid "Welcome to %s! Please help him/her take the first steps with Odoo!"
+#: model:ir.ui.view,arch_db:hr.hr_job_view_kanban
+msgid "Vacancies :"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__visa_expire
+msgid "Visa Expire Date"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__visa_no
+msgid "Visa No"
 msgstr ""
 
 #. module: hr
 #: selection:hr.employee,marital:0
 msgid "Widower"
-msgstr "વિધુર"
+msgstr ""
 
 #. module: hr
-#: field:hr.employee,work_email:0
+#: model:ir.actions.act_window,help:hr.act_employee_from_department
+#: model:ir.actions.act_window,help:hr.open_view_employee_list_my
+msgid ""
+"With just a quick glance on the Odoo employee screen, you\n"
+"                can easily find all the information you need for each person;\n"
+"                contact data, job position, availability, etc."
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__address_id
+msgid "Work Address"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__work_email
 msgid "Work Email"
 msgstr ""
 
 #. module: hr
-#: field:hr.employee,mobile_phone:0
+#: model:ir.ui.view,arch_db:hr.view_employee_form
+msgid "Work Information"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__work_location
+msgid "Work Location"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__mobile_phone
 msgid "Work Mobile"
 msgstr ""
 
 #. module: hr
-#: field:hr.employee,work_phone:0
+#: model:ir.ui.view,arch_db:hr.res_config_settings_view_form
+msgid "Work Organization"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.view_employee_form
+msgid "Work Permit"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__permit_no
+msgid "Work Permit No"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__work_phone
 msgid "Work Phone"
 msgstr ""
 
 #. module: hr
-#: field:hr.employee,address_id:0
-msgid "Working Address"
+#: model:ir.model.fields,field_description:hr.field_hr_employee__resource_calendar_id
+msgid "Working Hours"
 msgstr ""
 
 #. module: hr
-#: view:hr.department:hr.view_department_form
+#: code:addons/hr/models/hr.py:206
+#, python-format
+msgid "You cannot create a recursive hierarchy."
+msgstr ""
+
+#. module: hr
+#: code:addons/hr/models/hr.py:314
+#, python-format
+msgid "You cannot create recursive departments."
+msgstr ""
+
+#. module: hr
+#: model:mail.template,subject:hr.mail_template_data_unknown_employee_email_address
+msgid "Your document has not been created"
+msgstr ""
+
+#. module: hr
+#: model:ir.ui.view,arch_db:hr.view_department_form
 msgid "department"
 msgstr ""
 
 #. module: hr
-#: view:hr.employee:hr.view_employee_form
+#: model:ir.ui.view,arch_db:hr.view_employee_form
 msgid "e.g. Part Time"
 msgstr ""
 
 #. module: hr
-#: view:hr.job:hr.view_hr_job_form
-msgid "new employee(s) expected"
+#: model:ir.ui.view,arch_db:hr.view_hr_job_form
+msgid "e.g. Sales Manager"
 msgstr ""
 
 #. module: hr
-#: view:hr.job:hr.view_hr_job_form
-msgid "no_of_recruitment"
+#: model:ir.model,name:hr.model_mail_alias_mixin
+msgid "mail.alias.mixin"
+msgstr ""
+
+#. module: hr
+#: model:ir.model,name:hr.model_res_config_settings
+msgid "res.config.settings"
 msgstr ""

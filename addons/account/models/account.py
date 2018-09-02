@@ -2,12 +2,13 @@
 
 import time
 import math
+import re
 
-from openerp.osv import expression
-from openerp.tools.float_utils import float_round as round
-from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
-from openerp.exceptions import UserError, ValidationError
-from openerp import api, fields, models, _
+from odoo.osv import expression
+from odoo.tools.float_utils import float_round as round
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
+from odoo.exceptions import UserError, ValidationError
+from odoo import api, fields, models, _
 
 
 class AccountAccountType(models.Model):
@@ -25,6 +26,14 @@ class AccountAccountType(models.Model):
         help="The 'Internal Type' is used for features available on "\
         "different types of accounts: liquidity type is for cash or bank accounts"\
         ", payable/receivable is for vendor/customer accounts.")
+    internal_group = fields.Selection([
+        ('equity', 'Equity'),
+        ('asset', 'Asset'),
+        ('liability', 'Liability'),
+        ('income', 'Income'),
+        ('expense', 'Expense'),
+    ], string="Internal Group",
+       help="The 'Internal Group' is used to filter accounts based on the internal group set on the account type.")
     note = fields.Text(string='Description')
 
 
@@ -34,6 +43,8 @@ class AccountAccountTag(models.Model):
 
     name = fields.Char(required=True)
     applicability = fields.Selection([('accounts', 'Accounts'), ('taxes', 'Taxes')], required=True, default='accounts')
+    color = fields.Integer('Color Index')
+    active = fields.Boolean(default=True, help="Set active to false to hide the Account Tag without removing it.")
 
 #----------------------------------------------------------
 # Accounts
@@ -45,63 +56,29 @@ class AccountAccount(models.Model):
     _description = "Account"
     _order = "code"
 
-    #@api.multi
-    #def _compute_has_unreconciled_entries(self):
-    #    print "ici dedans"
-    #    account_ids = self.ids
-    #    for account in self:
-    #        # Avoid useless work if has_unreconciled_entries is not relevant for this account
-    #        if account.deprecated or not account.reconcile:
-    #            account.has_unreconciled_entries = False
-    #            account_ids = account_ids - account
-    #    if account_ids:
-    #        res = dict.fromkeys([x.id for x in account_ids], False)
-    #        self.env.cr.execute(
-    #            """ SELECT s.account_id FROM(
-    #                    SELECT
-    #                        a.id as account_id, a.last_time_entries_checked AS last_time_entries_checked,
-    #                        MAX(l.write_date) AS max_date
-    #                    FROM
-    #                        account_move_line l
-    #                        RIGHT JOIN account_account a ON (a.id = l.account_id)
-    #                    WHERE
-    #                        a.id in %s
-    #                        AND EXISTS (
-    #                            SELECT 1
-    #                            FROM account_move_line l
-    #                            WHERE l.account_id = a.id
-    #                            AND l.amount_residual > 0
-    #                        )
-    #                        AND EXISTS (
-    #                            SELECT 1
-    #                            FROM account_move_line l
-    #                            WHERE l.account_id = a.id
-    #                            AND l.amount_residual < 0
-    #                        )
-    #                    GROUP BY a.id, a.last_time_entries_checked
-    #                ) as s
-    #                WHERE (last_time_entries_checked IS NULL OR max_date > last_time_entries_checked)
-    #            """ % (account_ids,))
-    #        res.update(self.env.cr.dictfetchall())
-    #        for account in self.browse(res.keys()):
-    #            if res[account.id]:
-    #                account.has_unreconciled_entries = True
-
     @api.multi
     @api.constrains('internal_type', 'reconcile')
     def _check_reconcile(self):
         for account in self:
             if account.internal_type in ('receivable', 'payable') and account.reconcile == False:
-                raise ValueError(_('You cannot have a receivable/payable account that is not reconciliable. (account code: %s)') % account.code)
+                raise ValidationError(_('You cannot have a receivable/payable account that is not reconcilable. (account code: %s)') % account.code)
+
+    @api.multi
+    @api.constrains('user_type_id')
+    def _check_user_type_id(self):
+        account_unaffected_earnings = self.search([('company_id', '=', self.company_id.id), ('user_type_id', '=', self.env.ref('account.data_unaffected_earnings').id)])
+        if len(account_unaffected_earnings) >= 2:
+            raise ValidationError(_('You cannot have more than one account with "Current Year Earnings" as type. (accounts: %s)') % [a.code for a in account_unaffected_earnings])
 
     name = fields.Char(required=True, index=True)
     currency_id = fields.Many2one('res.currency', string='Account Currency',
         help="Forces all moves for this account to have this account currency.")
     code = fields.Char(size=64, required=True, index=True)
     deprecated = fields.Boolean(index=True, default=False)
-    user_type_id = fields.Many2one('account.account.type', string='Type', required=True, oldname="user_type", 
+    user_type_id = fields.Many2one('account.account.type', string='Type', required=True, oldname="user_type",
         help="Account Type is used for information purpose, to generate country-specific legal reports, and set the rules to close a fiscal year and generate opening entries.")
-    internal_type = fields.Selection(related='user_type_id.type', store=True)
+    internal_type = fields.Selection(related='user_type_id.type', string="Internal Type", store=True, readonly=True)
+    internal_group = fields.Selection(related='user_type_id.internal_group', string="Internal Group", store=True, readonly=True)
     #has_unreconciled_entries = fields.Boolean(compute='_compute_has_unreconciled_entries',
     #    help="The account has at least one unreconciled debit and credit since last time the invoices & payments matching was performed.")
     last_time_entries_checked = fields.Datetime(string='Latest Invoices & Payments Matching Date', readonly=True, copy=False,
@@ -115,26 +92,133 @@ class AccountAccount(models.Model):
     company_id = fields.Many2one('res.company', string='Company', required=True,
         default=lambda self: self.env['res.company']._company_default_get('account.account'))
     tag_ids = fields.Many2many('account.account.tag', 'account_account_account_tag', string='Tags', help="Optional tags you may want to assign for custom reporting")
+    group_id = fields.Many2one('account.group')
+
+    opening_debit = fields.Monetary(string="Opening debit", compute='_compute_opening_debit_credit', inverse='_set_opening_debit', help="Opening debit value for this account.")
+    opening_credit = fields.Monetary(string="Opening credit", compute='_compute_opening_debit_credit', inverse='_set_opening_credit', help="Opening credit value for this account.")
 
     _sql_constraints = [
         ('code_company_uniq', 'unique (code,company_id)', 'The code of the account must be unique per company !')
     ]
 
     @api.model
-    def name_search(self, name, args=None, operator='ilike', limit=100):
+    def _search_new_account_code(self, company, digits, prefix):
+        for num in range(1, 100):
+            new_code = str(prefix.ljust(digits - 1, '0')) + str(num)
+            rec = self.search([('code', '=', new_code), ('company_id', '=', company.id)], limit=1)
+            if not rec:
+                return new_code
+        raise UserError(_('Cannot generate an unused account code.'))
+
+    def _compute_opening_debit_credit(self):
+        for record in self:
+            opening_debit = opening_credit = 0.0
+            if record.company_id.account_opening_move_id:
+                for line in self.env['account.move.line'].search([('account_id', '=', record.id),
+                                                                 ('move_id','=', record.company_id.account_opening_move_id.id)]):
+                    #could be executed at most twice: once for credit, once for debit
+                    if line.debit:
+                        opening_debit = line.debit
+                    elif line.credit:
+                        opening_credit = line.credit
+            record.opening_debit = opening_debit
+            record.opening_credit = opening_credit
+
+    def _set_opening_debit(self):
+        self._set_opening_debit_credit(self.opening_debit, 'debit')
+
+    def _set_opening_credit(self):
+        self._set_opening_debit_credit(self.opening_credit, 'credit')
+
+    def _set_opening_debit_credit(self, amount, field):
+        """ Generic function called by both opening_debit and opening_credit's
+        inverse function. 'Amount' parameter is the value to be set, and field
+        either 'debit' or 'credit', depending on which one of these two fields
+        got assigned.
+        """
+        opening_move = self.company_id.account_opening_move_id
+
+        if not opening_move:
+            raise UserError(_("You must first define an opening move."))
+
+        if opening_move.state == 'draft':
+            # check whether we should create a new move line or modify an existing one
+            opening_move_line = self.env['account.move.line'].search([('account_id', '=', self.id),
+                                                                      ('move_id','=', opening_move.id),
+                                                                      (field,'!=', False),
+                                                                      (field,'!=', 0.0)]) # 0.0 condition important for import
+
+            counter_part_map = {'debit': opening_move_line.credit, 'credit': opening_move_line.debit}
+            # No typo here! We want the credit value when treating debit and debit value when treating credit
+
+            if opening_move_line:
+                if amount:
+                    # modify the line
+                    setattr(opening_move_line.with_context({'check_move_validity': False}), field, amount)
+                elif counter_part_map[field]:
+                    # delete the line (no need to keep a line with value = 0)
+                    opening_move_line.with_context({'check_move_validity': False}).unlink()
+            elif amount:
+                # create a new line, as none existed before
+                self.env['account.move.line'].with_context({'check_move_validity': False}).create({
+                        'name': _('Opening balance'),
+                        field: amount,
+                        'move_id': opening_move.id,
+                        'account_id': self.id,
+                })
+
+            # Then, we automatically balance the opening move, to make sure it stays valid
+            if not 'import_file' in self.env.context:
+                # When importing a file, avoid recomputing the opening move for each account and do it at the end, for better performances
+                self.company_id._auto_balance_opening_move()
+
+    @api.model
+    def default_get(self, default_fields):
+        """If we're creating a new account through a many2one, there are chances that we typed the account code
+        instead of its name. In that case, switch both fields values.
+        """
+        default_name = self._context.get('default_name')
+        default_code = self._context.get('default_code')
+        if default_name and not default_code:
+            try:
+                default_code = int(default_name)
+            except ValueError:
+                pass
+            if default_code:
+                default_name = False
+        contextual_self = self.with_context(default_name=default_name, default_code=default_code)
+        return super(AccountAccount, contextual_self).default_get(default_fields)
+
+    @api.model
+    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
         args = args or []
         domain = []
         if name:
-            domain = ['|', ('code', '=ilike', name + '%'), ('name', operator, name)]
+            domain = ['|', ('code', '=ilike', name.split(' ')[0] + '%'), ('name', operator, name)]
             if operator in expression.NEGATIVE_TERM_OPERATORS:
-                domain = ['&'] + domain
-        accounts = self.search(domain + args, limit=limit)
-        return accounts.name_get()
+                domain = ['&', '!'] + domain[1:]
+        account_ids = self._search(domain + args, limit=limit, access_rights_uid=name_get_uid)
+        return self.browse(account_ids).name_get()
 
     @api.onchange('internal_type')
     def onchange_internal_type(self):
-        if self.internal_type in ('receivable', 'payable'):
-            self.reconcile = True
+        self.reconcile = self.internal_type in ('receivable', 'payable')
+
+    @api.onchange('code')
+    def onchange_code(self):
+        AccountGroup = self.env['account.group']
+
+        group = False
+        code_prefix = self.code
+
+        # find group with longest matching prefix
+        while code_prefix:
+            matching_group = AccountGroup.search([('code_prefix', '=', code_prefix)], limit=1)
+            if matching_group:
+                group = matching_group
+                break
+            code_prefix = code_prefix[:-1]
+        self.group_id = group
 
     @api.multi
     @api.depends('name', 'code')
@@ -145,26 +229,94 @@ class AccountAccount(models.Model):
             result.append((account.id, name))
         return result
 
-    @api.one
+    @api.multi
+    @api.returns('self', lambda value: value.id)
     def copy(self, default=None):
         default = dict(default or {})
-        default.update(code=_("%s (copy)") % (self.code or ''))
+        if default.get('code', False):
+            return super(AccountAccount, self).copy(default)
+        try:
+            default['code'] = (str(int(self.code) + 10) or '')
+            default.setdefault('name', _("%s (copy)") % (self.name or ''))
+            while self.env['account.account'].search([('code', '=', default['code']),
+                                                      ('company_id', '=', default.get('company_id', False) or self.company_id.id)], limit=1):
+                default['code'] = (str(int(default['code']) + 10) or '')
+                default['name'] = _("%s (copy)") % (self.name or '')
+        except ValueError:
+            default['code'] = _("%s (copy)") % (self.code or '')
+            default['name'] = self.name
         return super(AccountAccount, self).copy(default)
+
+    @api.model
+    def load(self, fields, data):
+        """ Overridden for better performances when importing a list of account
+        with opening debit/credit. In that case, the auto-balance is postpone
+        until the whole file has been imported.
+        """
+        rslt = super(AccountAccount, self).load(fields, data)
+
+        if 'import_file' in self.env.context:
+            companies = self.search([('id', 'in', rslt['ids'])]).mapped('company_id')
+            for company in companies:
+                company._auto_balance_opening_move()
+        return rslt
+
+    def _toggle_reconcile_to_true(self):
+        '''Toggle the `reconcile´ boolean from False -> True
+
+        Note that: lines with debit = credit = amount_currency = 0 are set to `reconciled´ = True
+        '''
+        query = """
+            UPDATE account_move_line SET
+                reconciled = CASE WHEN debit = 0 AND credit = 0 AND amount_currency = 0
+                    THEN true ELSE false END,
+                amount_residual = (debit-credit),
+                amount_residual_currency = amount_currency
+            WHERE full_reconcile_id IS NULL and account_id IN %s
+        """
+        self.env.cr.execute(query, [tuple(self.ids)])
+
+    def _toggle_reconcile_to_false(self):
+        '''Toggle the `reconcile´ boolean from True -> False
+
+        Note that it is disallowed if some lines are partially reconciled.
+        '''
+        partial_lines_count = self.env['account.move.line'].search_count([
+            ('account_id', 'in', self.ids),
+            ('full_reconcile_id', '=', False),
+            ('|'),
+            ('matched_debit_ids', '!=', False),
+            ('matched_credit_ids', '!=', False),
+        ])
+        if partial_lines_count > 0:
+            raise UserError(_('You cannot switch an account to prevent the reconciliation '
+                              'if some partial reconciliations are still pending.'))
+        query = """
+            UPDATE account_move_line
+                SET amount_residual = 0, amount_residual_currency = 0
+            WHERE full_reconcile_id = NULL AND account_id IN %s
+        """
+        self.env.cr.execute(query, [tuple(self.ids)])
 
     @api.multi
     def write(self, vals):
-        # Dont allow changing the company_id when account_move_line already exist
+        # Do not allow changing the company_id when account_move_line already exist
         if vals.get('company_id', False):
             move_lines = self.env['account.move.line'].search([('account_id', 'in', self.ids)], limit=1)
             for account in self:
-                if (account.company_id.id <> vals['company_id']) and move_lines:
+                if (account.company_id.id != vals['company_id']) and move_lines:
                     raise UserError(_('You cannot change the owner company of an account that already contains journal items.'))
+        if 'reconcile' in vals:
+            if vals['reconcile']:
+                self.filtered(lambda r: not r.reconcile)._toggle_reconcile_to_true()
+            else:
+                self.filtered(lambda r: r.reconcile)._toggle_reconcile_to_false()
         return super(AccountAccount, self).write(vals)
 
     @api.multi
     def unlink(self):
         if self.env['account.move.line'].search([('account_id', 'in', self.ids)], limit=1):
-            raise UserError(_('You cannot do that on an account that contains journal items.'))
+            raise UserError(_('You cannot perform this action on an account that contains journal items.'))
         #Checking whether the account is set as a property to any Partner or not
         values = ['account.account,%s' % (account_id,) for account_id in self.ids]
         partner_prop_acc = self.env['ir.property'].search([('value_reference', 'in', values)], limit=1)
@@ -175,6 +327,51 @@ class AccountAccount(models.Model):
     @api.multi
     def mark_as_reconciled(self):
         return self.write({'last_time_entries_checked': time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+
+    @api.multi
+    def action_open_reconcile(self):
+        self.ensure_one()
+        # Open reconciliation view for this account
+        if self.internal_type == 'payable':
+            action_context = {'show_mode_selector': False, 'mode': 'suppliers'}
+        elif self.internal_type == 'receivable':
+            action_context = {'show_mode_selector': False, 'mode': 'customers'}
+        else:
+            action_context = {'show_mode_selector': False, 'mode': 'accounts', 'account_ids': [self.id,]}
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'manual_reconciliation_view',
+            'context': action_context,
+        }
+
+
+class AccountGroup(models.Model):
+    _name = "account.group"
+    _parent_store = True
+    _order = 'code_prefix'
+
+    parent_id = fields.Many2one('account.group', index=True, ondelete='cascade')
+    parent_path = fields.Char(index=True)
+    name = fields.Char(required=True)
+    code_prefix = fields.Char()
+
+    def name_get(self):
+        result = []
+        for group in self:
+            name = group.name
+            if group.code_prefix:
+                name = group.code_prefix + ' ' + name
+            result.append((group.id, name))
+        return result
+
+    @api.model
+    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
+        if not args:
+            args = []
+        criteria_operator = ['|'] if operator not in expression.NEGATIVE_TERM_OPERATORS else ['&', '!']
+        domain = criteria_operator + [('code_prefix', '=ilike', name + '%'), ('name', operator, name)]
+        group_ids = self._search(domain + args, limit=limit, access_rights_uid=name_get_uid)
+        return self.browse(group_ids).name_get()
 
 
 class AccountJournal(models.Model):
@@ -188,8 +385,15 @@ class AccountJournal(models.Model):
     def _default_outbound_payment_methods(self):
         return self.env.ref('account.account_payment_method_manual_out')
 
+    def __get_bank_statements_available_sources(self):
+        return [('undefined', _('Undefined Yet'))]
+
+    def _get_bank_statements_available_sources(self):
+        return self.__get_bank_statements_available_sources()
+
     name = fields.Char(string='Journal Name', required=True)
     code = fields.Char(string='Short Code', size=5, required=True, help="The journal entries of this journal will be named using this prefix.")
+    active = fields.Boolean(default=True, help="Set active to false to hide the Journal without removing it.")
     type = fields.Selection([
             ('sale', 'Sale'),
             ('purchase', 'Purchase'),
@@ -197,11 +401,10 @@ class AccountJournal(models.Model):
             ('bank', 'Bank'),
             ('general', 'Miscellaneous'),
         ], required=True,
-        help="Select 'Sale' for customer invoices journals."\
-        " Select 'Purchase' for vendor bills journals."\
-        " Select 'Cash' or 'Bank' for journals that are used in customer or vendor payments."\
-        " Select 'General' for miscellaneous operations journals."\
-        " Select 'Opening/Closing Situation' for entries generated for new fiscal years.")
+        help="Select 'Sale' for customer invoices journals.\n"\
+        "Select 'Purchase' for vendor bills journals.\n"\
+        "Select 'Cash' or 'Bank' for journals that are used in customer or vendor payments.\n"\
+        "Select 'General' for miscellaneous operations journals.")
     type_control_ids = fields.Many2many('account.account.type', 'account_journal_type_rel', 'journal_id', 'type_id', string='Account Types Allowed')
     account_control_ids = fields.Many2many('account.account', 'account_account_type_rel', 'journal_id', 'account_id', string='Accounts Allowed',
         domain=[('deprecated', '=', False)])
@@ -215,49 +418,121 @@ class AccountJournal(models.Model):
         help="If this box is checked, the system will try to group the accounting lines when generating them from invoices.")
     sequence_id = fields.Many2one('ir.sequence', string='Entry Sequence',
         help="This field contains the information related to the numbering of the journal entries of this journal.", required=True, copy=False)
-    refund_sequence_id = fields.Many2one('ir.sequence', string='Refund Entry Sequence',
-        help="This field contains the information related to the numbering of the refund entries of this journal.", copy=False)
-    sequence = fields.Integer(help='Used to order Journals in the dashboard view')
+    refund_sequence_id = fields.Many2one('ir.sequence', string='Credit Note Entry Sequence',
+        help="This field contains the information related to the numbering of the credit note entries of this journal.", copy=False)
+    sequence = fields.Integer(help='Used to order Journals in the dashboard view', default=10)
+    sequence_number_next = fields.Integer(string='Next Number',
+        help='The next sequence number will be used for the next invoice.',
+        compute='_compute_seq_number_next',
+        inverse='_inverse_seq_number_next')
+    refund_sequence_number_next = fields.Integer(string='Credit Notes: Next Number',
+        help='The next sequence number will be used for the next credit note.',
+        compute='_compute_refund_seq_number_next',
+        inverse='_inverse_refund_seq_number_next')
 
     #groups_id = fields.Many2many('res.groups', 'account_journal_group_rel', 'journal_id', 'group_id', string='Groups')
     currency_id = fields.Many2one('res.currency', help='The currency used to enter statement', string="Currency", oldname='currency')
-    company_id = fields.Many2one('res.company', string='Company', required=True, index=1, default=lambda self: self.env.user.company_id,
+    company_id = fields.Many2one('res.company', string='Company', required=True, index=True, default=lambda self: self.env.user.company_id,
         help="Company related to this journal")
 
-    refund_sequence = fields.Boolean(string='Dedicated Refund Sequence', help="Check this box if you don't want to share the same sequence for invoices and refunds made from this journal", default=True)
+    refund_sequence = fields.Boolean(string='Dedicated Credit Note Sequence', help="Check this box if you don't want to share the same sequence for invoices and credit notes made from this journal", default=False)
 
     inbound_payment_method_ids = fields.Many2many('account.payment.method', 'account_journal_inbound_payment_method_rel', 'journal_id', 'inbound_payment_method',
-        domain=[('payment_type', '=', 'inbound')], string='Debit Methods', default=lambda self: self._default_inbound_payment_methods(),
-        help="Means of payment for collecting money. Odoo modules offer various payments handling facilities, "
-             "but you can always use the 'Manual' payment method in order to manage payments outside of the software.")
+        domain=[('payment_type', '=', 'inbound')], string='For Incoming Payments', default=lambda self: self._default_inbound_payment_methods(),
+        help="Manual: Get paid by cash, check or any other method outside of Odoo.\n"\
+             "Electronic: Get paid automatically through a payment acquirer by requesting a transaction on a card saved by the customer when buying or subscribing online (payment token).\n"\
+             "Batch Deposit: Encase several customer checks at once by generating a batch deposit to submit to your bank. When encoding the bank statement in Odoo,you are suggested to reconcile the transaction with the batch deposit. Enable this option from the settings.")
     outbound_payment_method_ids = fields.Many2many('account.payment.method', 'account_journal_outbound_payment_method_rel', 'journal_id', 'outbound_payment_method',
-        domain=[('payment_type', '=', 'outbound')], string='Payment Methods', default=lambda self: self._default_outbound_payment_methods(),
-        help="Means of payment for sending money. Odoo modules offer various payments handling facilities, "
-             "but you can always use the 'Manual' payment method in order to manage payments outside of the software.")
+        domain=[('payment_type', '=', 'outbound')], string='For Outgoing Payments', default=lambda self: self._default_outbound_payment_methods(),
+        help="Manual:Pay bill by cash or any other method outside of Odoo.\n"\
+             "Check:Pay bill by check and print it from Odoo.\n"\
+             "SEPA Credit Transfer: Pay bill from a SEPA Credit Transfer file you submit to your bank. Enable this option from the settings.")
     at_least_one_inbound = fields.Boolean(compute='_methods_compute', store=True)
     at_least_one_outbound = fields.Boolean(compute='_methods_compute', store=True)
     profit_account_id = fields.Many2one('account.account', string='Profit Account', domain=[('deprecated', '=', False)], help="Used to register a profit when the ending balance of a cash register differs from what the system computes")
     loss_account_id = fields.Many2one('account.account', string='Loss Account', domain=[('deprecated', '=', False)], help="Used to register a loss when the ending balance of a cash register differs from what the system computes")
 
+    belongs_to_company = fields.Boolean('Belong to the user\'s current company', compute="_belong_to_company", search="_search_company_journals",)
+
     # Bank journals fields
-    bank_account_id = fields.Many2one('res.partner.bank', string="Bank Account", ondelete='restrict')
-    display_on_footer = fields.Boolean("Show in Invoices Footer", help="Display this bank account on the footer of printed documents like invoices and sales orders.")
-    bank_statements_source = fields.Selection([('manual', 'Record Manually')], string='Bank Feeds')
+    company_partner_id = fields.Many2one('res.partner', related='company_id.partner_id', string='Account Holder', readonly=True, store=False)
+    bank_account_id = fields.Many2one('res.partner.bank', string="Bank Account", ondelete='restrict', copy=False, domain="[('partner_id','=', company_partner_id)]")
+    bank_statements_source = fields.Selection(selection=_get_bank_statements_available_sources, string='Bank Feeds', default='undefined', help="Defines how the bank statements will be registered")
     bank_acc_number = fields.Char(related='bank_account_id.acc_number')
     bank_id = fields.Many2one('res.bank', related='bank_account_id.bank_id')
+    post_at_bank_rec = fields.Boolean(string="Post At Bank Reconciliation", help="Whether or not the payments made in this journal should be generated in draft state, so that the related journal entries are only posted when performing bank reconciliation.")
+
+    # alias configuration for 'purchase' type journals
+    alias_id = fields.Many2one('mail.alias', string='Alias')
+    alias_domain = fields.Char('Alias domain', compute='_compute_alias_domain', default=lambda self: self.env["ir.config_parameter"].sudo().get_param("mail.catchall.domain"))
+    alias_name = fields.Char('Alias Name for Vendor Bills', related='alias_id.alias_name', help="It creates draft vendor bill by sending an email.")
 
     _sql_constraints = [
         ('code_company_uniq', 'unique (code, name, company_id)', 'The code and name of the journal must be unique per company !'),
     ]
+
+    @api.multi
+    def _compute_alias_domain(self):
+        alias_domain = self.env["ir.config_parameter"].sudo().get_param("mail.catchall.domain")
+        for record in self:
+            record.alias_domain = alias_domain
+
+    @api.multi
+    # do not depend on 'sequence_id.date_range_ids', because
+    # sequence_id._get_current_sequence() may invalidate it!
+    @api.depends('sequence_id.use_date_range', 'sequence_id.number_next_actual')
+    def _compute_seq_number_next(self):
+        '''Compute 'sequence_number_next' according to the current sequence in use,
+        an ir.sequence or an ir.sequence.date_range.
+        '''
+        for journal in self:
+            if journal.sequence_id:
+                sequence = journal.sequence_id._get_current_sequence()
+                journal.sequence_number_next = sequence.number_next_actual
+            else:
+                journal.sequence_number_next = 1
+
+    @api.multi
+    def _inverse_seq_number_next(self):
+        '''Inverse 'sequence_number_next' to edit the current sequence next number.
+        '''
+        for journal in self:
+            if journal.sequence_id and journal.sequence_number_next:
+                sequence = journal.sequence_id._get_current_sequence()
+                sequence.sudo().number_next = journal.sequence_number_next
+
+    @api.multi
+    # do not depend on 'refund_sequence_id.date_range_ids', because
+    # refund_sequence_id._get_current_sequence() may invalidate it!
+    @api.depends('refund_sequence_id.use_date_range', 'refund_sequence_id.number_next_actual')
+    def _compute_refund_seq_number_next(self):
+        '''Compute 'sequence_number_next' according to the current sequence in use,
+        an ir.sequence or an ir.sequence.date_range.
+        '''
+        for journal in self:
+            if journal.refund_sequence_id and journal.refund_sequence:
+                sequence = journal.refund_sequence_id._get_current_sequence()
+                journal.refund_sequence_number_next = sequence.number_next_actual
+            else:
+                journal.refund_sequence_number_next = 1
+
+    @api.multi
+    def _inverse_refund_seq_number_next(self):
+        '''Inverse 'refund_sequence_number_next' to edit the current sequence next number.
+        '''
+        for journal in self:
+            if journal.refund_sequence_id and journal.refund_sequence and journal.refund_sequence_number_next:
+                sequence = journal.refund_sequence_id._get_current_sequence()
+                sequence.number_next = journal.refund_sequence_number_next
 
     @api.one
     @api.constrains('currency_id', 'default_credit_account_id', 'default_debit_account_id')
     def _check_currency(self):
         if self.currency_id:
             if self.default_credit_account_id and not self.default_credit_account_id.currency_id.id == self.currency_id.id:
-                raise UserError(_('Configuration error!\nThe currency of the journal should be the same than the default credit account.'))
+                raise ValidationError(_('The currency of the journal should be the same than the default credit account.'))
             if self.default_debit_account_id and not self.default_debit_account_id.currency_id.id == self.currency_id.id:
-                raise UserError(_('Configuration error!\nThe currency of the journal should be the same than the default debit account.'))
+                raise ValidationError(_('The currency of the journal should be the same than the default debit account.'))
 
     @api.one
     @api.constrains('type', 'bank_account_id')
@@ -280,7 +555,33 @@ class AccountJournal(models.Model):
         if not self.default_debit_account_id:
             self.default_debit_account_id = self.default_credit_account_id
 
-    @api.one
+    @api.multi
+    def _get_alias_values(self, alias_name=None):
+        if not alias_name:
+            alias_name = self.name
+            if self.company_id != self.env.ref('base.main_company'):
+                alias_name += '-' + str(self.company_id.name)
+        return {
+            'alias_defaults': {'type': 'in_invoice'},
+            'alias_user_id': self.env.user.id,
+            'alias_parent_thread_id': self.id,
+            'alias_name': re.sub(r'[^\w]+', '-', alias_name)
+        }
+
+    @api.multi
+    def unlink(self):
+        bank_accounts = self.env['res.partner.bank'].browse()
+        for bank_account in self.mapped('bank_account_id'):
+            accounts = self.search([('bank_account_id', '=', bank_account.id)])
+            if accounts <= self:
+                bank_accounts += bank_account
+        self.mapped('alias_id').unlink()
+        ret = super(AccountJournal, self).unlink()
+        bank_accounts.unlink()
+        return ret
+
+    @api.multi
+    @api.returns('self', lambda value: value.id)
     def copy(self, default=None):
         default = dict(default or {})
         default.update(
@@ -288,12 +589,32 @@ class AccountJournal(models.Model):
             name=_("%s (copy)") % (self.name or ''))
         return super(AccountJournal, self).copy(default)
 
+    def _update_mail_alias(self, vals):
+        self.ensure_one()
+        alias_values = self._get_alias_values(alias_name=vals.get('alias_name'))
+        if self.alias_id:
+            self.alias_id.write(alias_values)
+        else:
+            self.alias_id = self.env['mail.alias'].with_context(alias_model_name='account.invoice',
+                alias_parent_model_name='account.journal').create(alias_values)
+
+        if vals.get('alias_name'):
+            # remove alias_name to avoid useless write on alias
+            del(vals['alias_name'])
+
     @api.multi
     def write(self, vals):
         for journal in self:
+            company = journal.company_id
             if ('company_id' in vals and journal.company_id.id != vals['company_id']):
                 if self.env['account.move'].search([('journal_id', 'in', self.ids)], limit=1):
                     raise UserError(_('This journal already contains items, therefore you cannot modify its company.'))
+                company = self.env['res.company'].browse(vals['company_id'])
+                if self.bank_account_id.company_id and self.bank_account_id.company_id != company:
+                    self.bank_account_id.write({
+                        'company_id': company.id,
+                        'partner_id': company.partner_id.id,
+                    })
             if ('code' in vals and journal.code != vals['code']):
                 if self.env['account.move'].search([('journal_id', 'in', self.ids)], limit=1):
                     raise UserError(_('This journal already contains items, therefore you cannot modify its short name.'))
@@ -307,13 +628,39 @@ class AccountJournal(models.Model):
                     self.default_debit_account_id.currency_id = vals['currency_id']
                 if not 'default_credit_account_id' in vals and self.default_credit_account_id:
                     self.default_credit_account_id.currency_id = vals['currency_id']
+                if self.bank_account_id:
+                    self.bank_account_id.currency_id = vals['currency_id']
+            if 'bank_account_id' in vals:
+                if not vals.get('bank_account_id'):
+                    raise UserError(_('You cannot remove the bank account from the journal once set.'))
+                else:
+                    bank_account = self.env['res.partner.bank'].browse(vals['bank_account_id'])
+                    if bank_account.partner_id != company.partner_id:
+                        raise UserError(_("The partners of the journal's company and the related bank account mismatch."))
+            if vals.get('type') == 'purchase':
+                self._update_mail_alias(vals)
         result = super(AccountJournal, self).write(vals)
 
         # Create the bank_account_id if necessary
         if 'bank_acc_number' in vals:
             for journal in self.filtered(lambda r: r.type == 'bank' and not r.bank_account_id):
                 journal.set_bank_account(vals.get('bank_acc_number'), vals.get('bank_id'))
-
+        # create the relevant refund sequence
+        if vals.get('refund_sequence'):
+            for journal in self.filtered(lambda j: j.type in ('sale', 'purchase') and not j.refund_sequence_id):
+                journal_vals = {
+                    'name': journal.name,
+                    'company_id': journal.company_id.id,
+                    'code': journal.code,
+                    'refund_sequence_number_next': vals.get('refund_sequence_number_next', journal.refund_sequence_number_next),
+                }
+                journal.refund_sequence_id = self.sudo()._create_sequence(journal_vals, refund=True).id
+        # Changing the 'post_at_bank_rec' option will post the draft payment moves and change the related invoices' state.
+        if 'post_at_bank_rec' in vals and not vals['post_at_bank_rec']:
+            draft_moves = self.env['account.move'].search([('journal_id', '=', self.id), ('state', '=', 'draft')])
+            pending_payments = draft_moves.mapped('line_ids.payment_id')
+            pending_payments.mapped('move_line_ids.move_id').post()
+            pending_payments.mapped('reconciled_invoice_ids').filtered(lambda x: x.state == 'in_payment').write({'state': 'paid'})
         return result
 
     @api.model
@@ -321,14 +668,15 @@ class AccountJournal(models.Model):
         prefix = code.upper()
         if refund:
             prefix = 'R' + prefix
-        return prefix + '/%(year)s/'
+        return prefix + '/%(range_year)s/'
 
     @api.model
     def _create_sequence(self, vals, refund=False):
         """ Create new no_gap entry sequence for every new Journal"""
         prefix = self._get_sequence_prefix(vals['code'], refund)
+        seq_name = refund and vals['code'] + _(': Refund') or vals['code']
         seq = {
-            'name': vals['name'],
+            'name': _('%s Sequence') % seq_name,
             'implementation': 'no_gap',
             'prefix': prefix,
             'padding': 4,
@@ -337,7 +685,10 @@ class AccountJournal(models.Model):
         }
         if 'company_id' in vals:
             seq['company_id'] = vals['company_id']
-        return self.env['ir.sequence'].create(seq)
+        seq = self.env['ir.sequence'].create(seq)
+        seq_date_range = seq._get_current_sequence()
+        seq_date_range.number_next = refund and vals.get('refund_sequence_number_next', 1) or vals.get('sequence_number_next', 1)
+        return seq
 
     @api.model
     def _prepare_liquidity_account(self, name, company, currency_id, type):
@@ -347,34 +698,39 @@ class AccountJournal(models.Model):
 
         :param name: name of the bank account
         :param company: company for which the wizard is running
-        :param currency_id: ID of the currency in wich is the bank account
+        :param currency_id: ID of the currency in which is the bank account
         :param type: either 'cash' or 'bank'
         :return: mapping of field names and values
         :rtype: dict
         '''
-
+        digits = 6
+        acc = self.env['account.account'].search([('company_id', '=', company.id)], limit=1)
+        if acc:
+            digits = len(acc.code)
         # Seek the next available number for the account code
-        code_digits = company.accounts_code_digits or 0
         if type == 'bank':
             account_code_prefix = company.bank_account_code_prefix or ''
         else:
             account_code_prefix = company.cash_account_code_prefix or company.bank_account_code_prefix or ''
-        for num in xrange(1, 100):
-            new_code = str(account_code_prefix.ljust(code_digits - 1, '0')) + str(num)
-            rec = self.env['account.account'].search([('code', '=', new_code), ('company_id', '=', company.id)], limit=1)
-            if not rec:
-                break
-        else:
-            raise UserError(_('Cannot generate an unused account code.'))
 
         liquidity_type = self.env.ref('account.data_account_type_liquidity')
         return {
                 'name': name,
                 'currency_id': currency_id or False,
-                'code': new_code,
+                'code': self.env['account.account']._search_new_account_code(company, digits, account_code_prefix),
                 'user_type_id': liquidity_type and liquidity_type.id or False,
                 'company_id': company.id,
         }
+
+    @api.model
+    def get_next_bank_cash_default_code(self, journal_type, company_id):
+        journal_code_base = (journal_type == 'cash' and 'CSH' or 'BNK')
+        journals = self.env['account.journal'].search([('code', 'like', journal_code_base + '%'), ('company_id', '=', company_id)])
+        for num in range(1, 100):
+            # journal_code has a maximal size of 5, hence we can enforce the boundary num < 100
+            journal_code = journal_code_base + str(num)
+            if journal_code not in journals.mapped('code'):
+                return journal_code
 
     @api.model
     def create(self, vals):
@@ -382,18 +738,12 @@ class AccountJournal(models.Model):
         if vals.get('type') in ('bank', 'cash'):
             # For convenience, the name can be inferred from account number
             if not vals.get('name') and 'bank_acc_number' in vals:
-                vals['name'] = _('Bank') + ' ' + vals['bank_acc_number']
+                vals['name'] = vals['bank_acc_number']
 
             # If no code provided, loop to find next available journal code
             if not vals.get('code'):
-                for num in xrange(1, 100):
-                    # journal_code has a maximal size of 5, hence we can enforce the boundary num < 100
-                    journal_code = (vals['type'] == 'cash' and 'CSH' or 'BNK') + str(num)
-                    journal = self.env['account.journal'].search([('code', '=', journal_code), ('company_id', '=', company_id)], limit=1)
-                    if not journal:
-                        vals['code'] = journal_code
-                        break
-                else:
+                vals['code'] = self.get_next_bank_cash_default_code(vals['type'], company_id)
+                if not vals['code']:
                     raise UserError(_("Cannot generate an unused journal code. Please fill the 'Shortcode' field."))
 
             # Create a default debit/credit account if not given
@@ -408,10 +758,12 @@ class AccountJournal(models.Model):
         # We just need to create the relevant sequences according to the chosen options
         if not vals.get('sequence_id'):
             vals.update({'sequence_id': self.sudo()._create_sequence(vals).id})
-        if vals.get('type') in ('sale', 'puchase') and vals.get('refund_sequence') and not vals.get('refund_sequence_id'):
+        if vals.get('type') in ('sale', 'purchase') and vals.get('refund_sequence') and not vals.get('refund_sequence_id'):
             vals.update({'refund_sequence_id': self.sudo()._create_sequence(vals, refund=True).id})
-
         journal = super(AccountJournal, self).create(vals)
+        if journal.type == 'purchase':
+            # create a mail alias for purchase journals (always, deactivated if alias_name isn't set)
+            journal._update_mail_alias(vals)
 
         # Create the bank_account_id if necessary
         if journal.type == 'bank' and not journal.bank_account_id and vals.get('bank_acc_number'):
@@ -440,12 +792,44 @@ class AccountJournal(models.Model):
             res += [(journal.id, name)]
         return res
 
+    @api.model
+    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
+        args = args or []
+        connector = '|'
+        if operator in expression.NEGATIVE_TERM_OPERATORS:
+            connector = '&'
+        journal_ids = self._search([connector, ('code', operator, name), ('name', operator, name)] + args, limit=limit, access_rights_uid=name_get_uid)
+        return self.browse(journal_ids).name_get()
+
+    @api.multi
+    @api.depends('company_id')
+    def _belong_to_company(self):
+        for journal in self:
+            journal.belong_to_company = (journal.company_id.id == self.env.user.company_id.id)
+
+    @api.multi
+    def _search_company_journals(self, operator, value):
+        if value:
+            recs = self.search([('company_id', operator, self.env.user.company_id.id)])
+        elif operator == '=':
+            recs = self.search([('company_id', '!=', self.env.user.company_id.id)])
+        else:
+            recs = self.search([('company_id', operator, self.env.user.company_id.id)])
+        return [('id', 'in', [x.id for x in recs])]
+
     @api.multi
     @api.depends('inbound_payment_method_ids', 'outbound_payment_method_ids')
     def _methods_compute(self):
         for journal in self:
-            journal.at_least_one_inbound = bool(len(self.inbound_payment_method_ids))
-            journal.at_least_one_outbound = bool(len(self.outbound_payment_method_ids))
+            journal.at_least_one_inbound = bool(len(journal.inbound_payment_method_ids))
+            journal.at_least_one_outbound = bool(len(journal.outbound_payment_method_ids))
+
+    def action_configure_bank_journal(self):
+        """ This function is called by the "configure" button of bank journals,
+        visible on dashboard if no bank statement source has been defined yet
+        """
+        # We simply call the setup bar function.
+        return self.env['res.company'].setting_init_bank_account_action()
 
 
 class ResPartnerBank(models.Model):
@@ -458,26 +842,32 @@ class ResPartnerBank(models.Model):
     @api.constrains('journal_id')
     def _check_journal_id(self):
         if len(self.journal_id) > 1:
-            raise ValidationError(_('A bank account can anly belong to one journal.'))
+            raise ValidationError(_('A bank account can belong to only one journal.'))
 
 
 #----------------------------------------------------------
 # Tax
 #----------------------------------------------------------
 
+class AccountTaxGroup(models.Model):
+    _name = 'account.tax.group'
+    _order = 'sequence asc'
+
+    name = fields.Char(required=True, translate=True)
+    sequence = fields.Integer(default=10)
 
 class AccountTax(models.Model):
     _name = 'account.tax'
     _description = 'Tax'
-    _order = 'sequence'
+    _order = 'sequence,id'
 
     @api.model
     def _default_tax_group(self):
         return self.env['account.tax.group'].search([], limit=1)
 
     name = fields.Char(string='Tax Name', required=True, translate=True)
-    type_tax_use = fields.Selection([('sale', 'Sales'), ('purchase', 'Purchases'), ('none', 'None')], string='Tax Scope', required=True, default="sale",
-        help="Determines where the tax is selectable. Note : 'None' means a tax can't be used by itself, however it can still be used in a group.")
+    type_tax_use = fields.Selection([('sale', 'Sales'), ('purchase', 'Purchases'), ('none', 'None'), ('adjustment', 'Adjustment')], string='Tax Scope', required=True, default="sale",
+        help="Determines where the tax is selectable. Note : 'None' means a tax can't be used by itself, however it can still be used in a group. 'adjustment' is used to perform tax adjustment.")
     amount_type = fields.Selection(default='percent', string="Tax Computation", required=True, oldname='type',
         selection=[('group', 'Group of Taxes'), ('fixed', 'Fixed'), ('percent', 'Percentage of Price'), ('division', 'Percentage of Price Tax Included')])
     active = fields.Boolean(default=True, help="Set active to false to hide the tax without removing it.")
@@ -488,9 +878,9 @@ class AccountTax(models.Model):
     amount = fields.Float(required=True, digits=(16, 4))
     account_id = fields.Many2one('account.account', domain=[('deprecated', '=', False)], string='Tax Account', ondelete='restrict',
         help="Account that will be set on invoice tax lines for invoices. Leave empty to use the expense account.", oldname='account_collected_id')
-    refund_account_id = fields.Many2one('account.account', domain=[('deprecated', '=', False)], string='Tax Account on Refunds', ondelete='restrict',
-        help="Account that will be set on invoice tax lines for refunds. Leave empty to use the expense account.", oldname='account_paid_id')
-    description = fields.Char(string='Label on Invoices')
+    refund_account_id = fields.Many2one('account.account', domain=[('deprecated', '=', False)], string='Tax Account on Credit Notes', ondelete='restrict',
+        help="Account that will be set on invoice tax lines for credit notes. Leave empty to use the expense account.", oldname='account_paid_id')
+    description = fields.Char(string='Label on Invoices', translate=True)
     price_include = fields.Boolean(string='Included in Price', default=False,
         help="Check this if the price you use on the product and invoices includes this tax.")
     include_base_amount = fields.Boolean(string='Affect Base of Subsequent Taxes', default=False,
@@ -498,6 +888,26 @@ class AccountTax(models.Model):
     analytic = fields.Boolean(string="Include in Analytic Cost", help="If set, the amount computed by this tax will be assigned to the same analytic account as the invoice line (if any)")
     tag_ids = fields.Many2many('account.account.tag', 'account_tax_account_tag', string='Tags', help="Optional tags you may want to assign for custom reporting")
     tax_group_id = fields.Many2one('account.tax.group', string="Tax Group", default=_default_tax_group, required=True)
+    # Technical field to make the 'tax_exigibility' field invisible if the same named field is set to false in 'res.company' model
+    hide_tax_exigibility = fields.Boolean(string='Hide Use Cash Basis Option', related='company_id.tax_exigibility', readonly=True)
+    tax_exigibility = fields.Selection(
+        [('on_invoice', 'Based on Invoice'),
+         ('on_payment', 'Based on Payment'),
+        ], string='Tax Due', default='on_invoice',
+        oldname='use_cash_basis',
+        help="Based on Invoice: the tax is due as soon as the invoice is validated.\n"
+        "Based on Payment: the tax is due as soon as the payment of the invoice is received.")
+    cash_basis_account_id = fields.Many2one(
+        'account.account',
+        string='Tax Received Account',
+        domain=[('deprecated', '=', False)],
+        oldname='cash_basis_account',
+        help='Account used as counterpart for the journal entry, for taxes eligible based on payments.')
+    cash_basis_base_account_id = fields.Many2one(
+        'account.account',
+        domain=[('deprecated', '=', False)],
+        string='Base Tax Received Account',
+        help='Account that will be set on lines created in cash basis journal entry and used to keep track of the tax base amount.')
 
     _sql_constraints = [
         ('name_company_uniq', 'unique(name, company_id, type_tax_use)', 'Tax names must be unique !'),
@@ -506,17 +916,26 @@ class AccountTax(models.Model):
     @api.one
     @api.constrains('children_tax_ids', 'type_tax_use')
     def _check_children_scope(self):
+        if not self._check_m2m_recursion('children_tax_ids'):
+            raise ValidationError(_("Recursion found for tax '%s'.") % (self.name,))
         if not all(child.type_tax_use in ('none', self.type_tax_use) for child in self.children_tax_ids):
-            raise UserError(_('The application scope of taxes in a group must be either the same as the group or "None".'))
+            raise ValidationError(_('The application scope of taxes in a group must be either the same as the group or left empty.'))
 
-    @api.one
+    @api.multi
+    @api.returns('self', lambda value: value.id)
     def copy(self, default=None):
         default = dict(default or {}, name=_("%s (Copy)") % self.name)
         return super(AccountTax, self).copy(default=default)
 
+    @api.depends('name', 'type_tax_use')
+    def name_get(self):
+        if not self._context.get('append_type_to_tax_name'):
+            return super(AccountTax, self).name_get()
+        return [(tax.id, '%s (%s)' % (tax.name, tax.type_tax_use)) for tax in self]
+
     @api.model
-    def name_search(self, name, args=None, operator='ilike', limit=80):
-        """ Returns a list of tupples containing id, name, as internally it is called {def name_get}
+    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
+        """ Returns a list of tuples containing id, name, as internally it is called {def name_get}
             result format: {[(id, name), (id, name), ...]}
         """
         args = args or []
@@ -524,11 +943,11 @@ class AccountTax(models.Model):
             domain = [('description', operator, name), ('name', operator, name)]
         else:
             domain = ['|', ('description', operator, name), ('name', operator, name)]
-        taxes = self.search(expression.AND([domain, args]), limit=limit)
-        return taxes.name_get()
+        tax_ids = self._search(expression.AND([domain, args]), limit=limit, access_rights_uid=name_get_uid)
+        return self.browse(tax_ids).name_get()
 
     @api.model
-    def search(self, args, offset=0, limit=None, order=None, count=False):
+    def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
         context = self._context or {}
 
         if context.get('type'):
@@ -542,7 +961,7 @@ class AccountTax(models.Model):
             if journal.type in ('sale', 'purchase'):
                 args += [('type_tax_use', '=', journal.type)]
 
-        return super(AccountTax, self).search(args, offset, limit, order, count=count)
+        return super(AccountTax, self)._search(args, offset, limit, order, count=count, access_rights_uid=access_rights_uid)
 
     @api.onchange('amount')
     def onchange_amount(self):
@@ -558,23 +977,56 @@ class AccountTax(models.Model):
         if self.price_include:
             self.include_base_amount = True
 
+    def get_grouping_key(self, invoice_tax_val):
+        """ Returns a string that will be used to group account.invoice.tax sharing the same properties"""
+        self.ensure_one()
+        return str(invoice_tax_val['tax_id']) + '-' + \
+               str(invoice_tax_val['account_id']) + '-' + \
+               str(invoice_tax_val['account_analytic_id']) + '-' + \
+               str(invoice_tax_val.get('analytic_tag_ids', []))
+
     def _compute_amount(self, base_amount, price_unit, quantity=1.0, product=None, partner=None):
         """ Returns the amount of a single tax. base_amount is the actual amount on which the tax is applied, which is
             price_unit * quantity eventually affected by previous taxes (if tax is include_base_amount XOR price_include)
         """
         self.ensure_one()
         if self.amount_type == 'fixed':
-            return math.copysign(self.amount, base_amount) * quantity
-        if (self.amount_type == 'percent' and not self.price_include) or (self.amount_type == 'division' and self.price_include):
+            # Use copysign to take into account the sign of the base amount which includes the sign
+            # of the quantity and the sign of the price_unit
+            # Amount is the fixed price for the tax, it can be negative
+            # Base amount included the sign of the quantity and the sign of the unit price and when
+            # a product is returned, it can be done either by changing the sign of quantity or by changing the
+            # sign of the price unit.
+            # When the price unit is equal to 0, the sign of the quantity is absorbed in base_amount then
+            # a "else" case is needed.
+            if base_amount:
+                return math.copysign(quantity, base_amount) * self.amount
+            else:
+                return quantity * self.amount
+
+        price_include = self.price_include or self._context.get('force_price_include')
+
+        if (self.amount_type == 'percent' and not price_include) or (self.amount_type == 'division' and price_include):
             return base_amount * self.amount / 100
-        if self.amount_type == 'percent' and self.price_include:
+        if self.amount_type == 'percent' and price_include:
             return base_amount - (base_amount / (1 + self.amount / 100))
-        if self.amount_type == 'division' and not self.price_include:
+        if self.amount_type == 'division' and not price_include:
             return base_amount / (1 - self.amount / 100) - base_amount
 
-    @api.v8
+    @api.multi
+    def json_friendly_compute_all(self, price_unit, currency_id=None, quantity=1.0, product_id=None, partner_id=None):
+        """ Just converts parameters in browse records and calls for compute_all, because js widgets can't serialize browse records """
+        if currency_id:
+            currency_id = self.env['res.currency'].browse(currency_id)
+        if product_id:
+            product_id = self.env['product.product'].browse(product_id)
+        if partner_id:
+            partner_id = self.env['res.partner'].browse(partner_id)
+        return self.compute_all(price_unit, currency=currency_id, quantity=quantity, product=product_id, partner=partner_id)
+
+    @api.multi
     def compute_all(self, price_unit, currency=None, quantity=1.0, product=None, partner=None):
-        """ Returns all information required to apply taxes (in self + their children in case of a tax goup).
+        """ Returns all information required to apply taxes (in self + their children in case of a tax group).
             We consider the sequence of the parent for group of taxes.
                 Eg. considering letters as taxes and alphabetic order as sequence :
                 [G, B([A, D, F]), E, C] will be computed as [A, D, F, C, E, G]
@@ -609,69 +1061,102 @@ class AccountTax(models.Model):
         # the 'Account' decimal precision + 5), and that way it's like
         # rounding after the sum of the tax amounts of each line
         prec = currency.decimal_places
-        if company_id.tax_calculation_rounding_method == 'round_globally':
-            prec += 5
-        total_excluded = total_included = base = round(price_unit * quantity, prec)
 
-        for tax in self:
+        # In some cases, it is necessary to force/prevent the rounding of the tax and the total
+        # amounts. For example, in SO/PO line, we don't want to round the price unit at the
+        # precision of the currency.
+        # The context key 'round' allows to force the standard behavior.
+        round_tax = False if company_id.tax_calculation_rounding_method == 'round_globally' else True
+        round_total = True
+        if 'round' in self.env.context:
+            round_tax = bool(self.env.context['round'])
+            round_total = bool(self.env.context['round'])
+
+        if not round_tax:
+            prec += 5
+
+        base_values = self.env.context.get('base_values')
+        if not base_values:
+            total_excluded = total_included = base = round(price_unit * quantity, prec)
+        else:
+            total_excluded, total_included, base = base_values
+
+        # Sorting key is mandatory in this case. When no key is provided, sorted() will perform a
+        # search. However, the search method is overridden in account.tax in order to add a domain
+        # depending on the context. This domain might filter out some taxes from self, e.g. in the
+        # case of group taxes.
+        for tax in self.sorted(key=lambda r: r.sequence):
+            # Allow forcing price_include/include_base_amount through the context for the reconciliation widget.
+            # See task 24014.
+            price_include = self._context.get('force_price_include', tax.price_include)
+
             if tax.amount_type == 'group':
-                ret = tax.children_tax_ids.compute_all(price_unit, currency, quantity, product, partner)
+                children = tax.children_tax_ids.with_context(base_values=(total_excluded, total_included, base))
+                ret = children.compute_all(price_unit, currency, quantity, product, partner)
                 total_excluded = ret['total_excluded']
-                base = ret['total_excluded']
+                base = ret['base'] if tax.include_base_amount else base
                 total_included = ret['total_included']
                 tax_amount = total_included - total_excluded
                 taxes += ret['taxes']
                 continue
 
             tax_amount = tax._compute_amount(base, price_unit, quantity, product, partner)
-            tax_amount = currency.round(tax_amount)
+            if not round_tax:
+                tax_amount = round(tax_amount, prec)
+            else:
+                tax_amount = currency.round(tax_amount)
 
-            if tax_amount:
-                if tax.price_include:
-                    total_excluded -= tax_amount
-                    base -= tax_amount
-                else:
-                    total_included += tax_amount
+            if price_include:
+                total_excluded -= tax_amount
+                base -= tax_amount
+            else:
+                total_included += tax_amount
 
-                if tax.include_base_amount:
-                    base += tax_amount
+            # Keep base amount used for the current tax
+            tax_base = base
 
-                taxes.append({
-                    'id': tax.id,
-                    'name': tax.name,
-                    'amount': tax_amount,
-                    'sequence': tax.sequence,
-                    'account_id': tax.account_id.id,
-                    'refund_account_id': tax.refund_account_id.id,
-                    'analytic': tax.analytic,
-                })
+            if tax.include_base_amount:
+                base += tax_amount
+
+            taxes.append({
+                'id': tax.id,
+                'name': tax.with_context(**{'lang': partner.lang} if partner else {}).name,
+                'amount': tax_amount,
+                'base': tax_base,
+                'sequence': tax.sequence,
+                'account_id': tax.account_id.id,
+                'refund_account_id': tax.refund_account_id.id,
+                'analytic': tax.analytic,
+                'price_include': tax.price_include,
+            })
 
         return {
             'taxes': sorted(taxes, key=lambda k: k['sequence']),
-            'total_excluded': currency.round(total_excluded),
-            'total_included': currency.round(total_included),
+            'total_excluded': currency.round(total_excluded) if round_total else total_excluded,
+            'total_included': currency.round(total_included) if round_total else total_included,
+            'base': base,
         }
-
-    @api.v7
-    def compute_all(self, cr, uid, ids, price_unit, currency_id=None, quantity=1.0, product_id=None, partner_id=None, context=None):
-        currency = currency_id and self.pool.get('res.currency').browse(cr, uid, currency_id, context=context) or None
-        product = product_id and self.pool.get('product.product').browse(cr, uid, product_id, context=context) or None
-        partner = partner_id and self.pool.get('res.partner').browse(cr, uid, partner_id, context=context) or None
-        ids = isinstance(ids, (int, long)) and [ids] or ids
-        recs = self.browse(cr, uid, ids, context=context)
-        return recs.compute_all(price_unit, currency, quantity, product, partner)
 
     @api.model
     def _fix_tax_included_price(self, price, prod_taxes, line_taxes):
         """Subtract tax amount from price when corresponding "price included" taxes do not apply"""
         # FIXME get currency in param?
-        incl_tax = prod_taxes.filtered(lambda tax: tax.id not in line_taxes and tax.price_include)
+        incl_tax = prod_taxes.filtered(lambda tax: tax not in line_taxes and tax.price_include)
         if incl_tax:
             return incl_tax.compute_all(price)['total_excluded']
         return price
 
-class AccountOperationTemplate(models.Model):
-    _name = "account.operation.template"
+    @api.model
+    def _fix_tax_included_price_company(self, price, prod_taxes, line_taxes, company_id):
+        if company_id:
+            #To keep the same behavior as in _compute_tax_id
+            prod_taxes = prod_taxes.filtered(lambda tax: tax.company_id == company_id)
+            line_taxes = line_taxes.filtered(lambda tax: tax.company_id == company_id)
+        return self._fix_tax_included_price(price, prod_taxes, line_taxes)
+
+
+class AccountReconcileModel(models.Model):
+    _name = "account.reconcile.model"
     _description = "Preset to create journal entries during a invoices and payments matching"
 
     name = fields.Char(string='Button Label', required=True)
@@ -686,29 +1171,45 @@ class AccountOperationTemplate(models.Model):
         ('fixed', 'Fixed'),
         ('percentage', 'Percentage of balance')
         ], required=True, default='percentage')
+    is_tax_price_included = fields.Boolean(string='Is Tax Included in Price', related='tax_id.price_include',
+        help='Technical field used inside the view to make the force_tax_included field readonly if the tax is already price included.')
+    tax_amount_type = fields.Selection(string='Tax Amount Type', related='tax_id.amount_type',
+        help='Technical field used inside the view to make the force_tax_included field invisible if the tax is a group.')
+    force_tax_included = fields.Boolean(string='Tax Included in Price',
+        help='Force the tax to be managed as a price included tax.')
     amount = fields.Float(digits=0, required=True, default=100.0, help="Fixed amount will count as a debit if it is negative, as a credit if it is positive.")
-    tax_id = fields.Many2one('account.tax', string='Tax', ondelete='restrict', domain=[('type_tax_use', '=', 'purchase')])
-    analytic_account_id = fields.Many2one('account.analytic.account', string='Analytic Account', ondelete='set null', domain=[('state', 'not in', ('close', 'cancelled'))])
+    tax_id = fields.Many2one('account.tax', string='Tax', ondelete='restrict')
+    analytic_account_id = fields.Many2one('account.analytic.account', string='Analytic Account', ondelete='set null')
+    analytic_tag_ids = fields.Many2many('account.analytic.tag', string='Analytic Tags')
 
-    second_account_id = fields.Many2one('account.account', string='Account', ondelete='cascade', domain=[('deprecated', '=', False)])
-    second_journal_id = fields.Many2one('account.journal', string='Journal', ondelete='cascade', help="This field is ignored in a bank statement reconciliation.")
-    second_label = fields.Char(string='Journal Item Label')
+    second_account_id = fields.Many2one('account.account', string='Second Account', ondelete='cascade', domain=[('deprecated', '=', False)])
+    second_journal_id = fields.Many2one('account.journal', string='Second Journal', ondelete='cascade', help="This field is ignored in a bank statement reconciliation.")
+    second_label = fields.Char(string='Second Journal Item Label')
     second_amount_type = fields.Selection([
         ('fixed', 'Fixed'),
         ('percentage', 'Percentage of amount')
-        ], string='Amount type', required=True, default='percentage')
-    second_amount = fields.Float(string='Amount', digits=0, required=True, default=100.0, help="Fixed amount will count as a debit if it is negative, as a credit if it is positive.")
-    second_tax_id = fields.Many2one('account.tax', string='Tax', ondelete='restrict', domain=[('type_tax_use', '=', 'purchase')])
-    second_analytic_account_id = fields.Many2one('account.analytic.account', string='Analytic Account', ondelete='set null', domain=[('state', 'not in', ('close', 'cancelled'))])
+        ], string="Second Amount type",required=True, default='percentage')
+    is_second_tax_price_included = fields.Boolean(string='Is Second Tax Included in Price', related='second_tax_id.price_include',
+        help='Technical field used inside the view to make the force_second_tax_included field readonly if the tax is already price included.')
+    second_tax_amount_type = fields.Selection(string='Second Tax Amount Type', related='second_tax_id.amount_type',
+        help='Technical field used inside the view to make the force_second_tax_included field invisible if the tax is a group.')
+    force_second_tax_included = fields.Boolean(string='Second Tax Included in Price',
+        help='Force the second tax to be managed as a price included tax.')
+    second_amount = fields.Float(string='Second Amount', digits=0, required=True, default=100.0, help="Fixed amount will count as a debit if it is negative, as a credit if it is positive.")
+    second_tax_id = fields.Many2one('account.tax', string='Second Tax', ondelete='restrict', domain=[('type_tax_use', '=', 'purchase')])
+    second_analytic_account_id = fields.Many2one('account.analytic.account', string='Second Analytic Account', ondelete='set null')
+    second_analytic_tag_ids = fields.Many2many('account.analytic.tag', string='Second Analytic Tags')
 
     @api.onchange('name')
     def onchange_name(self):
         self.label = self.name
 
+    @api.onchange('tax_id')
+    def _onchange_tax_id(self):
+        if self.tax_id:
+            self.force_tax_included = self.tax_id.price_include
 
-class AccountTaxGroup(models.Model):
-    _name = 'account.tax.group'
-    _order = 'sequence asc'
-
-    name = fields.Char(required=True, translate=True)
-    sequence = fields.Integer(default=10)
+    @api.onchange('second_tax_id')
+    def _onchange_second_tax_id(self):
+        if self.second_tax_id:
+            self.force_second_tax_included = self.second_tax_id.price_include

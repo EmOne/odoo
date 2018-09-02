@@ -1,26 +1,23 @@
-# Romanian translation for openobject-addons
-# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
-# This file is distributed under the same license as the openobject-addons package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
-#
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * base_vat
+# 
+# Translators:
+# Martin Trigaux, 2018
+# Dorin Hongu <dhongu@gmail.com>, 2018
 msgid ""
 msgstr ""
-"Project-Id-Version: openobject-addons\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2014-08-14 13:08+0000\n"
-"PO-Revision-Date: 2014-08-24 07:02+0000\n"
-"Last-Translator: Simonel Criste <simi@erpsystems.ro>\n"
-"Language-Team: Romanian <ro@li.org>\n"
+"Project-Id-Version: Odoo Server saas~11.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-22 14:10+0000\n"
+"PO-Revision-Date: 2018-03-22 14:10+0000\n"
+"Last-Translator: Dorin Hongu <dhongu@gmail.com>, 2018\n"
+"Language-Team: Romanian (https://www.transifex.com/odoo/teams/41243/ro/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-08-25 10:04+0000\n"
-"X-Generator: Launchpad (build 17163)\n"
-
-#. module: base_vat
-#: view:res.partner:base_vat.view_partner_form
-msgid "Check Validity"
-msgstr "Verifica Valabilitatea"
+"Content-Transfer-Encoding: \n"
+"Language: ro\n"
+"Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));\n"
 
 #. module: base_vat
 #: model:ir.model,name:base_vat.model_res_company
@@ -28,58 +25,55 @@ msgid "Companies"
 msgstr "Companii"
 
 #. module: base_vat
-#: code:addons/base_vat/base_vat.py:114
-#, python-format
-msgid "Error!"
-msgstr "Eroare!"
-
-#. module: base_vat
-#: help:res.company,vat_check_vies:0
-msgid ""
-"If checked, Partners VAT numbers will be fully validated against EU's VIES "
-"service rather than via a simple format validation (checksum)."
-msgstr ""
-"Daca bifati, CUI-urile Partenerilor vor fi  validate fara folosirea "
-"serviciului de verificare VIES al Uniunii Europene, decat prin simpla "
-"validare a formatului (checksum)."
-
-#. module: base_vat
-#: code:addons/base_vat/base_vat.py:130
-#, python-format
-msgid "Importing VAT Number [%s] is not valid !"
-msgstr "Importul CUI [% s] nu este valid!"
-
-#. module: base_vat
 #: model:ir.model,name:base_vat.model_res_partner
-msgid "Partner"
-msgstr "Partener"
+msgid "Contact"
+msgstr "Contact"
 
 #. module: base_vat
-#: code:addons/base_vat/base_vat.py:153
+#: model:ir.ui.view,arch_db:base_vat.res_config_settings_view_form
+msgid ""
+"If this checkbox is ticked, you will not be able to save a contact if its "
+"VAT number cannot be verified by the European VIES service."
+msgstr ""
+
+#. module: base_vat
+#: code:addons/base_vat/models/res_partner.py:154
 #, python-format
 msgid ""
 "The VAT number [%s] for partner [%s] does not seem to be valid. \n"
 "Note: the expected format is %s"
 msgstr ""
-"CUI -ul [% s] pentru acest partener [% s] nu pare să fie valid. \n"
-"Notă: formatul așteptat este% s"
+"CUI -ul [ %s] pentru acest partener [ %s] nu pare să fie valid. \n"
+"Notă: formatul așteptat este %s"
 
 #. module: base_vat
-#: code:addons/base_vat/base_vat.py:152
+#: code:addons/base_vat/models/res_partner.py:153
 #, python-format
 msgid ""
 "The VAT number [%s] for partner [%s] either failed the VIES VAT validation "
 "check or did not respect the expected format %s."
 msgstr ""
-"CUI -ul [% s] pentru acest partener [% s] fie nu a reușit validarea "
-"verificării TVA VIES sau nu a respectat formatul% s."
+"CUI -ul [%s] pentru acest partener [%s] fie nu a reușit validarea "
+"verificării TVA VIES sau nu a respectat formatul %s."
 
 #. module: base_vat
-#: field:res.company,vat_check_vies:0
-msgid "VIES VAT Check"
-msgstr "Verifica TVA VIES"
+#: model:ir.ui.view,arch_db:base_vat.view_partner_form
+#: model:ir.ui.view,arch_db:base_vat.view_partner_short_form
+msgid "VAT"
+msgstr "TVA"
 
 #. module: base_vat
-#: view:res.partner:base_vat.view_partner_form
-msgid "e.g. BE0477472701"
-msgstr "exemplu RO08486157"
+#: model:ir.model.fields,field_description:base_vat.field_res_company__vat_check_vies
+#: model:ir.model.fields,field_description:base_vat.field_res_config_settings__vat_check_vies
+msgid "Verify VAT Numbers"
+msgstr "Verificare cod de TVA"
+
+#. module: base_vat
+#: model:ir.ui.view,arch_db:base_vat.res_config_settings_view_form
+msgid "Verify VAT numbers using the European VIES service"
+msgstr "Verificare cod de TVA utilizând serviciul european VIES "
+
+#. module: base_vat
+#: model:ir.model,name:base_vat.model_res_config_settings
+msgid "res.config.settings"
+msgstr "res.config.settings"

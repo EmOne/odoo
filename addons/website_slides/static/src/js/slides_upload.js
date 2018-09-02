@@ -1,18 +1,17 @@
-/*global $, _, PDFJS */
 odoo.define('website_slides.upload', function (require) {
 "use strict";
 
 var ajax = require('web.ajax');
 var core = require('web.core');
 var Widget = require('web.Widget');
-var base = require('web_editor.base');
+require('web.dom_ready');
+var weContext = require("web_editor.context");
 var slides = require('website_slides.slides');
-var website = require('website.website');
 
 var qweb = core.qweb;
 var _t = core._t;
 
-if(!$('.oe_slide_js_upload').length) {
+if (!$('.oe_slide_js_upload').length) {
     return $.Deferred().reject("DOM doesn't contain '.oe_slide_js_upload'");
 }
 
@@ -86,8 +85,8 @@ var SlideDialog = Widget.extend({
             this.reset_file();
             return;
         }
-        if (file.size / 1024 / 1024 > 15) {
-            this.display_alert(_t("File is too big. Please select file upto 15MB"));
+        if (file.size / 1024 / 1024 > 25) {
+            this.display_alert(_t("File is too big. File size cannot exceed 25MB"));
             this.reset_file();
             return;
         }
@@ -150,6 +149,8 @@ var SlideDialog = Widget.extend({
                                 _.each(data.items, function (obj) {
                                     page_content = page_content + obj.str + " ";
                                 });
+                                // page_content may contain null characters
+                                page_content = page_content.replace(/\0/g, "");
                                 self.index_content = self.index_content + page_number + ". " + page_content + '\n';
                                 if (maxPages === page_number) {
                                     if (loaded) {
@@ -198,7 +199,7 @@ var SlideDialog = Widget.extend({
             width: '100%',
             placeholder: tag,
             allowClear: true,
-            formatNoMatches: _.str.sprintf(_t("No matches found. Type to create new %s"), tag),
+            formatNoMatches: false,
             multiple: multi,
             selection_data: false,
             fetch_rpc_fnc : fetch_fnc,
@@ -208,13 +209,18 @@ var SlideDialog = Widget.extend({
                 }
                 return data.text;
             },
-            createSearchChoice: function (term) {
-                return {
-                    id: _.uniqueId('tag_'),
-                    create: true,
-                    tag: term,
-                    text: _.str.sprintf(_t("Create New %s '%s'"), tag, term)
-                };
+            createSearchChoice: function (term, data) {
+                var added_tags = $(this.opts.element).select2('data');
+                if (_.filter(_.union(added_tags, data), function (tag) {
+                    return tag.text.toLowerCase().localeCompare(term.toLowerCase()) === 0;
+                }).length === 0) {
+                    return {
+                        id: _.uniqueId('tag_'),
+                        create: true,
+                        tag: term,
+                        text: _.str.sprintf(_t("Create new tag '%s'"), term),
+                    };
+                }
             },
             fill_data: function (query, data) {
                 var that = this,
@@ -252,7 +258,7 @@ var SlideDialog = Widget.extend({
                     kwargs: {
                         fields: ['name'],
                         domain: [['channel_id', '=', self.channel_id]],
-                        context: base.get_context()
+                        context: weContext.get()
                     }
                 });
             }));
@@ -273,7 +279,7 @@ var SlideDialog = Widget.extend({
                 args: [],
                 kwargs: {
                     fields: ['name'],
-                    context: base.get_context()
+                    context: weContext.get()
                 }
             });
         }));
@@ -289,6 +295,15 @@ var SlideDialog = Widget.extend({
                 }
             });
         return res;
+    },
+    //Python PIL does not support SVG, so converting SVG to PNG
+    svg_to_png: function () {
+        var img = this.$el.find("img#slide-image")[0];
+        var canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        canvas.getContext("2d").drawImage(img, 0, 0);
+        return canvas.toDataURL("image/png").split(',')[1];
     },
     // Values and save
     get_value: function () {
@@ -313,21 +328,21 @@ var SlideDialog = Widget.extend({
         if (/^image\/.*/.test(this.file.type)) {
             _.extend(values, {
                 'slide_type': 'infographic',
-                'mime_type': this.file.type,
-                'datas': this.file.data
+                'mime_type': this.file.type === 'image/svg+xml' ? 'image/png' : this.file.type,
+                'datas': this.file.type === 'image/svg+xml' ? this.svg_to_png() : this.file.data
             });
         }
         return values;
     },
     validate: function () {
-        this.$('.form-group').removeClass('has-error');
+        this.$('.form-group').removeClass('o_has_error').find('.form-control, .custom-select').removeClass('is-invalid');
         if (!this.$('#name').val()) {
-            this.$('#name').closest('.form-group').addClass('has-error');
+            this.$('#name').closest('.form-group').addClass('o_has_error').find('.form-control, .custom-select').addClass('is-invalid');
             return false;
         }
         var url = this.$('#url').val() ? this.is_valid_url : false;
         if (!(this.file.name || url)) {
-            this.$('#url').closest('.form-group').addClass('has-error');
+            this.$('#url').closest('.form-group').addClass('o_has_error').find('.form-control, .custom-select').addClass('is-invalid');
             return false;
         }
         return true;
@@ -358,10 +373,9 @@ var SlideDialog = Widget.extend({
     }
 });
 
-    // bind the event to the button
-    $('.oe_slide_js_upload').on('click', function () {
-        var channel_id = $(this).attr('channel_id');
-        slides.page_widgets['upload_dialog'] = new SlideDialog(this, channel_id).appendTo(document.body);
-    });
-
+// bind the event to the button
+$('.oe_slide_js_upload').on('click', function () {
+    var channel_id = $(this).attr('channel_id');
+    slides.page_widgets['upload_dialog'] = new SlideDialog(this, channel_id).appendTo(document.body);
+});
 });

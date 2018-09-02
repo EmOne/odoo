@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
+# Part of Odoo. See LICENSE file for full copyright and licensing details.
+
 import logging
 import os
-import time
-
-import openerp
-import openerp.addons.hw_proxy.controllers.main as hw_proxy
-import threading
 import subprocess
-from openerp import http
-from openerp.http import request
-from openerp.tools.translate import _
+import threading
+
+from odoo import http
+
+from odoo.addons.hw_proxy.controllers import main as hw_proxy
 
 _logger = logging.getLogger(__name__)
 
@@ -70,7 +69,8 @@ upgrade_template = """
 	<p></p>
         However the preferred method to upgrade the posbox is to flash the sd-card with
         the <a href='http://nightly.odoo.com/trunk/posbox/'>latest image</a>. The upgrade
-        procedure is explained into to the <a href='/hw_proxy/static/doc/manual.pdf'>PosBox manual</a>
+        procedure is explained into to the
+        <a href='https://www.odoo.com/documentation/user/point_of_sale/posbox/index.html'>PosBox manual</a>
         </p>
         <p>
         To upgrade the posbox, click on the upgrade button. The upgrade will take a few minutes. <b>Do not reboot</b> the PosBox during the upgrade.
@@ -80,7 +80,7 @@ upgrade_template = """
         </p>
         <pre>
 """
-upgrade_template += subprocess.check_output("git --work-tree=/home/pi/odoo/ --git-dir=/home/pi/odoo/.git log -1", shell=True).replace("\n", "<br/>")
+upgrade_template += subprocess.check_output("git --work-tree=/home/pi/odoo/ --git-dir=/home/pi/odoo/.git log -1", shell=True).decode('utf-8').replace("\n", "<br/>")
 upgrade_template += """
         </pre>
         <div class='centering'>

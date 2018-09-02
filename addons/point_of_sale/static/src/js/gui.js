@@ -7,7 +7,8 @@ odoo.define('point_of_sale.gui', function (require) {
 // it is available to all pos objects trough the '.gui' field.
 
 var core = require('web.core');
-var Model = require('web.DataModel');
+var field_utils = require('web.field_utils');
+var session = require('web.session');
 
 var _t = core._t;
 
@@ -83,14 +84,14 @@ var Gui = core.Class.extend({
     // example loading a 'product_details' screen for a specific product.
     // - refresh: if you want the screen to cycle trough show / hide even
     // if you are already on the same screen.
-    show_screen: function(screen_name,params,refresh) {
+    show_screen: function(screen_name,params,refresh,skip_close_popup) {
         var screen = this.screen_instances[screen_name];
         if (!screen) {
             console.error("ERROR: show_screen("+screen_name+") : screen not found");
         }
-
-        this.close_popup();
-
+        if (!skip_close_popup){
+            this.close_popup();
+        }
         var order = this.pos.get_order();
         if (order) {
             var old_screen_name = order.get_screen_data('screen');
@@ -112,7 +113,7 @@ var Gui = core.Class.extend({
                 this.current_screen.hide();
             }
             this.current_screen = screen;
-            this.current_screen.show();
+            this.current_screen.show(refresh);
         }
     },
     
@@ -182,12 +183,22 @@ var Gui = core.Class.extend({
     close_other_tabs: function() {
         var self = this;
 
+        // avoid closing itself
+        var now = Date.now();
+
         localStorage['message'] = '';
         localStorage['message'] = JSON.stringify({
             'message':'close_tabs',
             'session': this.pos.pos_session.id,
+            'window_uid': now,
         });
 
+        // storage events are (most of the time) triggered only when the
+        // localstorage is updated in a different tab.
+        // some browsers (e.g. IE) does trigger an event in the same tab
+        // This may be a browser bug or a different interpretation of the HTML spec
+        // cf https://connect.microsoft.com/IE/feedback/details/774798/localstorage-event-fired-in-source-window
+        // Use window_uid parameter to exclude the current window
         window.addEventListener("storage", function(event) {
             var msg = event.data;
 
@@ -195,7 +206,8 @@ var Gui = core.Class.extend({
 
                 var msg = JSON.parse(event.newValue);
                 if ( msg.message  === 'close_tabs' &&
-                     msg.session  ==  self.pos.pos_session.id ) {
+                     msg.session  ==  self.pos.pos_session.id &&
+                     msg.window_uid != now) {
 
                     console.info('POS / Session opened in another window. EXITING POS')
                     self._close();
@@ -232,10 +244,11 @@ var Gui = core.Class.extend({
         }
 
         this.show_popup('selection',{
-            'title': options.title || _t('Select User'),
+            title: options.title || _t('Select User'),
             list: list,
             confirm: function(user){ def.resolve(user); },
-            cancel:  function(){ def.reject(); },
+            cancel: function(){ def.reject(); },
+            is_selected: function(user){ return user === self.pos.get_cashier(); },
         });
 
         return def.then(function(user){
@@ -333,17 +346,8 @@ var Gui = core.Class.extend({
         this.chrome.loading_message(_t('Closing ...'));
 
         this.pos.push_order().then(function(){
-            return new Model("ir.model.data").get_func("search_read")([['name', '=', 'action_client_pos_menu']], ['res_id'])
-            .pipe(function(res) {
-                window.location = '/web#action=' + res[0]['res_id'];
-            },function(err,event) {
-                event.preventDefault();
-                self.show_popup('error',{
-                    'title': _t('Could not close the point of sale.'),
-                    'body':  _t('Your internet connection is probably down.'),
-                });
-                self.chrome.widget.close_button.renderElement();
-            });
+            var url = "/web#action=point_of_sale.action_client_pos_menu";
+            window.location = session.debug ? $.param.querystring(url, {debug: session.debug}) : url;
         });
     },
 
@@ -369,7 +373,34 @@ var Gui = core.Class.extend({
     // if 'contents' is not a string, it is converted into
     // a JSON representation of the contents. 
 
+
+    // TODO: remove me in master: deprecated in favor of prepare_download_link
+    // this method is kept for backward compatibility but is likely not going
+    // to work as many browsers do to not accept fake click events on links
     download_file: function(contents, name) {
+        href_params = this.prepare_file_blob(contents,name);
+        var evt  = document.createEvent("HTMLEvents");
+        evt.initEvent("click");
+
+        $("<a>",href_params).get(0).dispatchEvent(evt);
+        
+    },      
+    
+    prepare_download_link: function(contents, filename, src, target) {
+        var href_params = this.prepare_file_blob(contents, filename);
+
+        $(target).parent().attr(href_params);
+        $(src).addClass('oe_hidden');
+        $(target).removeClass('oe_hidden');
+
+        // hide again after click
+        $(target).click(function() {
+            $(src).removeClass('oe_hidden');
+            $(this).addClass('oe_hidden');
+        });
+    },  
+    
+    prepare_file_blob: function(contents, name) {
         var URL = window.URL || window.webkitURL;
         
         if (typeof contents !== 'string') {
@@ -378,13 +409,8 @@ var Gui = core.Class.extend({
 
         var blob = new Blob([contents]);
 
-        var evt  = document.createEvent("HTMLEvents");
-            evt.initEvent("click");
-
-        $("<a>",{
-            download: name || 'document.txt',
-            href: URL.createObjectURL(blob),
-        }).get(0).dispatchEvent(evt);
+        return {download: name || 'document.txt',
+                href: URL.createObjectURL(blob),}
     },
 
     /* ---- Gui: EMAILS ---- */
@@ -411,14 +437,16 @@ var Gui = core.Class.extend({
     numpad_input: function(buffer, input, options) { 
         var newbuf  = buffer.slice(0);
         options = options || {};
+        var newbuf_float  = field_utils.parse.float(newbuf);
+        var decimal_point = _t.database.parameters.decimal_point;
 
-        if (input === '.') {
+        if (input === decimal_point) {
             if (options.firstinput) {
                 newbuf = "0.";
             }else if (!newbuf.length || newbuf === '-') {
                 newbuf += "0.";
-            } else if (newbuf.indexOf('.') < 0){
-                newbuf = newbuf + '.';
+            } else if (newbuf.indexOf(decimal_point) < 0){
+                newbuf = newbuf + decimal_point;
             }
         } else if (input === 'CLEAR') {
             newbuf = ""; 
@@ -435,7 +463,7 @@ var Gui = core.Class.extend({
                 newbuf = '-' + newbuf;
             }
         } else if (input[0] === '+' && !isNaN(parseFloat(input))) {
-            newbuf = '' + ((parseFloat(newbuf) || 0) + parseFloat(input));
+            newbuf = this.chrome.format_currency_no_symbol(newbuf_float + parseFloat(input));
         } else if (!isNaN(parseInt(input))) {
             if (options.firstinput) {
                 newbuf = '' + input;

@@ -1,152 +1,191 @@
-# Chinese (Simplified) translation for openobject-addons
-# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
-# This file is distributed under the same license as the openobject-addons package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
-#
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * auth_oauth
+# 
+# Translators:
+# Jeffery CHEN Fan <jeffery9@gmail.com>, 2016
+# Si Ling Lau <happy8645@hotmail.com>, 2017
+# 老窦 北京 <2662059195@qq.com>, 2017
+# e2f <projects@e2f.com>, 2018
 msgid ""
 msgstr ""
-"Project-Id-Version: openobject-addons\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2014-08-14 13:08+0000\n"
-"PO-Revision-Date: 2014-11-04 05:29+0000\n"
-"Last-Translator: 卓忆科技 <zhanghao@jointd.com>\n"
-"Language-Team: Chinese (Simplified) <zh_CN@li.org>\n"
+"Project-Id-Version: Odoo Server saas~11.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-22 14:10+0000\n"
+"PO-Revision-Date: 2018-03-22 14:10+0000\n"
+"Last-Translator: e2f <projects@e2f.com>, 2018\n"
+"Language-Team: Chinese (China) (https://www.transifex.com/odoo/teams/41243/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-11-05 07:41+0000\n"
-"X-Generator: Launchpad (build 17223)\n"
+"Content-Transfer-Encoding: \n"
+"Language: zh_CN\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: auth_oauth
-#: code:addons/auth_oauth/controllers/main.py:99
+#: model:ir.ui.view,arch_db:auth_oauth.res_config_settings_view_form
+msgid "<i class=\"fa fa-fw fa-arrow-right\"/>Tutorial"
+msgstr "<i class=\"fa fa-fw fa-arrow-right\"/>教程"
+
+#. module: auth_oauth
+#: code:addons/auth_oauth/controllers/main.py:100
 #, python-format
 msgid "Access Denied"
-msgstr "访问被拒绝（请检查是否输入了正确的master密码）"
+msgstr "访问拒绝"
 
 #. module: auth_oauth
-#: field:base.config.settings,auth_oauth_facebook_enabled:0
-msgid "Allow users to sign in with Facebook"
-msgstr "允许用户用Facebook登录"
-
-#. module: auth_oauth
-#: field:base.config.settings,auth_oauth_google_enabled:0
+#: model:ir.model.fields,field_description:auth_oauth.field_res_config_settings__auth_oauth_google_enabled
 msgid "Allow users to sign in with Google"
 msgstr "允许用户通过google登录"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,enabled:0
+#: model:ir.ui.view,arch_db:auth_oauth.res_config_settings_view_form
+msgid "Allow users to sign in with their Google account"
+msgstr "允许用户使用其 Google 账户登录"
+
+#. module: auth_oauth
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__enabled
 msgid "Allowed"
 msgstr "允许"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,auth_endpoint:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__auth_endpoint
 msgid "Authentication URL"
-msgstr "身份验证URL"
+msgstr "身份验证网址"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,body:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__body
 msgid "Body"
 msgstr "正文"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,css_class:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__css_class
 msgid "CSS class"
-msgstr "CSS class"
+msgstr "CSS类"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,client_id:0
-#: field:base.config.settings,auth_oauth_facebook_client_id:0
-#: field:base.config.settings,auth_oauth_google_client_id:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__client_id
+#: model:ir.model.fields,field_description:auth_oauth.field_res_config_settings__auth_oauth_google_client_id
 msgid "Client ID"
-msgstr "Client ID"
+msgstr "客户端 ID"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,create_uid:0
+#: model:ir.ui.view,arch_db:auth_oauth.res_config_settings_view_form
+msgid "Client ID:"
+msgstr "客户端 ID："
+
+#. module: auth_oauth
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__create_uid
 msgid "Created by"
 msgstr "创建人"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,create_date:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__create_date
 msgid "Created on"
-msgstr "创建"
+msgstr "创建时间"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,data_endpoint:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__data_endpoint
 msgid "Data URL"
-msgstr "数据URL"
+msgstr "数据网址"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,id:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__display_name
+msgid "Display Name"
+msgstr "显示名称"
+
+#. module: auth_oauth
+#: model:ir.ui.view,arch_db:auth_oauth.res_config_settings_view_form
+msgid "Google Authentication"
+msgstr "Google 认证"
+
+#. module: auth_oauth
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__id
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,write_uid:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider____last_update
+msgid "Last Modified on"
+msgstr "最后修改日"
+
+#. module: auth_oauth
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__write_uid
 msgid "Last Updated by"
-msgstr "最后更新"
+msgstr "最后更新人"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,write_date:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__write_date
 msgid "Last Updated on"
-msgstr ""
+msgstr "最后更新时间"
 
 #. module: auth_oauth
-#: field:res.users,oauth_access_token:0
+#: model:ir.model.fields,field_description:auth_oauth.field_res_users__oauth_access_token
 msgid "OAuth Access Token"
 msgstr "OAuth  访问令牌"
 
 #. module: auth_oauth
-#: field:res.users,oauth_provider_id:0
+#: model:ir.model.fields,field_description:auth_oauth.field_res_users__oauth_provider_id
 msgid "OAuth Provider"
-msgstr "OAuth Provider"
+msgstr "OAuth 服务商"
 
 #. module: auth_oauth
 #: model:ir.ui.menu,name:auth_oauth.menu_oauth_providers
+#: model:ir.ui.view,arch_db:auth_oauth.res_config_settings_view_form
 msgid "OAuth Providers"
-msgstr "OAuth Providers"
+msgstr "OAuth服务商"
 
 #. module: auth_oauth
 #: sql_constraint:res.users:0
 msgid "OAuth UID must be unique per provider"
-msgstr "OAuth UID必须是每个提供者（ provider ）唯一的"
+msgstr "OAuth UID必须是每个服务商（ provider ）唯一的"
 
 #. module: auth_oauth
-#: field:res.users,oauth_uid:0
+#: model:ir.model.fields,field_description:auth_oauth.field_res_users__oauth_uid
 msgid "OAuth User ID"
-msgstr "OAuth User ID"
+msgstr "OAuth 用户ID"
 
 #. module: auth_oauth
 #: model:ir.model,name:auth_oauth.model_auth_oauth_provider
 msgid "OAuth2 provider"
-msgstr "OAuth2 provider"
+msgstr "OAuth2服务商"
 
 #. module: auth_oauth
-#: view:res.users:auth_oauth.view_users_form
+#: model:ir.ui.view,arch_db:auth_oauth.view_users_form
 msgid "Oauth"
-msgstr "OAuth身份认证"
+msgstr "Oauth"
 
 #. module: auth_oauth
-#: help:res.users,oauth_uid:0
+#: model:ir.model.fields,help:auth_oauth.field_res_users__oauth_uid
 msgid "Oauth Provider user_id"
-msgstr "Oauth Provider user_id"
+msgstr "Oauth服务商user_id"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,name:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__name
 msgid "Provider name"
-msgstr "Provider 名称"
+msgstr "服务商名称"
 
 #. module: auth_oauth
 #: model:ir.actions.act_window,name:auth_oauth.action_oauth_provider
 msgid "Providers"
-msgstr "Providers"
+msgstr "服务商"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,scope:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__scope
 msgid "Scope"
 msgstr "作用域"
 
 #. module: auth_oauth
-#: code:addons/auth_oauth/controllers/main.py:97
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__sequence
+msgid "Sequence"
+msgstr "序列"
+
+#. module: auth_oauth
+#: model:ir.model.fields,field_description:auth_oauth.field_res_config_settings__server_uri_google
+msgid "Server uri"
+msgstr "服务器URI"
+
+#. module: auth_oauth
+#: code:addons/auth_oauth/controllers/main.py:98
 #, python-format
 msgid "Sign up is not allowed on this database."
 msgstr "此数据库不允许注册"
@@ -157,12 +196,12 @@ msgid "Users"
 msgstr "用户"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,validation_endpoint:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__validation_endpoint
 msgid "Validation URL"
-msgstr "验证  URL"
+msgstr "验证网址"
 
 #. module: auth_oauth
-#: code:addons/auth_oauth/controllers/main.py:101
+#: code:addons/auth_oauth/controllers/main.py:102
 #, python-format
 msgid ""
 "You do not have access to this database or your invitation has expired. "
@@ -171,12 +210,22 @@ msgid ""
 msgstr "您无权访问此数据库或者您的邀请已经过期.请申请一个新的邀请并在您的邀请邮件中确认。"
 
 #. module: auth_oauth
-#: view:auth.oauth.provider:auth_oauth.view_oauth_provider_form
-#: view:auth.oauth.provider:auth_oauth.view_oauth_provider_list
+#: model:ir.ui.view,arch_db:auth_oauth.view_oauth_provider_form
+#: model:ir.ui.view,arch_db:auth_oauth.view_oauth_provider_tree
 msgid "arch"
 msgstr "arch"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,sequence:0
-msgid "unknown"
-msgstr "未知"
+#: model:ir.ui.view,arch_db:auth_oauth.res_config_settings_view_form
+msgid "e.g. 1234-xyz.apps.googleusercontent.com"
+msgstr "例如：1234-xyz.apps.googleusercontent.com"
+
+#. module: auth_oauth
+#: model:ir.model,name:auth_oauth.model_ir_config_parameter
+msgid "ir.config_parameter"
+msgstr "ir.config_parameter"
+
+#. module: auth_oauth
+#: model:ir.model,name:auth_oauth.model_res_config_settings
+msgid "res.config.settings"
+msgstr "设置-基础设置"

@@ -1,2 +1,1 @@
-import website
-import payment
+from . import payment_acquirer

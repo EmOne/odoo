@@ -1,107 +1,143 @@
-# Spanish translation for openobject-addons
-# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
-# This file is distributed under the same license as the openobject-addons package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
-#
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * auth_oauth
+# 
+# Translators:
+# Martin Trigaux, 2016
+# Leonardo Chianea <noamixcontenidos@gmail.com>, 2016
+# Ivan Nieto <ivan.n.s@tuta.io>, 2016
+# oihane <oihanecruce@gmail.com>, 2016
+# Mateo Tibaquirá Palacios <nestormateo@gmail.com>, 2016
+# Ana Juaristi <ajuaristio@gmail.com>, 2016
+# Antonio Trueba, 2016
+# Carles Antoli <carlesantoli@hotmail.com>, 2016
+# José Vicente <txusev@gmail.com>, 2017
+# Lina Maria Avendaño Carvajal <lina8823@gmail.com>, 2017
+# JOSE ALEJANDRO ECHEVERRI VALENCIA <josealejandroeche@gmail.com>, 2018
 msgid ""
 msgstr ""
-"Project-Id-Version: openobject-addons\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2014-08-14 13:08+0000\n"
-"PO-Revision-Date: 2014-08-14 19:24+0000\n"
-"Last-Translator: Pedro Manuel Baeza <pedro.baeza@gmail.com>\n"
-"Language-Team: Spanish <es@li.org>\n"
+"Project-Id-Version: Odoo Server saas~11.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-22 14:10+0000\n"
+"PO-Revision-Date: 2018-03-22 14:10+0000\n"
+"Last-Translator: JOSE ALEJANDRO ECHEVERRI VALENCIA <josealejandroeche@gmail.com>, 2018\n"
+"Language-Team: Spanish (https://www.transifex.com/odoo/teams/41243/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-08-15 06:55+0000\n"
-"X-Generator: Launchpad (build 17156)\n"
+"Content-Transfer-Encoding: \n"
+"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. module: auth_oauth
-#: code:addons/auth_oauth/controllers/main.py:99
+#: model:ir.ui.view,arch_db:auth_oauth.res_config_settings_view_form
+msgid "<i class=\"fa fa-fw fa-arrow-right\"/>Tutorial"
+msgstr "<i class=\"fa fa-fw fa-arrow-right\"/>Tutorial"
+
+#. module: auth_oauth
+#: code:addons/auth_oauth/controllers/main.py:100
 #, python-format
 msgid "Access Denied"
 msgstr "Acceso denegado"
 
 #. module: auth_oauth
-#: field:base.config.settings,auth_oauth_facebook_enabled:0
-msgid "Allow users to sign in with Facebook"
-msgstr "Permitir a los usuarios ingresar con Facebook"
-
-#. module: auth_oauth
-#: field:base.config.settings,auth_oauth_google_enabled:0
+#: model:ir.model.fields,field_description:auth_oauth.field_res_config_settings__auth_oauth_google_enabled
 msgid "Allow users to sign in with Google"
 msgstr "Permitir a los usuarios ingresar con Google"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,enabled:0
+#: model:ir.ui.view,arch_db:auth_oauth.res_config_settings_view_form
+msgid "Allow users to sign in with their Google account"
+msgstr "Permitir a los usuarios firmar con su cuenta Google"
+
+#. module: auth_oauth
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__enabled
 msgid "Allowed"
 msgstr "Permitido"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,auth_endpoint:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__auth_endpoint
 msgid "Authentication URL"
 msgstr "URL Autenticación"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,body:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__body
 msgid "Body"
-msgstr "Cuerpo del mensaje"
+msgstr "Contenido"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,css_class:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__css_class
 msgid "CSS class"
 msgstr "Clase CSS"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,client_id:0
-#: field:base.config.settings,auth_oauth_facebook_client_id:0
-#: field:base.config.settings,auth_oauth_google_client_id:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__client_id
+#: model:ir.model.fields,field_description:auth_oauth.field_res_config_settings__auth_oauth_google_client_id
 msgid "Client ID"
 msgstr "Id. de cliente"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,create_uid:0
+#: model:ir.ui.view,arch_db:auth_oauth.res_config_settings_view_form
+msgid "Client ID:"
+msgstr "ID Cliente:"
+
+#. module: auth_oauth
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__create_uid
 msgid "Created by"
 msgstr "Creado por"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,create_date:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__create_date
 msgid "Created on"
-msgstr "Creado en"
+msgstr "Creado el"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,data_endpoint:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__data_endpoint
 msgid "Data URL"
 msgstr "URL de los datos"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,id:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__display_name
+msgid "Display Name"
+msgstr "Nombre a mostrar"
+
+#. module: auth_oauth
+#: model:ir.ui.view,arch_db:auth_oauth.res_config_settings_view_form
+msgid "Google Authentication"
+msgstr "Autenticación Google"
+
+#. module: auth_oauth
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__id
 msgid "ID"
 msgstr "ID"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,write_uid:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider____last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: auth_oauth
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__write_uid
 msgid "Last Updated by"
-msgstr "Última actualización de"
+msgstr "Última actualización por"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,write_date:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__write_date
 msgid "Last Updated on"
-msgstr "Última actualización en"
+msgstr "Última actualización el"
 
 #. module: auth_oauth
-#: field:res.users,oauth_access_token:0
+#: model:ir.model.fields,field_description:auth_oauth.field_res_users__oauth_access_token
 msgid "OAuth Access Token"
 msgstr "Palabra de acceso (token) OAuth"
 
 #. module: auth_oauth
-#: field:res.users,oauth_provider_id:0
+#: model:ir.model.fields,field_description:auth_oauth.field_res_users__oauth_provider_id
 msgid "OAuth Provider"
 msgstr "Proveedor OAuth"
 
 #. module: auth_oauth
 #: model:ir.ui.menu,name:auth_oauth.menu_oauth_providers
+#: model:ir.ui.view,arch_db:auth_oauth.res_config_settings_view_form
 msgid "OAuth Providers"
 msgstr "Proveedores OAuth"
 
@@ -111,7 +147,7 @@ msgid "OAuth UID must be unique per provider"
 msgstr "El id. de usuario OAuth debe ser único por proveedor"
 
 #. module: auth_oauth
-#: field:res.users,oauth_uid:0
+#: model:ir.model.fields,field_description:auth_oauth.field_res_users__oauth_uid
 msgid "OAuth User ID"
 msgstr "Id. de usuario OAuth"
 
@@ -121,17 +157,17 @@ msgid "OAuth2 provider"
 msgstr "Proveedor OAuth2"
 
 #. module: auth_oauth
-#: view:res.users:auth_oauth.view_users_form
+#: model:ir.ui.view,arch_db:auth_oauth.view_users_form
 msgid "Oauth"
 msgstr "Oauth"
 
 #. module: auth_oauth
-#: help:res.users,oauth_uid:0
+#: model:ir.model.fields,help:auth_oauth.field_res_users__oauth_uid
 msgid "Oauth Provider user_id"
 msgstr "Id. de usuario OAuth para el proveedor"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,name:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__name
 msgid "Provider name"
 msgstr "Nombre proveedor"
 
@@ -141,12 +177,22 @@ msgid "Providers"
 msgstr "Proveedores"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,scope:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__scope
 msgid "Scope"
 msgstr "Ámbito"
 
 #. module: auth_oauth
-#: code:addons/auth_oauth/controllers/main.py:97
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__sequence
+msgid "Sequence"
+msgstr "Secuencia"
+
+#. module: auth_oauth
+#: model:ir.model.fields,field_description:auth_oauth.field_res_config_settings__server_uri_google
+msgid "Server uri"
+msgstr "Servidor uri"
+
+#. module: auth_oauth
+#: code:addons/auth_oauth/controllers/main.py:98
 #, python-format
 msgid "Sign up is not allowed on this database."
 msgstr "No se permiten registros en esta base de datos."
@@ -157,12 +203,12 @@ msgid "Users"
 msgstr "Usuarios"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,validation_endpoint:0
+#: model:ir.model.fields,field_description:auth_oauth.field_auth_oauth_provider__validation_endpoint
 msgid "Validation URL"
 msgstr "URL de validación"
 
 #. module: auth_oauth
-#: code:addons/auth_oauth/controllers/main.py:101
+#: code:addons/auth_oauth/controllers/main.py:102
 #, python-format
 msgid ""
 "You do not have access to this database or your invitation has expired. "
@@ -174,12 +220,22 @@ msgstr ""
 "invitación."
 
 #. module: auth_oauth
-#: view:auth.oauth.provider:auth_oauth.view_oauth_provider_form
-#: view:auth.oauth.provider:auth_oauth.view_oauth_provider_list
+#: model:ir.ui.view,arch_db:auth_oauth.view_oauth_provider_form
+#: model:ir.ui.view,arch_db:auth_oauth.view_oauth_provider_tree
 msgid "arch"
 msgstr "arquitectura"
 
 #. module: auth_oauth
-#: field:auth.oauth.provider,sequence:0
-msgid "unknown"
-msgstr "Desconocido"
+#: model:ir.ui.view,arch_db:auth_oauth.res_config_settings_view_form
+msgid "e.g. 1234-xyz.apps.googleusercontent.com"
+msgstr "ej.. 1234-xyz.apps.googleusercontent.com"
+
+#. module: auth_oauth
+#: model:ir.model,name:auth_oauth.model_ir_config_parameter
+msgid "ir.config_parameter"
+msgstr "ir.config_parameter"
+
+#. module: auth_oauth
+#: model:ir.model,name:auth_oauth.model_res_config_settings
+msgid "res.config.settings"
+msgstr "res.config.settings"

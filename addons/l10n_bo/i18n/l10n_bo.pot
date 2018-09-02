@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-25 09:39+0000\n"
-"PO-Revision-Date: 2015-08-25 09:39+0000\n"
+"POT-Creation-Date: 2015-09-18 08:19+0000\n"
+"PO-Revision-Date: 2015-09-18 08:19+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,38 +16,13 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: l10n_bo
+#: model:ir.ui.menu,name:l10n_bo.account_reports_bo_statements_menu
+msgid "Bolivian Statements"
+msgstr ""
+
+#. module: l10n_bo
 #: model:account.account.type,name:l10n_bo.account_account_type_NCLASIFICADO
 msgid "Cuentas No Clasificadas"
-msgstr ""
-
-#. module: l10n_bo
-#: model:account.tax.template,name:l10n_bo.ITAX_03
-msgid "IT 3%"
-msgstr ""
-
-#. module: l10n_bo
-#: model:account.account.tag,name:l10n_bo.tag_ITAX_03_OUT
-msgid "ITAX_03_OUT"
-msgstr ""
-
-#. module: l10n_bo
-#: model:account.account.tag,name:l10n_bo.tag_ITAX_21_OUT
-msgid "ITAX_21_OUT"
-msgstr ""
-
-#. module: l10n_bo
-#: model:account.tax.template,name:l10n_bo.OTAX_21
-msgid "IVA 13% Compra"
-msgstr ""
-
-#. module: l10n_bo
-#: model:account.tax.template,name:l10n_bo.ITAX_21
-msgid "IVA 13% Venta"
-msgstr ""
-
-#. module: l10n_bo
-#: model:account.account.tag,name:l10n_bo.tag_OTAX_21_IN
-msgid "OTAX_21_IN"
 msgstr ""
 
 #. module: l10n_bo

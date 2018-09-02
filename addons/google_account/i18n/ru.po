@@ -1,111 +1,109 @@
-# Russian translation for openobject-addons
-# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
-# This file is distributed under the same license as the openobject-addons package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
-#
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * google_account
+# 
+# Translators:
+# Collex100, 2017
+# Максим Дронь <dronmax@gmail.com>, 2017
+# Max Belyanin <maxbelyanin@gmail.com>, 2017
 msgid ""
 msgstr ""
-"Project-Id-Version: openobject-addons\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2012-12-21 17:05+0000\n"
-"PO-Revision-Date: 2014-08-14 16:10+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Russian <ru@li.org>\n"
+"Project-Id-Version: Odoo Server saas~11.4\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-08-02 09:56+0000\n"
+"PO-Revision-Date: 2018-08-02 09:56+0000\n"
+"Last-Translator: Max Belyanin <maxbelyanin@gmail.com>, 2017\n"
+"Language-Team: Russian (https://www.transifex.com/odoo/teams/41243/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-08-15 07:09+0000\n"
-"X-Generator: Launchpad (build 17156)\n"
+"Content-Transfer-Encoding: \n"
+"Language: ru\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#. module: google_base_account
-#: field:res.users,gmail_user:0
-msgid "Username"
-msgstr "Имя пользователя"
+#. module: google_account
+#: model:ir.model.fields,field_description:google_account.field_google_service__create_uid
+msgid "Created by"
+msgstr "Создано"
 
-#. module: google_base_account
-#: model:ir.actions.act_window,name:google_base_account.act_google_login_form
-msgid "Google Login"
-msgstr "Логин Google"
+#. module: google_account
+#: model:ir.model.fields,field_description:google_account.field_google_service__create_date
+msgid "Created on"
+msgstr "Создан"
 
-#. module: google_base_account
-#: code:addons/google_base_account/wizard/google_login.py:29
+#. module: google_account
+#: model:ir.model.fields,field_description:google_account.field_google_service__display_name
+msgid "Display Name"
+msgstr "Отображаемое Имя"
+
+#. module: google_account
+#: model:ir.model.fields,field_description:google_account.field_google_service__id
+msgid "ID"
+msgstr "Номер"
+
+#. module: google_account
+#: model:ir.model.fields,field_description:google_account.field_google_service____last_update
+msgid "Last Modified on"
+msgstr "Последнее изменение"
+
+#. module: google_account
+#: model:ir.model.fields,field_description:google_account.field_google_service__write_uid
+msgid "Last Updated by"
+msgstr "Последний раз обновил"
+
+#. module: google_account
+#: model:ir.model.fields,field_description:google_account.field_google_service__write_date
+msgid "Last Updated on"
+msgstr "Последнее обновление"
+
+#. module: google_account
+#: code:addons/google_account/models/google_service.py:171
 #, python-format
-msgid "Google Contacts Import Error!"
-msgstr "Ошибка импорта контактов Google!"
+msgid "Method not supported [%s] not in [GET, POST, PUT, PATCH or DELETE]!"
+msgstr "Метод не поддерживается [%s] не в [GET, POST, PUT, PATCH или DELETE]!"
 
-#. module: google_base_account
-#: model:ir.model,name:google_base_account.model_res_users
-msgid "Users"
-msgstr ""
-
-#. module: google_base_account
-#: view:google.login:0
-msgid "or"
-msgstr ""
-
-#. module: google_base_account
-#: view:google.login:0
-msgid "Google login"
-msgstr "Логин Google"
-
-#. module: google_base_account
-#: field:google.login,password:0
-msgid "Google Password"
-msgstr "Пароль Google"
-
-#. module: google_base_account
-#: code:addons/google_base_account/wizard/google_login.py:77
-#, python-format
-msgid "Error!"
-msgstr ""
-
-#. module: google_base_account
-#: view:res.users:0
-msgid "Google Account"
-msgstr "Аккаунт Google"
-
-#. module: google_base_account
-#: view:res.users:0
-msgid "Synchronization"
-msgstr ""
-
-#. module: google_base_account
-#: code:addons/google_base_account/wizard/google_login.py:77
-#, python-format
-msgid "Authentication failed. Check the user and password."
-msgstr ""
-
-#. module: google_base_account
-#: code:addons/google_base_account/wizard/google_login.py:29
+#. module: google_account
+#: code:addons/google_account/models/google_service.py:119
 #, python-format
 msgid ""
-"Please install gdata-python-client from http://code.google.com/p/gdata-"
-"python-client/downloads/list"
+"Something went wrong during your token generation. Maybe your Authorization "
+"Code is invalid"
 msgstr ""
-"Установите, пожалуйста, gdata-python-client с http://code.google.com/p/gdata-"
-"python-client/downloads/list"
+"Что-то пошло не так во время генерации токенов. Возможно, ваш код "
+"авторизации недействителен."
 
-#. module: google_base_account
-#: model:ir.model,name:google_base_account.model_google_login
-msgid "Google Contact"
-msgstr "Контакт Google"
+#. module: google_account
+#: code:addons/google_account/models/google_service.py:55
+#, python-format
+msgid ""
+"Something went wrong during your token generation. Maybe your Authorization "
+"Code is invalid or already expired"
+msgstr ""
+"Что-то пошло не так во время генерации токенов. Возможно, ваш код "
+"авторизации недействителен или уже устарел"
 
-#. module: google_base_account
-#: view:google.login:0
-msgid "Cancel"
+#. module: google_account
+#: code:addons/google_account/models/google_service.py:149
+#, python-format
+msgid ""
+"Something went wrong during your token generation. Maybe your Authorization "
+"Code is invalid or already expired [%s]"
+msgstr ""
+"Что-то пошло не так во время генерации токенов. Возможно, ваш код "
+"авторизации недействителен или уже устарел [%s]"
+
+#. module: google_account
+#: code:addons/google_account/models/google_service.py:192
+#, python-format
+msgid "Something went wrong with your request to google"
+msgstr "Что-то пошло не так с вашим запросом к google"
+
+#. module: google_account
+#: code:addons/google_account/models/google_service.py:130
+#, python-format
+msgid "The account for the Google service '%s' is not configured."
 msgstr ""
 
-#. module: google_base_account
-#: field:google.login,user:0
-msgid "Google Username"
-msgstr "Имя пользователя Google"
-
-#. module: google_base_account
-#: field:res.users,gmail_password:0
-msgid "Password"
-msgstr "Пароль"
-
-#. module: google_base_account
-#: view:google.login:0
-msgid "_Login"
-msgstr "_Логин"
+#. module: google_account
+#: model:ir.model,name:google_account.model_google_service
+msgid "google.service"
+msgstr "google.service"

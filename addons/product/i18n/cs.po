@@ -1,381 +1,189 @@
-# Czech translation for openobject-addons
-# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
-# This file is distributed under the same license as the openobject-addons package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
-#
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * product
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: openobject-addons\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2014-09-23 16:28+0000\n"
-"PO-Revision-Date: 2014-08-14 16:10+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Czech <cs@li.org>\n"
+"Project-Id-Version: Odoo Server saas~11.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-08-24 09:05+0000\n"
+"PO-Revision-Date: 2018-08-24 09:05+0000\n"
+"Language-Team: Czech (https://www.transifex.com/odoo/teams/41243/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-09-24 09:25+0000\n"
-"X-Generator: Launchpad (build 17196)\n"
+"Content-Transfer-Encoding: \n"
+"Language: cs\n"
+"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
 
 #. module: product
-#: field:product.template,product_variant_count:0
-msgid "# of Product Variants"
+#: selection:product.pricelist.item,applied_on:0
+msgid " Product Category"
 msgstr ""
 
 #. module: product
-#: code:addons/product/product.py:725
-#: code:addons/product/product.py:1070
+#: model:ir.model.fields,field_description:product.field_product_product__product_variant_count
+#: model:ir.model.fields,field_description:product.field_product_template__product_variant_count
+msgid "# Product Variants"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_category__product_count
+msgid "# Products"
+msgstr ""
+
+#. module: product
+#: code:addons/product/models/product_pricelist.py:453
+#, python-format
+msgid "%s %% discount"
+msgstr ""
+
+#. module: product
+#: code:addons/product/models/product_pricelist.py:455
+#, python-format
+msgid "%s %% discount and %s surcharge"
+msgstr ""
+
+#. module: product
+#: code:addons/product/models/product_template.py:359
 #, python-format
 msgid "%s (copy)"
-msgstr "%s (kopie)"
-
-#. module: product
-#: model:product.attribute.value,name:product.product_attribute_value_1
-msgid "16 GB"
 msgstr ""
 
 #. module: product
-#: model:product.template,description_sale:product.product_product_3_product_template
+#: model:ir.ui.view,arch_db:product.product_pricelist_item_form_view
 msgid ""
-"17\" LCD Monitor\n"
-"Processor AMD 8-Core\n"
-"512MB RAM\n"
-"HDD SH-1"
+"<span attrs=\"{'invisible':[('base', '!=', 'list_price')]}\">Public Price  -  </span>\n"
+"                            <span attrs=\"{'invisible':[('base', '!=', 'standard_price')]}\">Cost  -  </span>\n"
+"                            <span attrs=\"{'invisible':[('base', '!=', 'pricelist')]}\">Other Pricelist  -  </span>"
 msgstr ""
-"17\" LCD monitor\n"
-"Osmijádrový procesor AMD\n"
-"512MB RAM\n"
-"Pevný disk SH-1"
 
 #. module: product
-#: model:product.template,description:product.product_product_25_product_template
+#: model:ir.ui.view,arch_db:product.product_pricelist_item_form_view
+msgid "<span class=\"o_form_label\">New Price =</span>"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.product_category_form_view
+msgid "<span class=\"o_stat_text\"> Products</span>"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.product_variant_easy_edit_view
+msgid "<span>kg</span>"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.product_template_form_view
+#: model:ir.ui.view,arch_db:product.product_variant_easy_edit_view
+msgid "<span>m³</span>"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.report_pricelist
+msgid "<strong>Currency</strong>:<br/>"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.report_pricelist
+msgid "<strong>Description</strong>"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.report_pricelist
+msgid "<strong>Price List Name</strong>:<br/>"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.report_simple_label
+msgid "<strong>Price:</strong>"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.report_pricelist
+msgid "<strong>Print date</strong>:<br/>"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.product_template_only_form_view
 msgid ""
-"17\" Monitor\n"
-"4GB RAM\n"
-"Standard-1294P Processor\n"
-"QWERTY keyboard"
+"<strong>Warning</strong>: adding or deleting attributes\n"
+"                        will delete and recreate existing variants and lead\n"
+"                        to the loss of their possible customizations."
 msgstr ""
-"17\" monitor\n"
-"4GB RAM\n"
-"Standardní procesor 1294P\n"
-"QWERTY klávesnice"
 
 #. module: product
-#: model:product.template,description:product.product_product_26_product_template
+#: sql_constraint:product.product:0
+msgid "A barcode can only be assigned to one product !"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_product__description_sale
+#: model:ir.model.fields,help:product.field_product_template__description_sale
 msgid ""
-"17\" Monitor\n"
-"6GB RAM\n"
-"Hi-Speed 234Q Processor\n"
-"QWERTY keyboard"
-msgstr ""
-"17\" monitor\n"
-"6GB RAM\n"
-"Výkonný procesor 234Q\n"
-"QWERTY klávesnice"
-
-#. module: product
-#: model:product.attribute.value,name:product.product_attribute_value_5
-msgid "2.4 GHz"
+"A description of the Product that you want to communicate to your customers."
+" This description will be copied to every Sales Order, Delivery Order and "
+"Customer Invoice/Credit Note"
 msgstr ""
 
 #. module: product
-#: model:product.template,description_sale:product.product_product_8_product_template
+#: model:ir.model.fields,help:product.field_product_product__description_purchase
+#: model:ir.model.fields,help:product.field_product_template__description_purchase
 msgid ""
-"2.7GHz quad-core Intel Core i5\n"
-"                Turbo Boost up to 3.2GHz\n"
-"                8GB (two 4GB) memory\n"
-"                1TB hard drive1\n"
-"                Intel Iris Pro graphics\n"
-"            "
+"A description of the Product that you want to communicate to your vendors. "
+"This description will be copied to every Purchase Order, Receipt and Vendor "
+"Bill/Credit Note."
 msgstr ""
 
 #. module: product
-#: model:product.attribute.value,name:product.product_attribute_value_2
-msgid "32 GB"
-msgstr ""
-
-#. module: product
-#: model:product.template,description_sale:product.product_product_4_product_template
-#: model:product.template,description_sale:product.product_product_4b_product_template
-#: model:product.template,description_sale:product.product_product_4c_product_template
-#: model:product.template,description_sale:product.product_product_4d_product_template
-msgid ""
-"7.9‑inch (diagonal) LED-backlit, 128Gb\n"
-"Dual-core A5 with quad-core graphics\n"
-"FaceTime HD Camera, 1.2 MP Photos"
-msgstr ""
-
-#. module: product
-#: model:ir.actions.act_window,help:product.product_ul_form_action
-msgid ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Click to add a new Logistic Unit\n"
-"              </p><p>\n"
-"                The logistic unit defines the container used for the "
-"package.  \n"
-"                It has a type (e.g. pallet, box, ...) and you can specify "
-"its \n"
-"                size. \n"
-"              </p>\n"
-"            "
-msgstr ""
-
-#. module: product
-#: model:ir.actions.act_window,help:product.product_uom_categ_form_action
-msgid ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Click to add a new unit of measure category.\n"
-"              </p><p>\n"
-"                Units of measure belonging to the same category can be\n"
-"                converted between each others. For example, in the category\n"
-"                <i>'Time'</i>, you will have the following units of "
-"measure:\n"
-"                Hours, Days.\n"
-"              </p>\n"
-"            "
-msgstr ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Klikněte pro přidání nové měrné jednotky.\n"
-"              </p><p>\n"
-"                Mezi měrnými jednotkami náležícími do stejné kategorie lze\n"
-"                převádět. Například v kategorii <i>'Čas'</i> máte "
-"následující\n"
-"                měrné jednotky: hodiny, dny.\n"
-"              </p>\n"
-"            "
-
-#. module: product
-#: model:ir.actions.act_window,help:product.product_uom_form_action
-msgid ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Click to add a new unit of measure.\n"
-"              </p><p>\n"
-"                You must define a conversion rate between several Units of\n"
-"                Measure within the same category.\n"
-"              </p>\n"
-"            "
-msgstr ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Klikněte pro přidání nové měrné jednotky.\n"
-"              </p><p>\n"
-"                Musíte určit převodní poměr mezi několika\n"
-"                měrnými jednotkami stejné kategorie.\n"
-"              </p>\n"
-"            "
-
-#. module: product
-#: model:ir.actions.act_window,help:product.product_pricelist_action
-msgid ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Click to add a pricelist version.\n"
-"              </p><p>\n"
-"                There can be more than one version of a pricelist, each of\n"
-"                these must be valid during a certain period of time. Some\n"
-"                examples of versions: Main Prices, 2010, 2011, Summer "
-"Sales,\n"
-"                etc.\n"
-"              </p>\n"
-"            "
-msgstr ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Klikněte pro přidání verze ceníku.\n"
-"              </p><p>\n"
-"                Pokud existuje více verzí ceníku, každá musí být platná\n"
-"                v jiném rozsahu dat. Příklady verzí: Hlavní ceník, 2010, "
-"2011,\n"
-"                Letní slevy a podobně.\n"
-"              </p>\n"
-"            "
-
-#. module: product
-#: model:ir.actions.act_window,help:product.product_pricelist_action_for_purchase
-msgid ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Click to create a pricelist.\n"
-"              </p><p>\n"
-"                A price list contains rules to be evaluated in order to "
-"compute\n"
-"                the purchase price. The default price list has only one "
-"rule; use\n"
-"                the cost price defined on the product form, so that you do "
-"not have to\n"
-"                worry about supplier pricelists if you have very simple "
-"needs.\n"
-"              </p><p>\n"
-"                But you can also import complex price lists form your "
-"supplier\n"
-"                that may depends on the quantities ordered or the current\n"
-"                promotions.\n"
-"              </p>\n"
-"            "
-msgstr ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Klikněte pro vytvoření ceníku.\n"
-"              </p><p>\n"
-"                Ceník obsahuje pravidla, které je třeba vyhodnotit pro "
-"získání\n"
-"                nákupní ceny. Výchozí ceník má jen jedno pravidlo; použijte\n"
-"                nákladovou cenu zadanou ve formuláři výrobku takže se "
-"nemusíte\n"
-"                starat o ceníky vašich dodavatelů pokud máte jen základní\n"
-"                požadavky.\n"
-"</p><p>\n"
-"                Můžete však též importovat komplexní ceníky vašeho\n"
-"                dodavatele s množstevními slevami nebo momentálními\n"
-"                nabídkami.\n"
-"              </p>\n"
-"            "
-
-#. module: product
-#: model:ir.actions.act_window,help:product.product_pricelist_action2
-msgid ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Click to create a pricelist.\n"
-"              </p><p>\n"
-"                A price list contains rules to be evaluated in order to "
-"compute\n"
-"                the sales price of the products.\n"
-"              </p><p>\n"
-"                Price lists may have several versions (2010, 2011, Promotion "
-"of\n"
-"                February 2010, etc.) and each version may have several "
-"rules.\n"
-"                (e.g. the customer price of a product category will be based "
-"on\n"
-"                the supplier price multiplied by 1.80).\n"
-"              </p>\n"
-"            "
-msgstr ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Klikněte pro vytvoření ceníku.\n"
-"              </p><p>\n"
-"                Ceník obsahuje pravidla, které je třeba vyhodnotit pro "
-"získání\n"
-"                prodejních cen výrobků.\n"
-"              </p><p>\n"
-"                Ceníky mohou mít několik verzí (2010, 2011, Nabídka únor\n"
-"                2010, atd.) a každá verze může mít několik pravidel. (např. "
-"\n"
-"                zákaznická cena kategorie výrobků bude založena na ceně\n"
-"                dodavatele násobené 1,80)\n"
-"              </p>\n"
-"            "
-
-#. module: product
-#: model:ir.actions.act_window,help:product.product_normal_action
-#: model:ir.actions.act_window,help:product.product_variant_action
-msgid ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Click to define a new product.\n"
-"              </p><p>\n"
-"                You must define a product for everything you buy or sell,\n"
-"                whether it's a physical product, a consumable or service.\n"
-"              </p>\n"
-"            "
-msgstr ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Klikněte pro definování nového výrobku.\n"
-"              </p><p>\n"
-"                Pro vše, co prodáte, musíte definovat výrobek ať už jde\n"
-"                o fyzický výrobek, spotřební zboží nebo službu.\n"
-"              </p>\n"
-"            "
-
-#. module: product
-#: model:ir.actions.act_window,help:product.product_normal_action_sell
-msgid ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Click to define a new product.\n"
-"              </p><p>\n"
-"                You must define a product for everything you sell, whether "
-"it's\n"
-"                a physical product, a consumable or a service you offer to\n"
-"                customers.\n"
-"              </p><p>\n"
-"                The product form contains information to simplify the sale\n"
-"                process: price, notes in the quotation, accounting data,\n"
-"                procurement methods, etc.\n"
-"              </p>\n"
-"            "
-msgstr ""
-"<p class=\"oe_view_nocontent_create\">\n"
-"                Klikněte pro definování nového výrobku.\n"
-"              </p><p>\n"
-"                Pro vše, co prodáte, musíte definovat výrobek ať už jde\n"
-"                o fyzický výrobek, spotřební zboží nebo službu, kterou\n"
-"                nabízíte zákazníkům.\n"
-"              </p><p>\n"
-"                Formulář výrobku obsahuje informace pro zjednodušení\n"
-"                procesu prodeje: cenu, poznámky k nabídce, účetní\n"
-"                informace, způsoby zásobování a další.\n"
-"              </p>\n"
-"            "
-
-#. module: product
-#: model:ir.actions.act_window,help:product.product_category_action
-msgid ""
-"<p>\n"
-"                Here is a list of all your products classified by category. "
-"You\n"
-"                can click a category to get the list of all products linked "
-"to\n"
-"                this category or to a child of this category.\n"
-"              </p>\n"
-"            "
-msgstr ""
-"<p>\n"
-"                Zde je seznam všech vašich výrobků tříděných do kategorií.\n"
-"                Můžete kliknout na kategorii pro získání celého seznamu\n"
-"                výrobků této kategorie nebo podřízených kategorií.\n"
-"              </p>\n"
-"            "
-
-#. module: product
-#: help:product.category,type:0
-msgid ""
-"A category of the view type is a virtual category that can be used as the "
-"parent of another category to create a hierarchical structure."
-msgstr ""
-"Kategorie druhu pohledu je virtuální kategorie použitelná jako rodičovská "
-"kategorie jiné kategorie pro vytvoření hierarchické struktury."
-
-#. module: product
-#: help:product.template,description_sale:0
-msgid ""
-"A description of the Product that you want to communicate to your customers. "
-"This description will be copied to every Sale Order, Delivery Order and "
-"Customer Invoice/Refund"
-msgstr ""
-
-#. module: product
-#: help:product.template,description_purchase:0
-msgid ""
-"A description of the Product that you want to communicate to your suppliers. "
-"This description will be copied to every Purchase Order, Receipt and "
-"Supplier Invoice/Refund."
-msgstr ""
-
-#. module: product
-#: help:product.template,description:0
+#: model:ir.model.fields,help:product.field_product_product__description
+#: model:ir.model.fields,help:product.field_product_template__description
 msgid ""
 "A precise description of the Product, used only for internal information "
 "purposes."
 msgstr ""
 
 #. module: product
-#: model:product.category,name:product.product_category_7
-msgid "Accessories"
-msgstr "Příslušenství"
+#: model:ir.actions.act_window,help:product.product_pricelist_action2
+msgid ""
+"A price is a set of sales prices or rules to compute the price of sales order lines based on products, product categories, dates and ordered quantities.\n"
+"                This is the perfect tool to handle several pricings, seasonal discounts, etc."
+msgstr ""
 
 #. module: product
-#: field:product.price.type,active:0
-#: field:product.pricelist,active:0
-#: field:product.pricelist.version,active:0
-#: field:product.product,active:0
-#: field:product.template,active:0
-#: field:product.uom,active:0
+#: model:ir.model.fields,help:product.field_product_product__type
+#: model:ir.model.fields,help:product.field_product_template__type
+msgid ""
+"A storable product is a product for which you manage stock. The \"Inventory\" app has to be installed.\n"
+"A consumable product, on the other hand, is a product for which stock is not managed.\n"
+"A service is a non-material product you provide.\n"
+"A digital content is a non-material product you sell online. The files attached to the products are the one that are sold on the e-commerce such as e-books, music, pictures,... The \"Digital Product\" module has to be installed."
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_product__message_needaction
+#: model:ir.model.fields,field_description:product.field_product_template__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_pricelist__active
+#: model:ir.model.fields,field_description:product.field_product_product__active
+#: model:ir.model.fields,field_description:product.field_product_template__active
+#: model:ir.ui.view,arch_db:product.product_supplierinfo_search_view
 msgid "Active"
-msgstr "Aktivní"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_product__activity_ids
+#: model:ir.model.fields,field_description:product.field_product_template__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_product__activity_state
+#: model:ir.model.fields,field_description:product.field_product_template__activity_state
+msgid "Activity State"
+msgstr ""
 
 #. module: product
 #: model:product.category,name:product.product_category_all
@@ -383,1037 +191,732 @@ msgid "All"
 msgstr ""
 
 #. module: product
-#: model:product.template,description:product.product_product_37_product_template
-msgid "All in one hi-speed printer with fax and scanner."
-msgstr "Vysokorychlostní tiskárna all-in-one s faxem a skenerem."
-
-#. module: product
-#: model:product.category,name:product.accessories
-msgid "Apple Accessories"
-msgstr ""
-
-#. module: product
-#: model:product.template,name:product.product_product_7_product_template
-msgid "Apple In-Ear Headphones"
-msgstr ""
-
-#. module: product
-#: model:product.category,name:product.apple
-msgid "Apple Products"
-msgstr ""
-
-#. module: product
-#: model:product.template,name:product.product_product_9_product_template
-msgid "Apple Wireless Keyboard"
-msgstr ""
-
-#. module: product
-#: model:product.template,name:product.product_assembly_product_template
-msgid "Assembly Service Cost"
-msgstr "Náklady na sestavení"
-
-#. module: product
-#: help:product.supplierinfo,sequence:0
-msgid "Assigns the priority to the list of product supplier."
-msgstr "Přiřadí prioritu k seznamu dodavatelů výrobku."
-
-#. module: product
-#: help:product.price.type,field:0
-msgid "Associated field in the product form."
-msgstr "Přidružené pole ve formuláři výrobku."
-
-#. module: product
-#: code:addons/product/pricelist.py:208
+#: code:addons/product/models/product_pricelist.py:448
 #, python-format
-msgid ""
-"At least one pricelist has no active version !\n"
-"Please create or activate one."
+msgid "All Products"
 msgstr ""
-"Nejméně jeden ceník nemá aktivní verzi!\n"
-"Prosím vytvořte nebo aktivuje alespoň jednu."
 
 #. module: product
-#: field:product.attribute.line,attribute_id:0
-#: field:product.attribute.value,attribute_id:0
+#: model:ir.ui.view,arch_db:product.product_variant_easy_edit_view
+msgid "All general settings about this product are managed on"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_res_config_settings__group_sale_pricelist
+msgid ""
+"Allows to manage different prices based on rules per category of customers.\n"
+"                Example: 10% for retailers, promotion of 5 EUR on this product, etc."
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.product_normal_form_view
+#: model:ir.ui.view,arch_db:product.product_pricelist_view
+msgid "Applicable On"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__applied_on
+msgid "Apply On"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.product_pricelist_view_search
+#: model:ir.ui.view,arch_db:product.product_supplierinfo_search_view
+#: model:ir.ui.view,arch_db:product.product_template_search_view
+msgid "Archived"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_supplierinfo__sequence
+msgid "Assigns the priority to the list of product vendor."
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_attribute_line__attribute_id
+#: model:ir.model.fields,field_description:product.field_product_attribute_value__attribute_id
 msgid "Attribute"
 msgstr ""
 
 #. module: product
-#: field:product.attribute.value,price_extra:0
+#: model:ir.ui.view,arch_db:product.product_attribute_line_form
+#: model:ir.ui.view,arch_db:product.product_attribute_view_form
+msgid "Attribute Name"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_attribute_value__price_extra
 msgid "Attribute Price Extra"
 msgstr ""
 
 #. module: product
-#: field:product.attribute.value,price_ids:0
+#: model:ir.model.fields,field_description:product.field_product_attribute_value__price_ids
 msgid "Attribute Prices"
 msgstr ""
 
 #. module: product
 #: model:ir.actions.act_window,name:product.variants_action
-#: model:ir.ui.menu,name:product.menu_variants_action
+#: model:ir.model.fields,field_description:product.field_product_attribute_line__value_ids
+#: model:ir.ui.view,arch_db:product.product_attribute_view_form
 msgid "Attribute Values"
 msgstr ""
 
 #. module: product
 #: model:ir.actions.act_window,name:product.attribute_action
-#: model:ir.ui.menu,name:product.menu_attribute_action
-#: field:product.product,attribute_value_ids:0
+#: model:ir.model.fields,field_description:product.field_product_product__attribute_value_ids
+#: model:ir.ui.view,arch_db:product.product_attribute_value_view_tree
+#: model:ir.ui.view,arch_db:product.product_template_search_view
+#: model:ir.ui.view,arch_db:product.product_variant_easy_edit_view
 msgid "Attributes"
 msgstr ""
 
 #. module: product
-#: view:product.pricelist.item:product.product_pricelist_item_form_view
-msgid "Base Price"
-msgstr "Základní cena"
-
-#. module: product
-#: help:product.pricelist.item,base:0
-msgid "Base price for computation."
-msgstr "Základní cena pro výpočet."
-
-#. module: product
-#: help:product.template,list_price:0
-msgid ""
-"Base price to compute the customer price. Sometimes called the catalog price."
+#: model:ir.model.fields,field_description:product.field_res_config_settings__group_product_variant
+msgid "Attributes and Variants"
 msgstr ""
-"Základní cena pro výpočet zákaznické ceny. Často se také nazývá katalogová "
-"cena."
 
 #. module: product
-#: field:product.pricelist.item,base:0
+#: model:ir.model.fields,field_description:product.field_product_packaging__barcode
+#: model:ir.model.fields,field_description:product.field_product_product__barcode
+#: model:ir.model.fields,field_description:product.field_product_template__barcode
+#: model:ir.ui.view,arch_db:product.report_simple_barcode
+#: model:ir.ui.view,arch_db:product.report_simple_label
+msgid "Barcode"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_packaging__barcode
+msgid "Barcode used for packaging identification."
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_pricelist_item__base
+msgid ""
+"Base price for computation.\n"
+"Public Price: The base price will be the Sale/public Price.\n"
+"Cost Price : The base price will be the cost price.\n"
+"Other Pricelist : Computation of the base price based on another Pricelist."
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_product__list_price
+#: model:ir.model.fields,help:product.field_product_template__list_price
+#: model:ir.model.fields,help:product.field_product_template__lst_price
+msgid ""
+"Base price to compute the customer price. Sometimes called the catalog "
+"price."
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__base
 msgid "Based on"
-msgstr "Založeno na"
+msgstr ""
 
 #. module: product
-#: field:product.product,image:0
+#: model:ir.model.fields,field_description:product.field_product_product__image
 msgid "Big-sized image"
 msgstr ""
 
 #. module: product
-#: field:product.uom,factor_inv:0
-msgid "Bigger Ratio"
-msgstr ""
-
-#. module: product
-#: selection:product.uom,uom_type:0
-msgid "Bigger than the reference Unit of Measure"
-msgstr "Větší než referenční měrná jednotka"
-
-#. module: product
-#: model:product.attribute.value,name:product.product_attribute_value_4
-msgid "Black"
-msgstr ""
-
-#. module: product
-#: model:product.template,name:product.product_product_35_product_template
-msgid "Blank CD"
-msgstr "Prázdné CD"
-
-#. module: product
-#: model:product.template,name:product.product_product_36_product_template
-msgid "Blank DVD-RW"
-msgstr "Prázdné DVD-RW"
-
-#. module: product
-#: model:product.template,name:product.product_product_5b_product_template
-msgid "Bose Mini Bluetooth Speaker"
-msgstr ""
-
-#. module: product
-#: model:product.template,description_sale:product.product_product_5b_product_template
-msgid "Bose's smallest portable Bluetooth speaker"
-msgstr ""
-
-#. module: product
-#: selection:product.ul,type:0
-msgid "Box"
-msgstr "Krabice"
-
-#. module: product
-#: model:product.ul,name:product.product_ul_box
-msgid "Box 20x20x40"
-msgstr "Krabice 20x20x40"
-
-#. module: product
-#: model:product.ul,name:product.product_ul_big_box
-msgid "Box 30x40x60"
-msgstr "Krabice 30x40x60"
-
-#. module: product
-#: help:product.uom,active:0
-msgid ""
-"By unchecking the active field you can disable a unit of measure without "
-"deleting it."
-msgstr ""
-"Odškrtnutím aktivního pole můžete zakázat měrnou jednotku bez jejího "
-"odstranění."
-
-#. module: product
-#: view:product.price_list:product.view_product_price_list
+#: model:ir.ui.view,arch_db:product.view_product_price_list
 msgid "Calculate Product Price per Unit Based on Pricelist Version."
-msgstr "Spočítat cenu výrobku na základní jednotku dle verze ceníku."
+msgstr ""
 
 #. module: product
-#: field:product.template,rental:0
+#: model:ir.model.fields,field_description:product.field_product_product__purchase_ok
+#: model:ir.model.fields,field_description:product.field_product_template__purchase_ok
+#: model:ir.ui.view,arch_db:product.product_template_search_view
+msgid "Can be Purchased"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_product__rental
+#: model:ir.model.fields,field_description:product.field_product_template__rental
 msgid "Can be Rent"
-msgstr "Lze pronajmout"
+msgstr ""
 
 #. module: product
-#: view:product.template:product.product_template_search_view
-#: field:product.template,sale_ok:0
+#: model:ir.model.fields,field_description:product.field_product_product__sale_ok
+#: model:ir.model.fields,field_description:product.field_product_template__sale_ok
+#: model:ir.ui.view,arch_db:product.product_template_search_view
 msgid "Can be Sold"
-msgstr "Lze prodat"
+msgstr ""
 
 #. module: product
-#: view:product.price_list:product.view_product_price_list
+#: model:ir.ui.view,arch_db:product.view_product_price_list
 msgid "Cancel"
-msgstr "Zrušit"
+msgstr ""
 
 #. module: product
-#: code:addons/product/product.py:210
+#: model:ir.ui.view,arch_db:product.product_category_form_view
+msgid "Category name"
+msgstr ""
+
+#. module: product
+#: code:addons/product/models/product_pricelist.py:442
 #, python-format
-msgid "Cannot change the category of existing Unit of Measure '%s'."
-msgstr "Nelze změnit kategorii existující měrné jednotky '%s'."
+msgid "Category: %s"
+msgstr ""
 
 #. module: product
-#: model:product.public.category,name:product.case
-msgid "Case"
-msgstr "Případ"
+#: model:ir.model.fields,help:product.field_product_attribute__create_variant
+msgid "Check this if you want to create multiple variants for this attribute."
+msgstr ""
 
 #. module: product
-#: view:product.template:product.product_template_search_view
-msgid "Category"
-msgstr "Kategorie"
-
-#. module: product
-#: field:product.category,type:0
-msgid "Category Type"
-msgstr "Typ kategorie"
-
-#. module: product
-#: field:product.category,child_id:0
+#: model:ir.model.fields,field_description:product.field_product_category__child_id
 msgid "Child Categories"
-msgstr "Podřízené kategorie"
-
-#. module: product
-#: field:product.packaging,code:0
-msgid "Code"
-msgstr "Kód"
-
-#. module: product
-#: help:product.template,uos_coeff:0
-msgid ""
-"Coefficient to convert default Unit of Measure to Unit of Sale\n"
-" uos = uom * coeff"
-msgstr ""
-"Koeficient pro převod měrných jednotek na prodejní jednotky\n"
-" PJ = MJ * koef."
-
-#. module: product
-#: model:product.attribute,name:product.product_attribute_2
-msgid "Color"
 msgstr ""
 
 #. module: product
-#: field:product.template,color:0
+#: model:ir.ui.view,arch_db:product.product_variant_easy_edit_view
+msgid "Codes"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_product__color
+#: model:ir.model.fields,field_description:product.field_product_template__color
 msgid "Color Index"
-msgstr "Index barvy"
-
-#. module: product
-#: model:product.template,description_sale:product.product_product_6_product_template
-msgid ""
-"Color: White\n"
-"Capacity: 16GB\n"
-"Connectivity: Wifi\n"
-"Beautiful 7.9-inch display\n"
-"Over 375,000 apps3\n"
-"Ultrafast wireless\n"
-"iOS7\n"
-"            "
 msgstr ""
 
 #. module: product
-#: field:product.pricelist,company_id:0
-#: field:product.pricelist.item,company_id:0
-#: field:product.pricelist.version,company_id:0
-#: field:product.supplierinfo,company_id:0
-#: field:product.template,company_id:0
+#: model:ir.ui.view,arch_db:product.res_config_settings_view_form
+msgid "Common Product Catalog"
+msgstr ""
+
+#. module: product
+#: model:ir.model,name:product.model_res_company
+msgid "Companies"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_price_history__company_id
+#: model:ir.model.fields,field_description:product.field_product_pricelist__company_id
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__company_id
+#: model:ir.model.fields,field_description:product.field_product_product__company_id
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__company_id
+#: model:ir.model.fields,field_description:product.field_product_template__company_id
 msgid "Company"
-msgstr "Společnost"
-
-#. module: product
-#: model:product.category,name:product.product_category_8
-#: model:product.public.category,name:product.Components
-msgid "Components"
-msgstr "Komponenty"
-
-#. module: product
-#: model:product.template,name:product.product_product_16_product_template
-msgid "Computer Case"
-msgstr "Počítačová skříň"
-
-#. module: product
-#: model:product.public.category,name:product.Computer_all_in_one
-msgid "Computer all-in-one"
 msgstr ""
 
 #. module: product
-#: model:product.category,name:product.product_category_4
-#: model:product.public.category,name:product.computers
-#: model:product.public.category,name:product.sub_computers
-msgid "Computers"
-msgstr "Počítače"
-
-#. module: product
-#: view:product.template:product.product_template_form_view
-msgid "Configurations"
+#: model:ir.model.fields,field_description:product.field_product_category__complete_name
+msgid "Complete Name"
 msgstr ""
 
 #. module: product
-#: view:product.template:product.product_template_search_view
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__compute_price
+#: model:ir.ui.view,arch_db:product.product_pricelist_item_form_view
+msgid "Compute Price"
+msgstr ""
+
+#. module: product
+#: code:addons/product/models/product_template.py:50
 #: selection:product.template,type:0
-msgid "Consumable"
-msgstr "Spotřební zboží"
-
-#. module: product
-#: view:product.template:product.product_template_search_view
-msgid "Consumable products"
-msgstr "Spotřební výrobky"
-
-#. module: product
-#: help:product.template,type:0
-msgid ""
-"Consumable: Will not imply stock management for this product. \n"
-"Stockable product: Will imply stock management for this product."
-msgstr ""
-"Spotřební: Neovlivňuje správu skladu tohoto výrobku \n"
-"Naskladnitelný výrobek: Ovlivňuje správu skladu tohoto výrobku."
-
-#. module: product
-#: help:product.uom,category_id:0
-msgid ""
-"Conversion between Units of Measure can only occur if they belong to the "
-"same category. The conversion will be made based on the ratios."
-msgstr ""
-"Převod mezi měrnými jednotkami lze uskutečnit jen když patří do stejné "
-"kategorie. Převod bude proveden na základě vzájemných poměrů."
-
-#. module: product
-#: code:addons/product/product.py:178
 #, python-format
-msgid ""
-"Conversion from Product UoM %s to Default UoM %s is not possible as they "
-"both belong to different Category!."
-msgstr ""
-"Převod z MJ výrobku %s na výchozí MJ %s není množný jelikož jednotky spadají "
-"do různých kategorií!"
-
-#. module: product
-#: model:product.price.type,name:product.standard_price
-#: field:product.template,standard_price:0
-msgid "Cost Price"
-msgstr "Nákladová cena"
-
-#. module: product
-#: help:product.template,standard_price:0
-msgid ""
-"Cost price of the product template used for standard stock valuation in "
-"accounting and used as a base price on purchase orders."
+msgid "Consumable"
 msgstr ""
 
 #. module: product
-#: field:pricelist.partnerinfo,create_uid:0
-#: field:product.attribute,create_uid:0
-#: field:product.attribute.line,create_uid:0
-#: field:product.attribute.price,create_uid:0
-#: field:product.attribute.value,create_uid:0
-#: field:product.category,create_uid:0
-#: field:product.packaging,create_uid:0
-#: field:product.price.history,create_uid:0
-#: field:product.price.type,create_uid:0
-#: field:product.price_list,create_uid:0
-#: field:product.pricelist,create_uid:0
-#: field:product.pricelist.item,create_uid:0
-#: field:product.pricelist.type,create_uid:0
-#: field:product.pricelist.version,create_uid:0
-#: field:product.product,create_uid:0
-#: field:product.supplierinfo,create_uid:0
-#: field:product.template,create_uid:0
-#: field:product.ul,create_uid:0
-#: field:product.uom,create_uid:0
-#: field:product.uom.categ,create_uid:0
+#: model:ir.model,name:product.model_res_partner
+msgid "Contact"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_packaging__qty
+msgid "Contained Quantity"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_price_history__cost
+#: model:ir.model.fields,field_description:product.field_product_product__standard_price
+#: model:ir.model.fields,field_description:product.field_product_template__standard_price
+#: selection:product.pricelist.item,base:0
+msgid "Cost"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_product__standard_price
+msgid ""
+"Cost used for stock valuation in standard price and as a first price to set "
+"in average/fifo. Also used as a base price for pricelists. Expressed in the "
+"default unit of measure of the product."
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_template__standard_price
+msgid ""
+"Cost used for stock valuation in standard price and as a first price to set "
+"in average/fifo. Also used as a base price for pricelists. Expressed in the "
+"default unit of measure of the product. "
+msgstr ""
+
+#. module: product
+#: model:ir.model,name:product.model_res_country_group
+msgid "Country Group"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_pricelist__country_group_ids
+msgid "Country Groups"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_attribute__create_variant
+msgid "Create Variant"
+msgstr ""
+
+#. module: product
+#: model:ir.actions.act_window,help:product.product_pricelist_action2
+msgid "Create a new pricelist"
+msgstr ""
+
+#. module: product
+#: model:ir.actions.act_window,help:product.product_template_action
+#: model:ir.actions.act_window,help:product.product_template_action_all
+msgid "Create a new product"
+msgstr ""
+
+#. module: product
+#: model:ir.actions.act_window,help:product.product_normal_action
+#: model:ir.actions.act_window,help:product.product_normal_action_sell
+#: model:ir.actions.act_window,help:product.product_variant_action
+msgid "Create a new product variant"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_attribute__create_uid
+#: model:ir.model.fields,field_description:product.field_product_attribute_line__create_uid
+#: model:ir.model.fields,field_description:product.field_product_attribute_price__create_uid
+#: model:ir.model.fields,field_description:product.field_product_attribute_value__create_uid
+#: model:ir.model.fields,field_description:product.field_product_category__create_uid
+#: model:ir.model.fields,field_description:product.field_product_packaging__create_uid
+#: model:ir.model.fields,field_description:product.field_product_price_history__create_uid
+#: model:ir.model.fields,field_description:product.field_product_price_list__create_uid
+#: model:ir.model.fields,field_description:product.field_product_pricelist__create_uid
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__create_uid
+#: model:ir.model.fields,field_description:product.field_product_product__create_uid
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__create_uid
+#: model:ir.model.fields,field_description:product.field_product_template__create_uid
 msgid "Created by"
 msgstr ""
 
 #. module: product
-#: field:pricelist.partnerinfo,create_date:0
-#: field:product.attribute,create_date:0
-#: field:product.attribute.line,create_date:0
-#: field:product.attribute.price,create_date:0
-#: field:product.attribute.value,create_date:0
-#: field:product.category,create_date:0
-#: field:product.packaging,create_date:0
-#: field:product.price.history,create_date:0
-#: field:product.price.type,create_date:0
-#: field:product.price_list,create_date:0
-#: field:product.pricelist,create_date:0
-#: field:product.pricelist.item,create_date:0
-#: field:product.pricelist.type,create_date:0
-#: field:product.pricelist.version,create_date:0
-#: field:product.product,create_date:0
-#: field:product.supplierinfo,create_date:0
-#: field:product.template,create_date:0
-#: field:product.ul,create_date:0
-#: field:product.uom,create_date:0
-#: field:product.uom.categ,create_date:0
+#: model:ir.model.fields,field_description:product.field_product_attribute__create_date
+#: model:ir.model.fields,field_description:product.field_product_attribute_line__create_date
+#: model:ir.model.fields,field_description:product.field_product_attribute_price__create_date
+#: model:ir.model.fields,field_description:product.field_product_attribute_value__create_date
+#: model:ir.model.fields,field_description:product.field_product_category__create_date
+#: model:ir.model.fields,field_description:product.field_product_packaging__create_date
+#: model:ir.model.fields,field_description:product.field_product_price_history__create_date
+#: model:ir.model.fields,field_description:product.field_product_price_list__create_date
+#: model:ir.model.fields,field_description:product.field_product_pricelist__create_date
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__create_date
+#: model:ir.model.fields,field_description:product.field_product_product__create_date
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__create_date
+#: model:ir.model.fields,field_description:product.field_product_template__create_date
 msgid "Created on"
 msgstr ""
 
 #. module: product
-#: model:ir.model,name:product.model_res_currency
-#: field:product.price.type,currency_id:0
-#: field:product.pricelist,currency_id:0
-#: view:website:product.report_pricelist
+#: model:ir.model.fields,field_description:product.field_product_pricelist__currency_id
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__currency_id
+#: model:ir.model.fields,field_description:product.field_product_product__currency_id
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__currency_id
+#: model:ir.model.fields,field_description:product.field_product_template__currency_id
 msgid "Currency"
-msgstr "Měna"
-
-#. module: product
-#: model:product.template,description:product.product_product_27_product_template
-msgid "Custom Laptop based on customer's requirement."
-msgstr "Zákaznický notebook založený na potřebách zákazníka."
-
-#. module: product
-#: model:product.template,description:product.product_product_5_product_template
-#: model:product.template,description:product.product_product_5b_product_template
-msgid "Custom computer assembled on order based on customer's requirement."
-msgstr "Zákaznický počítač sestavený na základě požadavků zákazníka."
-
-#. module: product
-#: field:product.product,partner_ref:0
-msgid "Customer ref"
-msgstr "Zákazník"
-
-#. module: product
-#: model:product.template,name:product.product_product_46_product_template
-msgid "Datacard"
-msgstr "Datová karta"
-
-#. module: product
-#: help:product.product,message_last_post:0
-#: help:product.template,message_last_post:0
-msgid "Date of the last message posted on the record."
 msgstr ""
 
 #. module: product
-#: model:product.uom,name:product.product_uom_day
-msgid "Day(s)"
-msgstr "Dnů"
+#: model:ir.model.fields,field_description:product.field_product_product__partner_ref
+msgid "Customer Ref"
+msgstr ""
 
 #. module: product
-#: model:product.pricelist.version,name:product.ver0
-msgid "Default Public Pricelist Version"
-msgstr "Výchozí verze veřejného ceníku"
+#: model:ir.model.fields,field_description:product.field_product_price_history__datetime
+msgid "Date"
+msgstr ""
 
 #. module: product
-#: view:product.template:product.product_template_search_view
-msgid "Default Unit of Measure"
-msgstr "Výchozí měrná jednotka"
+#: code:addons/product/models/res_company.py:59
+#, python-format
+msgid "Default %(currency)s pricelist for %(company)s"
+msgstr ""
 
 #. module: product
-#: help:product.template,uom_id:0
+#: model:ir.model.fields,help:product.field_product_product__uom_id
+#: model:ir.model.fields,help:product.field_product_template__uom_id
 msgid "Default Unit of Measure used for all stock operation."
-msgstr "Výchozí Měrná jednotka použitá pro všechny skladové operace."
+msgstr ""
 
 #. module: product
-#: help:product.template,uom_po_id:0
+#: model:ir.model.fields,help:product.field_product_product__uom_po_id
+#: model:ir.model.fields,help:product.field_product_template__uom_po_id
 msgid ""
 "Default Unit of Measure used for purchase orders. It must be in the same "
 "category than the default unit of measure."
 msgstr ""
-"Výchozí měrná jednotka objednávek. Musí být stejné kategorie jako výchozí "
-"měrná jednotka."
 
 #. module: product
-#: field:product.supplierinfo,delay:0
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__delay
 msgid "Delivery Lead Time"
-msgstr "Dodací čekací lhůta"
+msgstr ""
 
 #. module: product
-#: field:pricelist.partnerinfo,name:0
-#: field:product.packaging,name:0
-#: field:product.template,description:0
-#: view:website:product.report_pricelist
+#: model:ir.model.fields,field_description:product.field_product_product__description
+#: model:ir.model.fields,field_description:product.field_product_template__description
 msgid "Description"
-msgstr "Popis"
+msgstr ""
 
 #. module: product
-#: view:product.template:product.product_template_form_view
-msgid "Description for Quotations"
-msgstr "Popis do nabídek"
+#: model:ir.ui.view,arch_db:product.product_template_form_view
+msgid "Description for Customers"
+msgstr ""
 
 #. module: product
-#: view:product.template:product.product_template_form_view
-msgid "Description for Suppliers"
-msgstr "Popis pro dodavatele"
-
-#. module: product
-#: help:product.attribute.value,sequence:0
+#: model:ir.model.fields,help:product.field_product_attribute__sequence
+#: model:ir.model.fields,help:product.field_product_attribute_value__sequence
 msgid "Determine the display order"
 msgstr ""
 
 #. module: product
-#: model:product.public.category,name:product.devices
-msgid "Devices"
+#: model:ir.model.fields,field_description:product.field_product_attribute__display_name
+#: model:ir.model.fields,field_description:product.field_product_attribute_line__display_name
+#: model:ir.model.fields,field_description:product.field_product_attribute_price__display_name
+#: model:ir.model.fields,field_description:product.field_product_attribute_value__display_name
+#: model:ir.model.fields,field_description:product.field_product_category__display_name
+#: model:ir.model.fields,field_description:product.field_product_packaging__display_name
+#: model:ir.model.fields,field_description:product.field_product_price_history__display_name
+#: model:ir.model.fields,field_description:product.field_product_price_list__display_name
+#: model:ir.model.fields,field_description:product.field_product_pricelist__display_name
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__display_name
+#: model:ir.model.fields,field_description:product.field_product_product__display_name
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__display_name
+#: model:ir.model.fields,field_description:product.field_product_template__display_name
+#: model:ir.model.fields,field_description:product.field_report_product_report_pricelist__display_name
+msgid "Display Name"
 msgstr ""
 
 #. module: product
-#: model:product.uom,name:product.product_uom_dozen
-msgid "Dozen(s)"
-msgstr "Tuctů"
-
-#. module: product
-#: field:product.packaging,ean:0
-msgid "EAN"
-msgstr "EAN"
-
-#. module: product
-#: field:product.product,ean13:0
-#: field:product.template,ean13:0
-msgid "EAN13 Barcode"
-msgstr "Čárový kód EAN13"
-
-#. module: product
-#: field:product.ul,weight:0
-msgid "Empty Package Weight"
-msgstr "Váha prázdného balíku"
-
-#. module: product
-#: field:product.pricelist.version,date_end:0
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__date_end
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__date_end
 msgid "End Date"
-msgstr "Koncové datum"
+msgstr ""
 
 #. module: product
-#: selection:product.template,state:0
-msgid "End of Lifecycle"
-msgstr "Konec životního cyklu"
+#: model:ir.model.fields,help:product.field_product_supplierinfo__date_end
+msgid "End date for this vendor price"
+msgstr ""
 
 #. module: product
-#: constraint:product.category:0
-msgid "Error ! You cannot create recursive categories."
-msgstr "Chyba ! Nemůžete vytvořit rekurzivní Kategorie."
+#: model:ir.model.fields,help:product.field_product_pricelist_item__date_end
+msgid "Ending valid for the pricelist item validation"
+msgstr ""
 
 #. module: product
-#: code:addons/product/product.py:178
+#: code:addons/product/models/product.py:291
 #, python-format
-msgid "Error!"
-msgstr "Chyba!"
-
-#. module: product
-#: constraint:product.pricelist.item:0
-msgid "Error! The minimum margin should be lower than the maximum margin."
-msgstr "Chyba! Minimální marže by měla být nižší než maximální marže."
-
-#. module: product
-#: constraint:product.pricelist.item:0
 msgid ""
-"Error! You cannot assign the Main Pricelist as Other Pricelist in PriceList "
-"Item!"
+"Error! It is not allowed to choose more than one value for a given "
+"attribute."
 msgstr ""
-"Chyba! Nemůžete přiřadit hlavní ceník jako další ceník v položce ceníku!"
 
 #. module: product
-#: constraint:res.currency:0
-msgid ""
-"Error! You cannot define a rounding factor for the company's main currency "
-"that is smaller than the decimal precision of 'Account'."
+#: model:product.category,name:product.cat_expense
+msgid "Expenses"
 msgstr ""
-"Chyba! Nemůžete určit desetinnou přesnost hlavní měny společnosti menší než "
-"desetinnou přesnost 'účtu'."
 
 #. module: product
-#: constraint:decimal.precision:0
-msgid ""
-"Error! You cannot define the decimal precision of 'Account' as greater than "
-"the rounding factor of the company's main currency"
-msgstr ""
-"Chyba! Nemůžete určit desetinnou přesnost 'účtu' jako větší než "
-"zakorouhlovací faktor hlavní měny společnosti"
-
-#. module: product
-#: constraint:product.packaging:0
-msgid "Error: Invalid ean code"
-msgstr "Chyba: Neplatný kód ean"
-
-#. module: product
-#: constraint:product.template:0
-msgid ""
-"Error: The default Unit of Measure and the purchase Unit of Measure must be "
-"in the same category."
-msgstr ""
-"Chyba: Vychozí měrná jednotka a nákupní měrná jednotka musí být stejné "
-"kategorie."
-
-#. module: product
-#: help:product.pricelist.item,name:0
+#: model:ir.model.fields,help:product.field_product_pricelist_item__name
+#: model:ir.model.fields,help:product.field_product_pricelist_item__price
 msgid "Explicit rule name for this pricelist line."
-msgstr "Jméno explicitního pravidla pro tento řádek ceníku."
-
-#. module: product
-#: model:product.category,name:product.product_category_6
-msgid "External Devices"
-msgstr "Externí zařízení"
-
-#. module: product
-#: model:product.public.category,name:product.External_Hard_Drive
-msgid "External Hard Drive"
 msgstr ""
 
 #. module: product
-#: model:product.template,name:product.product_product_28_product_template
-msgid "External Hard disk"
-msgstr "Externí disk"
+#: selection:product.pricelist.item,compute_price:0
+msgid "Fix Price"
+msgstr ""
 
 #. module: product
-#: help:product.pricelist.version,date_start:0
-msgid "First valid date for the version."
-msgstr "První platné datum této verze."
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__fixed_price
+msgid "Fixed Price"
+msgstr ""
 
 #. module: product
-#: selection:product.template,mes_type:0
-msgid "Fixed"
-msgstr "Pevné"
-
-#. module: product
-#: field:product.product,message_follower_ids:0
-#: field:product.template,message_follower_ids:0
+#: model:ir.model.fields,field_description:product.field_product_product__message_follower_ids
+#: model:ir.model.fields,field_description:product.field_product_template__message_follower_ids
 msgid "Followers"
-msgstr "Sledující"
+msgstr ""
 
 #. module: product
-#: help:product.pricelist.item,min_quantity:0
+#: model:ir.model.fields,field_description:product.field_product_product__message_channel_ids
+#: model:ir.model.fields,field_description:product.field_product_template__message_channel_ids
+msgid "Followers (Channels)"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_product__message_partner_ids
+#: model:ir.model.fields,field_description:product.field_product_template__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_pricelist_item__min_quantity
 msgid ""
-"For the rule to apply, bought/sold quantity must be greater than or equal to "
-"minimum quantity specified in this field."
+"For the rule to apply, bought/sold quantity must be greater than or equal to the minimum quantity specified in this field.\n"
+"Expressed in the default unit of measure of the product."
 msgstr ""
 
 #. module: product
-#: model:product.template,description_sale:product.product_product_7_product_template
-msgid ""
-"Frequency: 5Hz to 21kHz\n"
-"Impedance: 23 ohms\n"
-"Sensitivity: 109 dB SPL/mW\n"
-"Drivers: two-way balanced armature\n"
-"Cable length: 1065 mm\n"
-"Weight: 0.4 ounce\n"
-"            "
+#: selection:product.pricelist.item,compute_price:0
+msgid "Formula"
 msgstr ""
 
 #. module: product
-#: model:product.template,description_sale:product.product_product_44_product_template
-msgid "Full featured image editing software."
-msgstr "Grafický software s plným rozsahem funkcí"
-
-#. module: product
-#: help:product.template,packaging_ids:0
-msgid ""
-"Gives the different ways to package the same product. This has no impact on "
-"the picking order and is mainly used if you use the EDI module."
-msgstr ""
-"Udává různé způsoby balení stejného výrobku. Nemá žádný vliv na naskladnění "
-"a používá se hlavně ve spojení s modulem EDI."
-
-#. module: product
-#: help:product.pricelist.item,sequence:0
-msgid ""
-"Gives the order in which the pricelist items will be checked. The evaluation "
-"gives highest priority to lowest sequence and stops as soon as a matching "
-"item is found."
-msgstr ""
-"Určuje pořadí, ve kterém budou kontrolovány položky ceníku. Vyhodnocení "
-"postupuje od největší priority přiřazené nejnižší posloupnosti a zastaví se "
-"jakmile najde shodující se položku."
-
-#. module: product
-#: help:product.packaging,sequence:0
-msgid "Gives the sequence order when displaying a list of packaging."
-msgstr "Dává pořadí posloupnosti, když zobrazuje seznam balení."
-
-#. module: product
-#: help:product.category,sequence:0
-msgid ""
-"Gives the sequence order when displaying a list of product categories."
-msgstr "Určuje pořadí posloupnosti při zobrazení seznamu kategorií výrobků."
-
-#. module: product
-#: model:product.template,name:product.product_product_44_product_template
-msgid "GrapWorks Software"
-msgstr "Software GrapWorks"
-
-#. module: product
-#: model:product.public.category,name:product.graphics_card
-#: model:product.template,name:product.product_product_24_product_template
-msgid "Graphics Card"
-msgstr "Grafická karta"
-
-#. module: product
-#: field:product.template,weight:0
-msgid "Gross Weight"
-msgstr "Hrubá váha"
-
-#. module: product
-#: view:product.template:product.product_template_search_view
-msgid "Group by..."
-msgstr "Seskupit podle..."
-
-#. module: product
-#: model:product.template,name:product.product_product_17_product_template
-msgid "HDD SH-1"
-msgstr "Pevný disk SH-1"
-
-#. module: product
-#: model:product.template,name:product.product_product_18_product_template
-msgid "HDD SH-2"
-msgstr "Pevný disk SH-2"
-
-#. module: product
-#: model:product.template,name:product.product_product_19_product_template
-msgid "HDD on Demand"
-msgstr "Harddisk na objednávku"
-
-#. module: product
-#: model:product.template,description:product.product_product_32_product_template
-msgid ""
-"Hands free headset for laptop PC with in-line microphone and headphone plug."
-msgstr "Náhlavní souprava pro notebook s konektorem mikrofonu a sluchátek."
-
-#. module: product
-#: model:product.public.category,name:product.HDD
-msgid "Hard Drive"
+#: model:ir.ui.view,arch_db:product.product_template_search_view
+msgid "Future Activities"
 msgstr ""
 
 #. module: product
-#: model:product.public.category,name:product.Headset
-msgid "Headset"
+#: model:ir.ui.view,arch_db:product.product_template_form_view
+msgid "General Information"
 msgstr ""
 
 #. module: product
-#: model:product.template,name:product.product_product_33_product_template
-msgid "Headset USB"
-msgstr "USB sluchátka"
-
-#. module: product
-#: model:product.template,description:product.product_product_33_product_template
-msgid "Headset for laptop PC with USB connector."
-msgstr "Sluchátka k notebooku s USB konektorem."
-
-#. module: product
-#: model:product.template,name:product.product_product_32_product_template
-msgid "Headset standard"
-msgstr "Standard sluchátek"
-
-#. module: product
-#: field:product.ul,height:0
-msgid "Height"
-msgstr "Výška"
-
-#. module: product
-#: model:product.template,description_sale:product.product_product_11_product_template
-#: model:product.template,description_sale:product.product_product_11b_product_template
-msgid ""
-"Height: 3.01 inches\n"
-"Width:  1.56 inches\n"
-"Depth:  0.21 inch\n"
-"Weight: 1.1 ounces"
+#: model:ir.model.fields,help:product.field_product_product__packaging_ids
+#: model:ir.model.fields,help:product.field_product_template__packaging_ids
+msgid "Gives the different ways to package the same product."
 msgstr ""
 
 #. module: product
-#: field:product.price.history,datetime:0
-msgid "Historization Time"
+#: model:ir.model.fields,help:product.field_product_product__sequence
+#: model:ir.model.fields,help:product.field_product_template__sequence
+msgid "Gives the sequence order when displaying a product list"
 msgstr ""
 
 #. module: product
-#: field:product.price.history,cost:0
-msgid "Historized Cost"
+#: selection:product.pricelist.item,applied_on:0
+msgid "Global"
 msgstr ""
 
 #. module: product
-#: help:product.product,message_summary:0
-#: help:product.template,message_summary:0
-msgid ""
-"Holds the Chatter summary (number of messages, ...). This summary is "
-"directly in html format in order to be inserted in kanban views."
+#: code:addons/product/models/product_template.py:30
+#, python-format
+msgid "Go to Internal Categories"
 msgstr ""
-"Udržuje souhrn klábosení (počet zpráv, ...). Tento souhrn je přímo ve "
-"formátu HTML aby jej bylo možné vložit do pohledů kanban."
 
 #. module: product
-#: model:product.uom,name:product.product_uom_hour
-msgid "Hour(s)"
-msgstr "Hodin"
-
-#. module: product
-#: help:product.uom,factor_inv:0
-msgid ""
-"How many times this Unit of Measure is bigger than the reference Unit of "
-"Measure in this category:\n"
-"1 * (this unit) = ratio * (reference unit)"
+#: model:ir.ui.view,arch_db:product.product_supplierinfo_search_view
+msgid "Group By"
 msgstr ""
-"Kolikrát je tato měrná jednotka větší než referenční měrná jednotka "
-"kategorie:\n"
-"1 * (tato jednotka) = poměr * (referenční jednotka)"
 
 #. module: product
-#: help:product.uom,factor:0
-msgid ""
-"How much bigger or smaller this unit is compared to the reference Unit of "
-"Measure for this category:\n"
-"1 * (reference unit) = ratio * (this unit)"
-msgstr ""
-"O kolik větší nebo menší je tato jednotka ve srovnání s referenční měrnou "
-"jednotkou této kategorie: \n"
-"1 * (referenční jednotka) = poměr * (tato jednotka)"
-
-#. module: product
-#: field:pricelist.partnerinfo,id:0
-#: field:product.attribute,id:0
-#: field:product.attribute.line,id:0
-#: field:product.attribute.price,id:0
-#: field:product.attribute.value,id:0
-#: field:product.category,id:0
-#: field:product.packaging,id:0
-#: field:product.price.history,id:0
-#: field:product.price.type,id:0
-#: field:product.price_list,id:0
-#: field:product.pricelist,id:0
-#: field:product.pricelist.item,id:0
-#: field:product.pricelist.type,id:0
-#: field:product.pricelist.version,id:0
-#: field:product.product,id:0
-#: field:product.supplierinfo,id:0
-#: field:product.template,id:0
-#: field:product.ul,id:0
-#: field:product.uom,id:0
-#: field:product.uom.categ,id:0
-#: field:report.product.report_pricelist,id:0
+#: model:ir.model.fields,field_description:product.field_product_attribute__id
+#: model:ir.model.fields,field_description:product.field_product_attribute_line__id
+#: model:ir.model.fields,field_description:product.field_product_attribute_price__id
+#: model:ir.model.fields,field_description:product.field_product_attribute_value__id
+#: model:ir.model.fields,field_description:product.field_product_category__id
+#: model:ir.model.fields,field_description:product.field_product_packaging__id
+#: model:ir.model.fields,field_description:product.field_product_price_history__id
+#: model:ir.model.fields,field_description:product.field_product_price_list__id
+#: model:ir.model.fields,field_description:product.field_product_pricelist__id
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__id
+#: model:ir.model.fields,field_description:product.field_product_product__id
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__id
+#: model:ir.model.fields,field_description:product.field_product_template__id
+#: model:ir.model.fields,field_description:product.field_report_product_report_pricelist__id
 msgid "ID"
 msgstr ""
 
 #. module: product
-#: help:product.product,message_unread:0
-#: help:product.template,message_unread:0
+#: model:ir.model.fields,help:product.field_product_product__message_unread
+#: model:ir.model.fields,help:product.field_product_template__message_unread
 msgid "If checked new messages require your attention."
-msgstr "Pokud je zaškrtnuto, nové zprávy vyžadují vaši pozornost."
-
-#. module: product
-#: help:product.pricelist,active:0
-msgid ""
-"If unchecked, it will allow you to hide the pricelist without removing it."
-msgstr "Pokud není zaškrtnuto, umožní vám skrýt ceník bez jeho odebrání."
-
-#. module: product
-#: help:product.product,active:0
-#: help:product.template,active:0
-msgid ""
-"If unchecked, it will allow you to hide the product without removing it."
-msgstr "Pokud není zaškrtnuto, umožní vám skrýt výrobek bez jeho odebrání."
-
-#. module: product
-#: model:product.category,name:product.imac
-msgid "Imac"
 msgstr ""
 
 #. module: product
-#: field:product.template,image:0
-msgid "Image"
-msgstr "Obrázek"
+#: model:ir.model.fields,help:product.field_product_product__message_needaction
+#: model:ir.model.fields,help:product.field_product_template__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
 
 #. module: product
-#: help:product.product,image:0
+#: model:ir.model.fields,help:product.field_product_product__message_has_error
+#: model:ir.model.fields,help:product.field_product_template__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_supplierinfo__product_id
 msgid ""
-"Image of the product variant (Big-sized image of product template if false). "
-"It is automatically resized as a 1024x1024px image, with aspect ratio "
+"If not set, the vendor price will apply to all variants of this product."
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_pricelist__active
+msgid ""
+"If unchecked, it will allow you to hide the pricelist without removing it."
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_product__active
+#: model:ir.model.fields,help:product.field_product_template__active
+msgid ""
+"If unchecked, it will allow you to hide the product without removing it."
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_template__image
+msgid "Image"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_product__image
+msgid ""
+"Image of the product variant (Big-sized image of product template if false)."
+" It is automatically resized as a 1024x1024px image, with aspect ratio "
 "preserved."
 msgstr ""
 
 #. module: product
-#: help:product.product,image_medium:0
+#: model:ir.model.fields,help:product.field_product_product__image_medium
 msgid ""
 "Image of the product variant (Medium-sized image of product template if "
 "false)."
 msgstr ""
 
 #. module: product
-#: help:product.product,image_small:0
+#: model:ir.model.fields,help:product.field_product_product__image_small
 msgid ""
 "Image of the product variant (Small-sized image of product template if "
 "false)."
 msgstr ""
 
 #. module: product
-#: selection:product.template,state:0
-msgid "In Development"
-msgstr "Ve vývoji"
+#: code:addons/product/models/product_pricelist.py:339
+#, python-format
+msgid "Import Template for Pricelists"
+msgstr ""
 
 #. module: product
-#: view:product.template:product.product_template_form_view
-msgid "Information"
-msgstr "Informace"
+#: code:addons/product/models/product_template.py:498
+#, python-format
+msgid "Import Template for Products"
+msgstr ""
+
+#. module: product
+#: code:addons/product/models/product.py:648
+#, python-format
+msgid "Import Template for Vendor Pricelists"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.res_config_settings_view_form
+msgid "In which unit of measure do you manage your weights"
+msgstr ""
 
 #. module: product
 #: model:ir.model,name:product.model_product_supplierinfo
-msgid "Information about a product supplier"
-msgstr "Informace o dodavateli výrobku"
-
-#. module: product
-#: model:product.template,name:product.product_product_38_product_template
-msgid "Ink Cartridge"
-msgstr "Inkoustová cartridge"
-
-#. module: product
-#: code:addons/product/product.py:385
-#, python-format
-msgid "Integrity Error!"
+msgid "Information about a product vendor"
 msgstr ""
 
 #. module: product
-#: model:product.category,name:product.product_category_2
-msgid "Internal"
-msgstr "Vnitřní"
-
-#. module: product
-#: field:product.template,categ_id:0
-msgid "Internal Category"
+#: model:ir.ui.view,arch_db:product.product_template_form_view
+msgid "Internal Notes"
 msgstr ""
 
 #. module: product
-#: field:product.product,code:0
-#: field:product.product,default_code:0
-#: field:product.template,default_code:0
+#: model:ir.model.fields,field_description:product.field_product_product__default_code
+#: model:ir.model.fields,field_description:product.field_product_template__default_code
 msgid "Internal Reference"
-msgstr "Vnitřní odkaz"
+msgstr ""
 
 #. module: product
-#: help:product.product,ean13:0
+#: model:ir.model.fields,help:product.field_product_product__barcode
+#: model:ir.model.fields,help:product.field_product_template__barcode
 msgid "International Article Number used for product identification."
-msgstr "Mezinárodní číslo položky použité pro identifikaci výrobku."
+msgstr ""
 
 #. module: product
-#: view:product.template:product.product_template_form_view
+#: model:ir.ui.view,arch_db:product.product_template_form_view
 msgid "Inventory"
-msgstr "Sklad"
-
-#. module: product
-#: model:product.category,name:product.ipad
-msgid "Ipad"
 msgstr ""
 
 #. module: product
-#: model:product.category,name:product.ipod
-msgid "Ipod"
+#: model:ir.model.fields,field_description:product.field_product_product__message_is_follower
+#: model:ir.model.fields,field_description:product.field_product_template__message_is_follower
+msgid "Is Follower"
 msgstr ""
 
 #. module: product
-#: field:product.product,message_is_follower:0
-#: field:product.template,message_is_follower:0
-msgid "Is a Follower"
-msgstr "Sleduje"
-
-#. module: product
-#: view:product.pricelist.version:product.product_pricelist_version_form_view
-msgid "Item List"
+#: model:ir.model.fields,field_description:product.field_product_product__is_product_variant
+#: model:ir.model.fields,field_description:product.field_product_template__is_product_variant
+msgid "Is a product variant"
 msgstr ""
 
 #. module: product
-#: field:product.pricelist.type,key:0
-msgid "Key"
-msgstr "Klíč"
-
-#. module: product
-#: model:product.public.category,name:product.Keyboard_Mouse
-msgid "Keyboard / Mouse"
+#: selection:res.config.settings,product_weight_in_lbs:0
+msgid "Kilogram"
 msgstr ""
 
 #. module: product
-#: model:product.template,name:product.product_product_27_product_template
-msgid "Laptop Customized"
-msgstr "Notebook na míru"
-
-#. module: product
-#: model:product.template,name:product.product_product_25_product_template
-msgid "Laptop E5023"
-msgstr "Notebook E5023"
-
-#. module: product
-#: model:product.template,name:product.product_product_26_product_template
-msgid "Laptop S3450"
-msgstr "Notebook S3450"
-
-#. module: product
-#: model:product.public.category,name:product.laptops
-msgid "Laptops"
+#: model:ir.model.fields,field_description:product.field_product_attribute____last_update
+#: model:ir.model.fields,field_description:product.field_product_attribute_line____last_update
+#: model:ir.model.fields,field_description:product.field_product_attribute_price____last_update
+#: model:ir.model.fields,field_description:product.field_product_attribute_value____last_update
+#: model:ir.model.fields,field_description:product.field_product_category____last_update
+#: model:ir.model.fields,field_description:product.field_product_packaging____last_update
+#: model:ir.model.fields,field_description:product.field_product_price_history____last_update
+#: model:ir.model.fields,field_description:product.field_product_price_list____last_update
+#: model:ir.model.fields,field_description:product.field_product_pricelist____last_update
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item____last_update
+#: model:ir.model.fields,field_description:product.field_product_product____last_update
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo____last_update
+#: model:ir.model.fields,field_description:product.field_product_template____last_update
+#: model:ir.model.fields,field_description:product.field_report_product_report_pricelist____last_update
+msgid "Last Modified on"
 msgstr ""
 
 #. module: product
-#: field:product.product,message_last_post:0
-#: field:product.template,message_last_post:0
-msgid "Last Message Date"
-msgstr ""
-
-#. module: product
-#: field:pricelist.partnerinfo,write_uid:0
-#: field:product.attribute,write_uid:0
-#: field:product.attribute.line,write_uid:0
-#: field:product.attribute.price,write_uid:0
-#: field:product.attribute.value,write_uid:0
-#: field:product.category,write_uid:0
-#: field:product.packaging,write_uid:0
-#: field:product.price.history,write_uid:0
-#: field:product.price.type,write_uid:0
-#: field:product.price_list,write_uid:0
-#: field:product.pricelist,write_uid:0
-#: field:product.pricelist.item,write_uid:0
-#: field:product.pricelist.type,write_uid:0
-#: field:product.pricelist.version,write_uid:0
-#: field:product.product,write_uid:0
-#: field:product.supplierinfo,write_uid:0
-#: field:product.template,write_uid:0
-#: field:product.ul,write_uid:0
-#: field:product.uom,write_uid:0
-#: field:product.uom.categ,write_uid:0
+#: model:ir.model.fields,field_description:product.field_product_attribute__write_uid
+#: model:ir.model.fields,field_description:product.field_product_attribute_line__write_uid
+#: model:ir.model.fields,field_description:product.field_product_attribute_price__write_uid
+#: model:ir.model.fields,field_description:product.field_product_attribute_value__write_uid
+#: model:ir.model.fields,field_description:product.field_product_category__write_uid
+#: model:ir.model.fields,field_description:product.field_product_packaging__write_uid
+#: model:ir.model.fields,field_description:product.field_product_price_history__write_uid
+#: model:ir.model.fields,field_description:product.field_product_price_list__write_uid
+#: model:ir.model.fields,field_description:product.field_product_pricelist__write_uid
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__write_uid
+#: model:ir.model.fields,field_description:product.field_product_product__write_uid
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__write_uid
+#: model:ir.model.fields,field_description:product.field_product_template__write_uid
 msgid "Last Updated by"
 msgstr ""
 
 #. module: product
-#: field:pricelist.partnerinfo,write_date:0
-#: field:product.attribute,write_date:0
-#: field:product.attribute.line,write_date:0
-#: field:product.attribute.price,write_date:0
-#: field:product.attribute.value,write_date:0
-#: field:product.category,write_date:0
-#: field:product.packaging,write_date:0
-#: field:product.price.history,write_date:0
-#: field:product.price.type,write_date:0
-#: field:product.price_list,write_date:0
-#: field:product.pricelist,write_date:0
-#: field:product.pricelist.item,write_date:0
-#: field:product.pricelist.type,write_date:0
-#: field:product.pricelist.version,write_date:0
-#: field:product.product,write_date:0
-#: field:product.supplierinfo,write_date:0
-#: field:product.template,write_date:0
-#: field:product.ul,write_date:0
-#: field:product.uom,write_date:0
-#: field:product.uom.categ,write_date:0
+#: model:ir.model.fields,field_description:product.field_product_attribute__write_date
+#: model:ir.model.fields,field_description:product.field_product_attribute_line__write_date
+#: model:ir.model.fields,field_description:product.field_product_attribute_price__write_date
+#: model:ir.model.fields,field_description:product.field_product_attribute_value__write_date
+#: model:ir.model.fields,field_description:product.field_product_category__write_date
+#: model:ir.model.fields,field_description:product.field_product_packaging__write_date
+#: model:ir.model.fields,field_description:product.field_product_price_history__write_date
+#: model:ir.model.fields,field_description:product.field_product_price_list__write_date
+#: model:ir.model.fields,field_description:product.field_product_pricelist__write_date
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__write_date
+#: model:ir.model.fields,field_description:product.field_product_product__write_date
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__write_date
+#: model:ir.model.fields,field_description:product.field_product_template__write_date
 msgid "Last Updated on"
 msgstr ""
 
 #. module: product
-#: help:product.pricelist.version,date_end:0
-msgid "Last valid date for the version."
-msgstr "Poslední datum, kdy verze platí."
+#: model:ir.ui.view,arch_db:product.product_template_search_view
+msgid "Late Activities"
+msgstr ""
 
 #. module: product
-#: help:product.supplierinfo,delay:0
+#: model:ir.model.fields,help:product.field_product_supplierinfo__delay
 msgid ""
 "Lead time in days between the confirmation of the purchase order and the "
 "receipt of the products in your warehouse. Used by the scheduler for "
@@ -1421,400 +924,237 @@ msgid ""
 msgstr ""
 
 #. module: product
-#: field:product.category,parent_left:0
-msgid "Left Parent"
-msgstr "Nadřazený levý"
-
-#. module: product
-#: field:product.ul,length:0
-msgid "Length"
-msgstr "Délka"
-
-#. module: product
-#: model:product.uom.categ,name:product.uom_categ_length
-msgid "Length / Distance"
-msgstr "Délka / Vzdálenost"
-
-#. module: product
-#: view:product.template:product.product_template_only_form_view
-msgid "List of Variants"
+#: model:ir.model.fields,field_description:product.field_product_attribute__attribute_line_ids
+msgid "Lines"
 msgstr ""
 
 #. module: product
-#: model:product.uom,name:product.product_uom_litre
-msgid "Liter(s)"
-msgstr "Litrů"
-
-#. module: product
-#: model:ir.model,name:product.model_product_ul
-msgid "Logistic Unit"
+#: model:ir.ui.view,arch_db:product.product_template_form_view
+msgid "Logistics"
 msgstr ""
 
 #. module: product
-#: model:ir.actions.act_window,name:product.product_ul_form_action
-#: model:ir.ui.menu,name:product.menu_product_ul_form_action
-#: view:product.ul:product.product_ul_form_view
-#: view:product.ul:product.product_ul_tree
-msgid "Logistic Units"
+#: model:ir.model.fields,field_description:product.field_res_users__has_group_pricelist_item
+#: model:res.groups,name:product.group_pricelist_item
+msgid "Manage Pricelist Items"
 msgstr ""
 
 #. module: product
-#: field:product.template,packaging_ids:0
-msgid "Logistical Units"
-msgstr "Logistické jednotky"
-
-#. module: product
-#: field:product.template,seller_id:0
-msgid "Main Supplier"
-msgstr "Hlavní dodavatel"
-
-#. module: product
-#: help:product.template,seller_id:0
-msgid "Main Supplier who has highest priority in Supplier List."
-msgstr "Hlavní dodavatel, který má nejvyšší prioritu v Seznamu dodavatelů."
-
-#. module: product
-#: model:res.groups,name:product.group_uom
-msgid "Manage Multiple Units of Measure"
-msgstr "Spravovat více měrných jednotek"
-
-#. module: product
+#: model:ir.model.fields,field_description:product.field_res_users__has_group_stock_packaging
 #: model:res.groups,name:product.group_stock_packaging
 msgid "Manage Product Packaging"
-msgstr "Spravovat balení výrobků"
+msgstr ""
 
 #. module: product
-#: model:res.groups,name:product.group_mrp_properties
-msgid "Manage Properties of Product"
-msgstr "Spravovat vlastnosti výrobků"
+#: model:ir.model.fields,field_description:product.field_res_users__has_group_product_variant
+#: model:res.groups,name:product.group_product_variant
+msgid "Manage Product Variants"
+msgstr ""
 
 #. module: product
-#: model:res.groups,name:product.group_uos
-msgid "Manage Secondary Unit of Measure"
-msgstr "Spravovat sekundární měrnou jednotku"
-
-#. module: product
-#: view:product.pricelist.item:product.product_pricelist_item_form_view
+#: model:ir.ui.view,arch_db:product.product_pricelist_item_form_view
 msgid "Max. Margin"
-msgstr "Max. marže"
+msgstr ""
 
 #. module: product
-#: field:product.pricelist.item,price_max_margin:0
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__price_max_margin
 msgid "Max. Price Margin"
-msgstr "Max. marže ceny"
+msgstr ""
 
 #. module: product
-#: field:product.template,mes_type:0
-msgid "Measure Type"
-msgstr "Měrný typ"
-
-#. module: product
-#: field:product.product,image_medium:0
-#: field:product.template,image_medium:0
+#: model:ir.model.fields,field_description:product.field_product_product__image_medium
+#: model:ir.model.fields,field_description:product.field_product_template__image_medium
 msgid "Medium-sized image"
-msgstr "Střední obrázek"
+msgstr ""
 
 #. module: product
-#: help:product.template,image_medium:0
+#: model:ir.model.fields,help:product.field_product_template__image_medium
 msgid ""
 "Medium-sized image of the product. It is automatically resized as a "
 "128x128px image, with aspect ratio preserved, only when the image exceeds "
 "one of those sizes. Use this field in form views or some kanban views."
 msgstr ""
-"Střední obrázek výrobku. Automaticky se zmenší na 128x128 pixelů se "
-"zachováním poměru stran (a to jen když obrázek překročí jeden z rozměrů). "
-"Použijte toto pole v zobrazeních formuláře a v některých pohledech kanban."
 
 #. module: product
-#: model:product.attribute,name:product.product_attribute_1
-#: model:product.public.category,name:product.Memory
-msgid "Memory"
+#: model:ir.model.fields,field_description:product.field_product_product__message_has_error
+#: model:ir.model.fields,field_description:product.field_product_template__message_has_error
+msgid "Message Delivery error"
 msgstr ""
 
 #. module: product
-#: field:product.product,message_ids:0
-#: field:product.template,message_ids:0
+#: model:ir.model.fields,field_description:product.field_product_product__message_ids
+#: model:ir.model.fields,field_description:product.field_product_template__message_ids
 msgid "Messages"
-msgstr "Zprávy"
+msgstr ""
 
 #. module: product
-#: help:product.product,message_ids:0
-#: help:product.template,message_ids:0
-msgid "Messages and communication history"
-msgstr "Zprávy a historie komunikace"
-
-#. module: product
-#: view:product.pricelist.item:product.product_pricelist_item_form_view
+#: model:ir.ui.view,arch_db:product.product_pricelist_item_form_view
 msgid "Min. Margin"
-msgstr "Min. marže"
+msgstr ""
 
 #. module: product
-#: field:product.pricelist.item,price_min_margin:0
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__price_min_margin
 msgid "Min. Price Margin"
-msgstr "Min. marže ceny"
+msgstr ""
 
 #. module: product
-#: field:product.pricelist.item,min_quantity:0
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__min_quantity
 msgid "Min. Quantity"
-msgstr "Min. množství"
+msgstr ""
 
 #. module: product
-#: field:product.supplierinfo,min_qty:0
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__min_qty
 msgid "Minimal Quantity"
-msgstr "Minimální množství"
-
-#. module: product
-#: model:product.public.category,name:product.Modem_Router
-msgid "Modem & Router"
 msgstr ""
 
 #. module: product
-#: model:product.public.category,name:product.motherboard
-msgid "Motherboard"
-msgstr ""
-
-#. module: product
-#: model:product.template,name:product.product_product_21_product_template
-msgid "Motherboard A20Z7"
-msgstr "Základní deska A20Z7"
-
-#. module: product
-#: model:product.template,name:product.product_product_20_product_template
-msgid "Motherboard I9P57"
-msgstr "Základní deska I9P57"
-
-#. module: product
-#: model:product.template,name:product.product_product_10_product_template
-msgid "Mouse, Optical"
-msgstr "Myš, optická"
-
-#. module: product
-#: model:product.template,name:product.product_product_12_product_template
-msgid "Mouse, Wireless"
-msgstr "Myš, bezdrátová"
-
-#. module: product
-#: model:product.template,name:product.product_product_31_product_template
-msgid "Multimedia Speakers"
-msgstr "Multimediální reproduktory"
-
-#. module: product
-#: field:product.attribute,name:0
-#: field:product.category,complete_name:0
-#: field:product.category,name:0
-#: field:product.pricelist.type,name:0
-#: field:product.pricelist.version,name:0
-#: field:product.template,name:0
-#: field:product.ul,name:0
-#: field:product.uom.categ,name:0
+#: model:ir.model.fields,field_description:product.field_product_attribute__name
+#: model:ir.model.fields,field_description:product.field_product_category__name
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__name
+#: model:ir.model.fields,field_description:product.field_product_product__name
+#: model:ir.model.fields,field_description:product.field_product_template__name
 msgid "Name"
-msgstr "Název"
-
-#. module: product
-#: help:product.price.type,name:0
-msgid "Name of this kind of price."
-msgstr "Název tohoto druhu ceny."
-
-#. module: product
-#: field:product.template,weight_net:0
-msgid "Net Weight"
-msgstr "Čistá hmotnost"
-
-#. module: product
-#: model:product.public.category,name:product.network
-msgid "Network"
 msgstr ""
 
 #. module: product
-#: view:product.pricelist.item:product.product_pricelist_item_form_view
-msgid "New Price ="
-msgstr "Nová cena ="
-
-#. module: product
-#: code:addons/product/product.py:705
-#, python-format
-msgid ""
-"New Unit of Measure '%s' must belong to same Unit of Measure category '%s' "
-"as of old Unit of Measure '%s'. If you need to change the unit of measure, "
-"you may deactivate this product from the 'Procurements' tab and create a new "
-"one."
-msgstr ""
-"Nová měrná jednotka '%s' musí patřit do stejné kategorie měrných jednotek "
-"'%s' jako původní měrná jednotka '%s'. Pokud chcete změnit měrnou jednotku, "
-"můžete tento výrobek deaktivovat na záložce 'zásobování' a vytvořit nový."
-
-#. module: product
-#: selection:product.category,type:0
-#: selection:product.template,state:0
-msgid "Normal"
-msgstr "Normální"
-
-#. module: product
-#: field:product.packaging,rows:0
-msgid "Number of Layers"
-msgstr "Počet vrstev"
-
-#. module: product
-#: selection:product.template,state:0
-msgid "Obsolete"
-msgstr "Zastaralý"
-
-#. module: product
-#: model:product.template,description_sale:product.product_product_42_product_template
-msgid ""
-"Office Editing Software with word processing, spreadsheets, presentations, "
-"graphics, and databases..."
-msgstr ""
-"Kancelářský software s textovým procesorem, tabulkami, prezentacemi, "
-"grafikou a databázemi..."
-
-#. module: product
-#: model:product.template,name:product.product_product_42_product_template
-msgid "Office Suite"
-msgstr "Kancelářský balík"
-
-#. module: product
-#: model:product.template,name:product.product_product_2_product_template
-msgid "On Site Assistance"
-msgstr "Asistence na místě"
-
-#. module: product
-#: model:product.template,name:product.product_product_1_product_template
-msgid "On Site Monitoring"
-msgstr "Sledování na místě"
-
-#. module: product
-#: model:product.template,description:product.product_product_19_product_template
-msgid "On demand hard-disk having capacity based on requirement."
-msgstr "Harddisk na vyžádání s kapacitou podle požadavků."
-
-#. module: product
-#: field:product.template,is_product_variant:0
-msgid "Only one product variant"
+#: model:ir.model.fields,field_description:product.field_product_product__activity_date_deadline
+#: model:ir.model.fields,field_description:product.field_product_template__activity_date_deadline
+msgid "Next Activity Deadline"
 msgstr ""
 
 #. module: product
-#: view:product.packaging:product.product_packaging_form_view
-#: view:product.packaging:product.product_packaging_form_view_without_product
-msgid "Other Info"
-msgstr "Jiné info"
+#: model:ir.model.fields,field_description:product.field_product_product__activity_summary
+#: model:ir.model.fields,field_description:product.field_product_template__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
 
 #. module: product
-#: code:addons/product/pricelist.py:391
-#: field:product.pricelist.item,base_pricelist_id:0
-#, python-format
+#: model:ir.model.fields,field_description:product.field_product_product__activity_type_id
+#: model:ir.model.fields,field_description:product.field_product_template__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_product__message_needaction_counter
+#: model:ir.model.fields,field_description:product.field_product_template__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_product__message_has_error_counter
+#: model:ir.model.fields,field_description:product.field_product_template__message_has_error_counter
+msgid "Number of error"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_product__message_needaction_counter
+#: model:ir.model.fields,help:product.field_product_template__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_product__message_has_error_counter
+#: model:ir.model.fields,help:product.field_product_template__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_product__message_unread_counter
+#: model:ir.model.fields,help:product.field_product_template__message_unread_counter
+msgid "Number of unread messages"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.product_supplierinfo_form_view
+msgid "Other Information"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__base_pricelist_id
+#: selection:product.pricelist.item,base:0
 msgid "Other Pricelist"
-msgstr "Jiný ceník"
-
-#. module: product
-#: model:product.category,name:product.product_category_3
-msgid "Other Products"
-msgstr "Jiné výrobky"
-
-#. module: product
-#: model:product.template,name:product.product_product_5_product_template
-msgid "PC Assemble + Custom (PC on Demand) "
 msgstr ""
 
 #. module: product
-#: model:product.template,name:product.product_product_3_product_template
-msgid "PC Assemble SC234"
-msgstr "Počítačová sestava SC234"
-
-#. module: product
-#: selection:product.ul,type:0
-msgid "Pack"
-msgstr "Balík"
-
-#. module: product
-#: field:product.packaging,ul:0
-msgid "Package Logistic Unit"
+#: selection:product.product,activity_state:0
+#: selection:product.template,activity_state:0
+msgid "Overdue"
 msgstr ""
 
 #. module: product
-#: field:product.packaging,ul_qty:0
-msgid "Package by layer"
-msgstr "Balík dle vrstvy"
+#: model:ir.model.fields,field_description:product.field_product_packaging__name
+msgid "Package Type"
+msgstr ""
 
 #. module: product
 #: model:ir.model,name:product.model_product_packaging
-#: view:product.packaging:product.product_packaging_form_view
-#: view:product.packaging:product.product_packaging_form_view_without_product
-#: view:product.packaging:product.product_packaging_tree_view
-#: view:product.packaging:product.product_packaging_tree_view_product
-#: view:product.template:product.product_template_form_view
+#: model:ir.ui.view,arch_db:product.product_packaging_form_view
+#: model:ir.ui.view,arch_db:product.product_packaging_tree_view
+#: model:ir.ui.view,arch_db:product.product_template_form_view
+#: model:ir.ui.view,arch_db:product.product_variant_easy_edit_view
 msgid "Packaging"
-msgstr "Balení"
-
-#. module: product
-#: selection:product.ul,type:0
-msgid "Pallet"
-msgstr "Paleta"
-
-#. module: product
-#: field:product.packaging,ul_container:0
-msgid "Pallet Logistic Unit"
 msgstr ""
 
 #. module: product
-#: view:product.packaging:product.product_packaging_form_view
-#: view:product.packaging:product.product_packaging_form_view_without_product
-msgid "Palletization"
-msgstr "Paletizace"
-
-#. module: product
-#: field:product.category,parent_id:0
+#: model:ir.model.fields,field_description:product.field_product_category__parent_id
 msgid "Parent Category"
-msgstr "Nadřazená kategorie"
-
-#. module: product
-#: model:ir.model,name:product.model_res_partner
-msgid "Partner"
-msgstr "Partner"
-
-#. module: product
-#: field:pricelist.partnerinfo,suppinfo_id:0
-msgid "Partner Information"
-msgstr "Informace partnera"
-
-#. module: product
-#: model:product.public.category,name:product.Pen_Drive
-msgid "Pen Drive"
 msgstr ""
 
 #. module: product
-#: model:product.template,name:product.product_product_29_product_template
-msgid "Pen drive, SP-2"
-msgstr "Flash disk, SP-2"
+#: model:ir.model.fields,field_description:product.field_product_category__parent_path
+msgid "Parent Path"
+msgstr ""
 
 #. module: product
-#: model:product.template,name:product.product_product_30_product_template
-msgid "Pen drive, SP-4"
-msgstr "Flash disk, SP-4"
+#: selection:product.pricelist.item,compute_price:0
+msgid "Percentage (discount)"
+msgstr ""
 
 #. module: product
-#: field:product.product,price:0
-#: field:product.template,price:0
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__percent_price
+msgid "Percentage Price"
+msgstr ""
+
+#. module: product
+#: selection:product.product,activity_state:0
+#: selection:product.template,activity_state:0
+msgid "Planned"
+msgstr ""
+
+#. module: product
+#: selection:res.config.settings,product_weight_in_lbs:0
+msgid "Pound"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__price
+#: model:ir.model.fields,field_description:product.field_product_product__price
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__price
+#: model:ir.model.fields,field_description:product.field_product_template__price
+#: model:ir.ui.view,arch_db:product.product_normal_form_view
+#: model:ir.ui.view,arch_db:product.product_pricelist_view
+#: model:ir.ui.view,arch_db:product.product_supplierinfo_tree_view
+#: model:ir.ui.view,arch_db:product.product_template_form_view
 msgid "Price"
-msgstr "Cena"
+msgstr ""
 
 #. module: product
-#: view:product.pricelist.item:product.product_pricelist_item_form_view
+#: model:ir.ui.view,arch_db:product.product_pricelist_item_form_view
 msgid "Price Computation"
-msgstr "Výpočet ceny"
+msgstr ""
 
 #. module: product
-#: field:product.pricelist.item,price_discount:0
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__price_discount
 msgid "Price Discount"
-msgstr "Sleva"
+msgstr ""
 
 #. module: product
-#: field:product.attribute.price,price_extra:0
+#: model:ir.model.fields,field_description:product.field_product_attribute_price__price_extra
 msgid "Price Extra"
 msgstr ""
 
 #. module: product
-#: help:product.attribute.value,price_extra:0
+#: model:ir.model.fields,help:product.field_product_attribute_value__price_extra
 msgid ""
 "Price Extra: Extra price for the variant with this attribute value on sale "
 "price. eg. 200 price extra, 1000 + 200 = 1200."
@@ -1823,837 +1163,606 @@ msgstr ""
 #. module: product
 #: model:ir.actions.act_window,name:product.action_product_price_list
 #: model:ir.model,name:product.model_product_price_list
-#: view:product.price_list:product.view_product_price_list
-#: field:product.pricelist.version,pricelist_id:0
-#: view:website:product.report_pricelist
+#: model:ir.ui.view,arch_db:product.product_supplierinfo_form_view
+#: model:ir.ui.view,arch_db:product.report_pricelist
+#: model:ir.ui.view,arch_db:product.view_product_price_list
 msgid "Price List"
-msgstr "Ceník"
+msgstr ""
 
 #. module: product
-#: field:product.pricelist.version,items_id:0
-msgid "Price List Items"
-msgstr "Položky ceníku"
-
-#. module: product
-#: view:website:product.report_pricelist
-msgid "Price List Name"
-msgstr "Název ceníku"
-
-#. module: product
-#: field:product.pricelist.item,price_version_id:0
-msgid "Price List Version"
-msgstr "Verze ceníku"
-
-#. module: product
-#: field:product.price.type,name:0
-msgid "Price Name"
-msgstr "Název ceny"
-
-#. module: product
-#: field:product.pricelist.item,price_round:0
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__price_round
 msgid "Price Rounding"
-msgstr "Zaoukrouhlení ceny"
+msgstr ""
 
 #. module: product
-#: field:product.pricelist.item,price_surcharge:0
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__price_surcharge
 msgid "Price Surcharge"
-msgstr "Cenová přirážka"
+msgstr ""
 
 #. module: product
-#: model:ir.model,name:product.model_product_price_type
-msgid "Price Type"
-msgstr "Typ ceny"
-
-#. module: product
-#: model:ir.actions.act_window,name:product.product_price_type_action
-#: model:ir.ui.menu,name:product.menu_product_price_type
-msgid "Price Types"
-msgstr "Typy ceny"
-
-#. module: product
-#: view:product.product:product.product_kanban_view
-#: view:product.template:product.product_template_kanban_view
+#: model:ir.ui.view,arch_db:product.product_kanban_view
+#: model:ir.ui.view,arch_db:product.product_template_kanban_view
 msgid "Price:"
-msgstr "Cena:"
+msgstr ""
 
 #. module: product
-#: field:product.price_list,price_list:0
+#: model:ir.model.fields,field_description:product.field_product_price_list__price_list
 msgid "PriceList"
-msgstr "Ceník"
+msgstr ""
 
 #. module: product
-#: model:ir.actions.report.xml,name:product.action_report_pricelist
+#: model:ir.actions.report,name:product.action_report_pricelist
 #: model:ir.model,name:product.model_product_pricelist
-#: view:product.supplierinfo:product.product_supplierinfo_form_view
-#: field:product.template,pricelist_id:0
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__pricelist_id
+#: model:ir.model.fields,field_description:product.field_product_product__pricelist_id
+#: model:ir.model.fields,field_description:product.field_product_template__pricelist_id
+#: model:ir.model.fields,field_description:product.field_res_partner__property_product_pricelist
+#: model:ir.model.fields,field_description:product.field_res_users__property_product_pricelist
+#: model:ir.ui.view,arch_db:product.product_template_form_view
 msgid "Pricelist"
-msgstr "Ceník"
+msgstr ""
 
 #. module: product
-#: field:product.pricelist,name:0
+#: model:ir.model.fields,field_description:product.field_product_product__pricelist_item_ids
+msgid "Pricelist Item"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_pricelist_item__applied_on
+msgid "Pricelist Item applicable on selected option"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_pricelist__item_ids
+#: model:ir.model.fields,field_description:product.field_product_product__item_ids
+#: model:ir.model.fields,field_description:product.field_product_template__item_ids
+#: model:ir.ui.view,arch_db:product.product_normal_form_view
+#: model:ir.ui.view,arch_db:product.product_pricelist_item_form_view
+#: model:ir.ui.view,arch_db:product.product_pricelist_item_tree_view
+#: model:ir.ui.view,arch_db:product.product_pricelist_view
+#: model:ir.ui.view,arch_db:product.product_template_form_view
+msgid "Pricelist Items"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_pricelist__name
 msgid "Pricelist Name"
-msgstr "Název ceníku"
-
-#. module: product
-#: model:ir.model,name:product.model_product_pricelist_type
-#: field:product.pricelist,type:0
-msgid "Pricelist Type"
-msgstr "Typ ceníku"
-
-#. module: product
-#: model:ir.model,name:product.model_product_pricelist_version
-#: view:product.pricelist:product.product_pricelist_view
-#: view:product.pricelist.version:product.product_pricelist_version_form_view
-#: view:product.pricelist.version:product.product_pricelist_version_tree_view
-msgid "Pricelist Version"
-msgstr "Verze ceníku"
-
-#. module: product
-#: model:ir.actions.act_window,name:product.product_pricelist_action
-#: model:ir.ui.menu,name:product.menu_product_pricelist_action
-#: field:product.pricelist,version_id:0
-msgid "Pricelist Versions"
-msgstr "Verze ceníku"
+msgstr ""
 
 #. module: product
 #: model:ir.model,name:product.model_product_pricelist_item
 msgid "Pricelist item"
-msgstr "Položka ceníku"
+msgstr ""
 
 #. module: product
 #: model:ir.actions.act_window,name:product.product_pricelist_action2
-#: model:ir.actions.act_window,name:product.product_pricelist_action_for_purchase
-#: model:ir.ui.menu,name:product.menu_product_pricelist_action2
-#: model:ir.ui.menu,name:product.menu_product_pricelist_main
+#: model:ir.model.fields,field_description:product.field_res_country_group__pricelist_ids
 msgid "Pricelists"
-msgstr "Ceníky"
+msgstr ""
 
 #. module: product
-#: view:res.partner:product.view_partner_property_form
+#: model:ir.model.fields,field_description:product.field_res_users__has_group_product_pricelist
+#: model:res.groups,name:product.group_product_pricelist
+msgid "Pricelists On Product"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.view_partner_property_form
 msgid "Pricelists are managed on"
-msgstr "Ceníky jsou spravovány na"
+msgstr ""
 
 #. module: product
-#: view:product.price_list:product.view_product_price_list
+#: model:ir.ui.view,arch_db:product.product_template_form_view
+#: model:ir.ui.view,arch_db:product.product_variant_easy_edit_view
+msgid "Pricing"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.view_product_price_list
 msgid "Print"
-msgstr "Tisk"
-
-#. module: product
-#: view:website:product.report_pricelist
-msgid "Print date"
 msgstr ""
-
-#. module: product
-#: model:product.public.category,name:product.printer
-msgid "Printer"
-msgstr ""
-
-#. module: product
-#: model:product.template,name:product.product_product_37_product_template
-msgid "Printer, All-in-one"
-msgstr "Tiskárna, all-in-one"
-
-#. module: product
-#: model:product.public.category,name:product.processor
-msgid "Processor"
-msgstr ""
-
-#. module: product
-#: model:product.template,name:product.product_product_23_product_template
-msgid "Processor AMD 8-Core"
-msgstr "Osmijádrový procesor AMD"
-
-#. module: product
-#: model:product.template,name:product.product_product_22_product_template
-msgid "Processor Core i5 2.70 Ghz"
-msgstr "Procesor Core i5 2.70 GHz"
-
-#. module: product
-#: view:product.template:product.product_template_form_view
-msgid "Procurements"
-msgstr "Zásobování"
 
 #. module: product
 #: model:ir.model,name:product.model_product_product
-#: field:product.packaging,product_tmpl_id:0
-#: field:product.pricelist.item,product_id:0
-#: view:product.product:product.product_search_form_view
-#: view:product.template:product.product_template_form_view
-#: view:product.template:product.product_template_search_view
-#: view:product.template:product.product_template_tree_view
-#: model:res.request.link,name:product.req_link_product
+#: model:ir.model.fields,field_description:product.field_product_packaging__product_id
+#: model:ir.model.fields,field_description:product.field_product_price_history__product_id
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__product_id
+#: model:ir.model.fields,field_description:product.field_product_product__product_variant_id
+#: model:ir.model.fields,field_description:product.field_product_template__product_variant_id
+#: model:ir.ui.view,arch_db:product.product_kanban_view
+#: model:ir.ui.view,arch_db:product.product_pricelist_item_form_view
+#: model:ir.ui.view,arch_db:product.product_search_form_view
+#: model:ir.ui.view,arch_db:product.product_supplierinfo_form_view
+#: model:ir.ui.view,arch_db:product.product_supplierinfo_search_view
+#: model:ir.ui.view,arch_db:product.product_supplierinfo_tree_view
+#: model:ir.ui.view,arch_db:product.product_template_form_view
+#: model:ir.ui.view,arch_db:product.product_template_kanban_view
+#: model:ir.ui.view,arch_db:product.product_template_search_view
+#: model:ir.ui.view,arch_db:product.product_template_tree_view
+#: selection:product.pricelist.item,applied_on:0
 msgid "Product"
-msgstr "Výrobek"
+msgstr ""
 
 #. module: product
 #: model:ir.model,name:product.model_product_attribute
+#: model:ir.ui.view,arch_db:product.product_attribute_view_form
 msgid "Product Attribute"
 msgstr ""
 
 #. module: product
-#: field:product.attribute.line,value_ids:0
-#: field:product.attribute.price,value_id:0
+#: model:ir.model.fields,field_description:product.field_product_attribute_price__value_id
 msgid "Product Attribute Value"
 msgstr ""
 
 #. module: product
-#: field:product.template,attribute_line_ids:0
+#: model:ir.ui.view,arch_db:product.product_attribute_line_form
+msgid "Product Attribute and Values"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_product__attribute_line_ids
+#: model:ir.model.fields,field_description:product.field_product_template__attribute_line_ids
 msgid "Product Attributes"
 msgstr ""
 
 #. module: product
-#: model:ir.actions.act_window,name:product.product_category_action_form
-#: model:ir.ui.menu,name:product.menu_product_category_action_form
-#: view:product.category:product.product_category_form_view
-#: view:product.category:product.product_category_list_view
-#: view:product.category:product.product_category_search_view
-#: view:product.category:product.product_category_tree_view
-msgid "Product Categories"
-msgstr "Kategorie výrobku"
+#: model:ir.actions.report,name:product.report_product_product_barcode
+#: model:ir.actions.report,name:product.report_product_template_barcode
+msgid "Product Barcode (PDF)"
+msgstr ""
 
 #. module: product
-#: model:ir.ui.menu,name:product.prod_config_main
-msgid "Product Categories & Attributes"
+#: model:ir.actions.act_window,name:product.product_category_action_form
+#: model:ir.ui.view,arch_db:product.product_category_list_view
+#: model:ir.ui.view,arch_db:product.product_category_search_view
+msgid "Product Categories"
 msgstr ""
 
 #. module: product
 #: model:ir.model,name:product.model_product_category
-#: field:product.pricelist.item,categ_id:0
-#: field:product.uom,category_id:0
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__categ_id
+#: model:ir.model.fields,field_description:product.field_product_product__categ_id
+#: model:ir.model.fields,field_description:product.field_product_template__categ_id
+#: model:ir.ui.view,arch_db:product.product_template_form_view
 msgid "Product Category"
-msgstr "Kategorie výrobku"
+msgstr ""
 
 #. module: product
-#: field:product.price.type,field:0
-msgid "Product Field"
-msgstr "Pole výrobku"
+#: model:ir.actions.report,name:product.report_product_label
+#: model:ir.actions.report,name:product.report_product_template_label
+msgid "Product Label (PDF)"
+msgstr ""
 
 #. module: product
-#: field:product.template,product_manager:0
-msgid "Product Manager"
-msgstr "Product manager"
-
-#. module: product
-#: view:product.template:product.product_template_form_view
+#: model:ir.ui.view,arch_db:product.product_template_form_view
+#: model:ir.ui.view,arch_db:product.product_variant_easy_edit_view
 msgid "Product Name"
-msgstr "Název výrobku"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_product__packaging_ids
+#: model:ir.model.fields,field_description:product.field_product_template__packaging_ids
+msgid "Product Packages"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.product_packaging_form_view
+msgid "Product Packaging"
+msgstr ""
+
+#. module: product
+#: model:ir.actions.act_window,name:product.action_packaging_view
+#: model:ir.model.fields,field_description:product.field_res_config_settings__group_stock_packaging
+#: model:ir.ui.view,arch_db:product.product_packaging_tree_view
+msgid "Product Packagings"
+msgstr ""
 
 #. module: product
 #: model:ir.model,name:product.model_product_template
-#: field:product.attribute.line,product_tmpl_id:0
-#: field:product.attribute.price,product_tmpl_id:0
-#: field:product.price.history,product_template_id:0
-#: field:product.pricelist.item,product_tmpl_id:0
-#: view:product.product:product.product_search_form_view
-#: field:product.product,product_tmpl_id:0
-#: field:product.supplierinfo,product_tmpl_id:0
-#: view:product.template:product.product_template_only_form_view
+#: model:ir.model.fields,field_description:product.field_product_attribute_line__product_tmpl_id
+#: model:ir.model.fields,field_description:product.field_product_attribute_price__product_tmpl_id
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__product_tmpl_id
+#: model:ir.model.fields,field_description:product.field_product_product__product_tmpl_id
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__product_tmpl_id
+#: model:ir.ui.view,arch_db:product.product_search_form_view
 msgid "Product Template"
-msgstr "Šablona výrobku"
+msgstr ""
 
 #. module: product
-#: field:product.template,type:0
+#: model:ir.model.fields,field_description:product.field_product_product__type
+#: model:ir.model.fields,field_description:product.field_product_template__type
 msgid "Product Type"
-msgstr "Typ výrobku"
+msgstr ""
 
 #. module: product
-#: model:ir.model,name:product.model_product_uom
-msgid "Product Unit of Measure"
-msgstr "Měrná jednotka výrobku"
-
-#. module: product
-#: view:product.product:product.product_normal_form_view
-#: view:product.template:product.product_template_search_view
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__product_id
+#: model:ir.ui.view,arch_db:product.product_normal_form_view
+#: model:ir.ui.view,arch_db:product.product_pricelist_item_form_view
+#: selection:product.pricelist.item,applied_on:0
 msgid "Product Variant"
-msgstr "Varianta výrobku"
+msgstr ""
 
 #. module: product
 #: model:ir.actions.act_window,name:product.product_normal_action
 #: model:ir.actions.act_window,name:product.product_normal_action_sell
-#: model:ir.actions.act_window,name:product.product_normal_action_tree
 #: model:ir.actions.act_window,name:product.product_variant_action
-#: model:ir.ui.menu,name:product.menu_products
-#: view:product.product:product.product_product_tree_view
+#: model:ir.ui.view,arch_db:product.product_product_tree_view
 msgid "Product Variants"
 msgstr ""
 
 #. module: product
-#: model:ir.model,name:product.model_product_uom_categ
-msgid "Product uom categ"
-msgstr "Kategore MJ výrobku"
-
-#. module: product
 #: model:ir.actions.act_window,name:product.product_template_action
-#: model:ir.ui.menu,name:product.menu_product_template_action
-#: field:product.template,product_variant_ids:0
+#: model:ir.actions.act_window,name:product.product_template_action_all
+#: model:ir.model.fields,field_description:product.field_product_product__product_variant_ids
+#: model:ir.model.fields,field_description:product.field_product_template__product_variant_ids
+#: model:ir.ui.view,arch_db:product.product_template_search_view
+#: model:ir.ui.view,arch_db:product.res_config_settings_view_form
 msgid "Products"
-msgstr "Výrobky"
+msgstr ""
 
 #. module: product
-#: model:ir.actions.report.xml,name:product.report_product_label
-msgid "Products Labels"
-msgstr "Štítky výrobků"
-
-#. module: product
-#: view:product.pricelist.item:product.product_pricelist_item_form_view
-#: view:product.pricelist.item:product.product_pricelist_item_tree_view
-msgid "Products Listprices Items"
-msgstr "Ceníkové položky výrobků"
-
-#. module: product
-#: view:product.pricelist:product.product_pricelist_view_search
+#: model:ir.ui.view,arch_db:product.product_pricelist_view_search
 msgid "Products Price"
-msgstr "Cena výrobků"
+msgstr ""
 
 #. module: product
-#: view:product.pricelist:product.product_pricelist_view
-#: view:product.pricelist:product.product_pricelist_view_tree
+#: model:ir.ui.view,arch_db:product.product_pricelist_view
+#: model:ir.ui.view,arch_db:product.product_pricelist_view_tree
 msgid "Products Price List"
-msgstr "Ceník výrobků"
+msgstr ""
 
 #. module: product
-#: view:product.pricelist:product.product_pricelist_view_search
+#: model:ir.ui.view,arch_db:product.product_pricelist_view_search
 msgid "Products Price Search"
-msgstr "Hledání ceny výrobku"
+msgstr ""
 
 #. module: product
-#: view:product.price.type:product.product_price_type_view
-msgid "Products Price Type"
-msgstr "Typ ceny výrobku"
-
-#. module: product
-#: model:ir.actions.act_window,name:product.product_category_action
-#: model:ir.ui.menu,name:product.menu_products_category
-msgid "Products by Category"
-msgstr "Výrobky podle kategorie"
-
-#. module: product
-#: code:addons/product/product.py:809
+#: code:addons/product/models/product.py:465
 #, python-format
 msgid "Products: "
-msgstr "Výrobky: "
+msgstr ""
 
 #. module: product
-#: model:product.price.type,name:product.list_price
-#: field:product.product,lst_price:0
-#: field:product.template,lst_price:0
+#: model:ir.model.fields,field_description:product.field_product_template__lst_price
+#: selection:product.pricelist.item,base:0
 msgid "Public Price"
-msgstr "Veřejná cena"
+msgstr ""
 
 #. module: product
 #: model:product.pricelist,name:product.list0
 msgid "Public Pricelist"
-msgstr "Veřejný ceník"
+msgstr ""
 
 #. module: product
-#: view:product.template:product.product_template_form_view
+#: model:ir.ui.view,arch_db:product.product_template_form_view
 msgid "Purchase"
-msgstr "Nákup"
+msgstr ""
 
 #. module: product
-#: field:product.template,description_purchase:0
+#: model:ir.model.fields,field_description:product.field_product_product__description_purchase
+#: model:ir.model.fields,field_description:product.field_product_template__description_purchase
 msgid "Purchase Description"
-msgstr "Popis nákupu"
+msgstr ""
 
 #. module: product
-#: model:res.groups,name:product.group_purchase_pricelist
-msgid "Purchase Pricelists"
-msgstr "Nákupní ceníky"
-
-#. module: product
-#: field:product.template,uom_po_id:0
+#: model:ir.model.fields,field_description:product.field_product_product__uom_po_id
+#: model:ir.model.fields,field_description:product.field_product_template__uom_po_id
 msgid "Purchase Unit of Measure"
-msgstr "Měrná jednotka nákupu"
+msgstr ""
 
 #. module: product
-#: field:pricelist.partnerinfo,min_quantity:0
-#: field:product.supplierinfo,qty:0
-msgid "Quantity"
-msgstr "Množství"
-
-#. module: product
-#: field:product.packaging,qty:0
-msgid "Quantity by Package"
-msgstr "Množství dle balíku"
-
-#. module: product
-#: field:product.price_list,qty1:0
+#: model:ir.model.fields,field_description:product.field_product_price_list__qty1
 msgid "Quantity-1"
-msgstr "Množství-1"
+msgstr ""
 
 #. module: product
-#: field:product.price_list,qty2:0
+#: model:ir.model.fields,field_description:product.field_product_price_list__qty2
 msgid "Quantity-2"
-msgstr "Množství-2"
+msgstr ""
 
 #. module: product
-#: field:product.price_list,qty3:0
+#: model:ir.model.fields,field_description:product.field_product_price_list__qty3
 msgid "Quantity-3"
-msgstr "Množství-3"
+msgstr ""
 
 #. module: product
-#: field:product.price_list,qty4:0
+#: model:ir.model.fields,field_description:product.field_product_price_list__qty4
 msgid "Quantity-4"
-msgstr "Množství-4"
+msgstr ""
 
 #. module: product
-#: field:product.price_list,qty5:0
+#: model:ir.model.fields,field_description:product.field_product_price_list__qty5
 msgid "Quantity-5"
-msgstr "Množství-5"
+msgstr ""
 
 #. module: product
-#: model:product.template,name:product.product_product_14_product_template
-msgid "RAM SR2"
-msgstr "RAM SR2"
+#: model:ir.model.fields,field_description:product.field_product_product__code
+msgid "Reference"
+msgstr ""
 
 #. module: product
-#: model:product.template,name:product.product_product_15_product_template
-msgid "RAM SR3"
-msgstr "RAM SR3"
+#: model:ir.model.fields,field_description:product.field_product_product__activity_user_id
+#: model:ir.model.fields,field_description:product.field_product_template__activity_user_id
+msgid "Responsible User"
+msgstr ""
 
 #. module: product
-#: model:product.template,name:product.product_product_13_product_template
-msgid "RAM SR5"
-msgstr "RAM SR5"
-
-#. module: product
-#: field:product.uom,factor:0
-msgid "Ratio"
-msgstr "Poměr"
-
-#. module: product
-#: model:product.category,name:product.product_category_10
-msgid "Raw Materials"
-msgstr "Surový materiál"
-
-#. module: product
-#: selection:product.uom,uom_type:0
-msgid "Reference Unit of Measure for this category"
-msgstr "Refereční měrná jednotka této kategorie"
-
-#. module: product
-#: field:product.category,parent_right:0
-msgid "Right Parent"
-msgstr "Nadřazený vpravo"
-
-#. module: product
-#: view:product.pricelist.item:product.product_pricelist_item_form_view
+#: model:ir.ui.view,arch_db:product.product_pricelist_item_form_view
 msgid "Rounding Method"
-msgstr "Zaokrouhlovací metoda"
+msgstr ""
 
 #. module: product
-#: field:product.uom,rounding:0
-msgid "Rounding Precision"
-msgstr "Přesnost zaokrouhlení"
-
-#. module: product
-#: model:product.template,name:product.product_product_45_product_template
-msgid "Router R430"
-msgstr "Směrovač R430"
-
-#. module: product
-#: field:product.pricelist.item,name:0
-msgid "Rule Name"
-msgstr "Název pravidla"
-
-#. module: product
-#: view:product.template:product.product_template_form_view
-msgid "Sale Conditions"
-msgstr "Podmínky prodeje"
-
-#. module: product
-#: field:product.template,description_sale:0
+#: model:ir.model.fields,field_description:product.field_product_product__description_sale
+#: model:ir.model.fields,field_description:product.field_product_template__description_sale
 msgid "Sale Description"
-msgstr "Prodejní popis"
+msgstr ""
 
 #. module: product
-#: field:product.template,list_price:0
+#: model:ir.model.fields,field_description:product.field_product_product__lst_price
 msgid "Sale Price"
-msgstr "Prodejní cena"
-
-#. module: product
-#: model:product.pricelist.type,name:product.pricelist_type_sale
-#: field:res.partner,property_product_pricelist:0
-msgid "Sale Pricelist"
-msgstr "Prodejní ceník"
+msgstr ""
 
 #. module: product
 #: model:product.category,name:product.product_category_1
 msgid "Saleable"
-msgstr "Lze prodávat"
+msgstr ""
 
 #. module: product
-#: view:product.template:product.product_template_form_view
+#: model:ir.ui.view,arch_db:product.product_template_form_view
 msgid "Sales"
-msgstr "Prodeje"
+msgstr ""
 
 #. module: product
-#: view:res.partner:product.view_partner_property_form
-msgid "Sales & Purchases"
-msgstr "Prodeje & nákupy"
+#: model:ir.model.fields,field_description:product.field_product_product__list_price
+#: model:ir.model.fields,field_description:product.field_product_template__list_price
+#: model:ir.ui.view,arch_db:product.product_template_form_view
+#: model:ir.ui.view,arch_db:product.product_template_tree_view
+msgid "Sales Price"
+msgstr ""
 
 #. module: product
+#: model:ir.model.fields,field_description:product.field_res_users__has_group_sale_pricelist
 #: model:res.groups,name:product.group_sale_pricelist
 msgid "Sales Pricelists"
-msgstr "Prodejní ceníky"
-
-#. module: product
-#: model:product.public.category,name:product.Screen
-msgid "Screen"
 msgstr ""
 
 #. module: product
-#: help:product.template,categ_id:0
+#: model:ir.model.fields,help:product.field_product_product__categ_id
+#: model:ir.model.fields,help:product.field_product_template__categ_id
 msgid "Select category for the current product"
-msgstr "Vyberte kategorii pro tento výrobek"
-
-#. module: product
-#: field:product.attribute.value,sequence:0
-#: field:product.category,sequence:0
-#: field:product.packaging,sequence:0
-#: field:product.pricelist.item,sequence:0
-#: field:product.supplierinfo,sequence:0
-msgid "Sequence"
-msgstr "Posloupnost"
-
-#. module: product
-#: model:product.public.category,name:product.server
-msgid "Server"
 msgstr ""
 
 #. module: product
-#: model:product.template,name:product.product_product_consultant_product_template
+#: model:ir.model.fields,field_description:product.field_product_attribute__sequence
+#: model:ir.model.fields,field_description:product.field_product_attribute_value__sequence
+#: model:ir.model.fields,field_description:product.field_product_packaging__sequence
+#: model:ir.model.fields,field_description:product.field_product_pricelist__sequence
+#: model:ir.model.fields,field_description:product.field_product_product__sequence
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__sequence
+#: model:ir.model.fields,field_description:product.field_product_template__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: product
+#: code:addons/product/models/product_template.py:51
 #: selection:product.template,type:0
+#, python-format
 msgid "Service"
-msgstr "Služba"
+msgstr ""
 
 #. module: product
-#: model:product.category,name:product.product_category_5
-#: model:product.public.category,name:product.services
-#: view:product.template:product.product_template_search_view
+#: model:ir.ui.view,arch_db:product.product_template_search_view
 msgid "Services"
-msgstr "Služby"
+msgstr ""
 
 #. module: product
-#: help:product.pricelist.item,price_round:0
+#: model:ir.model.fields,help:product.field_product_pricelist_item__price_round
 msgid ""
 "Sets the price so that it is a multiple of this value.\n"
 "Rounding is applied after the discount and before the surcharge.\n"
 "To have prices that end in 9.99, set rounding 10, surcharge -0.01"
 msgstr ""
-"Nastaví cenu tak, aby byla násobkem této hodnoty.\n"
-"Zaokrouhlení se provede po slevě a před příplatky.\n"
-"Abyste dosáhli cen končících na 9.99, nastavte zaokrouhlení na 10 a "
-"příplatek na -0.01."
 
 #. module: product
-#: field:product.product,image_small:0
-#: field:product.template,image_small:0
+#: model:ir.model.fields,field_description:product.field_res_config_settings__company_share_product
+msgid "Share product to all companies"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_res_config_settings__company_share_product
+msgid ""
+"Share your product to all companies defined in your instance.\n"
+" * Checked : Product are visible for every company, even if a company is defined on the partner.\n"
+" * Unchecked : Each company can see only its product (product where company is defined). Product not related to a company are visible for all companies."
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.product_template_search_view
+msgid "Show all records which has next action date is before today"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_res_config_settings__group_product_pricelist
+msgid "Show pricelists On Products"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_res_config_settings__group_pricelist_item
+msgid "Show pricelists to customers"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_product__image_small
+#: model:ir.model.fields,field_description:product.field_product_template__image_small
 msgid "Small-sized image"
-msgstr "Malý obrázek"
+msgstr ""
 
 #. module: product
-#: help:product.template,image_small:0
+#: model:ir.model.fields,help:product.field_product_template__image_small
 msgid ""
 "Small-sized image of the product. It is automatically resized as a 64x64px "
-"image, with aspect ratio preserved. Use this field anywhere a small image is "
-"required."
-msgstr ""
-"Malý obrázek výrobku. Je automaticky zmenšen na velikost 64x64 pixelů se "
-"zachováním poměru stran. Použijte toto pole kdekoli je potřeba malý obrázek."
-
-#. module: product
-#: selection:product.uom,uom_type:0
-msgid "Smaller than the reference Unit of Measure"
-msgstr "Menší než referenční měrná jednotka"
-
-#. module: product
-#: model:product.category,name:product.product_category_9
-#: model:product.public.category,name:product.Software
-msgid "Software"
+"image, with aspect ratio preserved. Use this field anywhere a small image is"
+" required."
 msgstr ""
 
 #. module: product
-#: model:product.public.category,name:product.Speakers
-msgid "Speakers"
-msgstr ""
-
-#. module: product
-#: help:product.pricelist.item,categ_id:0
+#: model:ir.model.fields,help:product.field_product_pricelist_item__categ_id
 msgid ""
 "Specify a product category if this rule only applies to products belonging "
 "to this category or its children categories. Keep empty otherwise."
 msgstr ""
-"Zadejte kategorii výrobku pokud se toto pravidlo vztahuje jen na výrobky "
-"této kategorie nebo podřízených kategorií. Jinak ponechte prázdné."
 
 #. module: product
-#: help:product.pricelist.item,product_id:0
+#: model:ir.model.fields,help:product.field_product_pricelist_item__product_id
 msgid ""
 "Specify a product if this rule only applies to one product. Keep empty "
 "otherwise."
 msgstr ""
-"Zadejte výrobek pokud se toto pravidlo vztahuje jen na jeden výrobek. Jinak "
-"pole ponechte prázdné."
 
 #. module: product
-#: help:product.pricelist.item,product_tmpl_id:0
+#: model:ir.model.fields,help:product.field_product_pricelist_item__product_tmpl_id
 msgid ""
 "Specify a template if this rule only applies to one product template. Keep "
 "empty otherwise."
 msgstr ""
-"Zvolte šablonu pokud se toto pravidlo vztahuje jen na jednu šablonu výrobku. "
-"Jinak ponechte prázdné."
 
 #. module: product
-#: help:product.template,uos_id:0
-msgid ""
-"Specify a unit of measure here if invoicing is made in another unit of "
-"measure than inventory. Keep empty to use the default unit of measure."
+#: model:ir.model.fields,help:product.field_product_product__sale_ok
+#: model:ir.model.fields,help:product.field_product_template__sale_ok
+msgid "Specify if the product can be selected in a sales order line."
 msgstr ""
 
 #. module: product
-#: help:product.template,sale_ok:0
-msgid "Specify if the product can be selected in a sales order line."
-msgstr "Zvolte, zda může být výrobek vybrán na řádku potvrzení objednávky."
-
-#. module: product
-#: help:product.pricelist.item,price_surcharge:0
+#: model:ir.model.fields,help:product.field_product_pricelist_item__price_surcharge
 msgid ""
 "Specify the fixed amount to add or substract(if negative) to the amount "
 "calculated with the discount."
 msgstr ""
-"Zadejte pevnou částku pro přičtení nebo odečtení (zápornou částku) od ceny "
-"vypočtené s touto slevou."
 
 #. module: product
-#: help:product.pricelist.item,price_max_margin:0
+#: model:ir.model.fields,help:product.field_product_pricelist_item__price_max_margin
 msgid "Specify the maximum amount of margin over the base price."
-msgstr "Zadejte maximální marži nad základní cenu."
+msgstr ""
 
 #. module: product
-#: help:product.pricelist.item,price_min_margin:0
+#: model:ir.model.fields,help:product.field_product_pricelist_item__price_min_margin
 msgid "Specify the minimum amount of margin over the base price."
-msgstr "Zadejte minimální marži nad základní cenu."
+msgstr ""
 
 #. module: product
-#: field:product.pricelist.version,date_start:0
+#: model:ir.model.fields,field_description:product.field_product_pricelist_item__date_start
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__date_start
 msgid "Start Date"
-msgstr "Počáteční datum"
+msgstr ""
 
 #. module: product
-#: view:product.template:product.product_template_form_view
-#: field:product.template,state:0
-msgid "Status"
-msgstr "Stav"
+#: model:ir.model.fields,help:product.field_product_supplierinfo__date_start
+msgid "Start date for this vendor price"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_pricelist_item__date_start
+msgid "Starting date for the pricelist item validation"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_product__activity_state
+#: model:ir.model.fields,help:product.field_product_template__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
 
 #. module: product
 #: selection:product.template,type:0
-msgid "Stockable Product"
-msgstr "Naskladnitelný výrobek"
+msgid "Storable Product"
+msgstr ""
 
 #. module: product
-#: field:product.product,message_summary:0
-#: field:product.template,message_summary:0
-msgid "Summary"
-msgstr "Souhrn"
+#: model:ir.model.fields,help:product.field_product_product__pricelist_id
+#: model:ir.model.fields,help:product.field_product_template__pricelist_id
+msgid ""
+"Technical field. Used for searching on pricelists, not stored in database."
+msgstr ""
 
 #. module: product
-#: field:product.supplierinfo,name:0
-#: field:product.template,seller_ids:0
-msgid "Supplier"
-msgstr "Dodavatel"
+#: model:ir.ui.view,arch_db:product.product_pricelist_item_form_view
+msgid ""
+"The computed price is expressed in the default Unit of Measure of the "
+"product."
+msgstr ""
 
 #. module: product
-#: view:product.supplierinfo:product.product_supplierinfo_form_view
-#: view:product.supplierinfo:product.product_supplierinfo_tree_view
-msgid "Supplier Information"
-msgstr "Informace o dodavateli"
-
-#. module: product
-#: field:product.template,seller_delay:0
-msgid "Supplier Lead Time"
-msgstr "Čekací lhůta dodavatele"
-
-#. module: product
-#: field:product.supplierinfo,pricelist_ids:0
-msgid "Supplier Pricelist"
-msgstr "Ceník dodavatele"
-
-#. module: product
-#: code:addons/product/pricelist.py:392
+#: code:addons/product/models/product_template.py:305
 #, python-format
-msgid "Supplier Prices on the product form"
-msgstr "Dodavatelské ceny na formuláři výrobku"
-
-#. module: product
-#: field:product.supplierinfo,product_code:0
-msgid "Supplier Product Code"
-msgstr "Kód výrobku dodavatele"
-
-#. module: product
-#: field:product.supplierinfo,product_name:0
-msgid "Supplier Product Name"
-msgstr "Jméno výrobku dodavatele"
-
-#. module: product
-#: field:product.template,seller_qty:0
-msgid "Supplier Quantity"
-msgstr "Množství dodavatele"
-
-#. module: product
-#: field:product.supplierinfo,product_uom:0
-msgid "Supplier Unit of Measure"
-msgstr "Měrná jednotka dodavatele"
-
-#. module: product
-#: help:product.supplierinfo,name:0
-msgid "Supplier of this product"
-msgstr "Dodavatel tohoto výrobku"
-
-#. module: product
-#: view:product.template:product.product_template_form_view
-msgid "Suppliers"
-msgstr "Dodavatelé"
-
-#. module: product
-#: model:product.public.category,name:product.Switch
-msgid "Switch"
+msgid ""
+"The default Unit of Measure and the purchase Unit of Measure must be in the "
+"same category."
 msgstr ""
 
 #. module: product
-#: model:product.template,name:product.product_product_47_product_template
-msgid "Switch, 24 ports"
-msgstr "Přepínač, 24-portový"
-
-#. module: product
-#: field:product.product,name_template:0
-msgid "Template Name"
-msgstr "Název šablony"
-
-#. module: product
-#: help:product.packaging,ean:0
-msgid "The EAN code of the package unit."
-msgstr "EAN kód jednotky balíku"
-
-#. module: product
-#: help:product.packaging,code:0
-msgid "The code of the transport unit."
-msgstr "Kód převozové jednotky."
-
-#. module: product
-#: help:product.uom,rounding:0
-msgid ""
-"The computed quantity will be a multiple of this value. Use 1.0 for a Unit "
-"of Measure that cannot be further split, such as a piece."
+#: model:ir.model.fields,help:product.field_product_packaging__sequence
+msgid "The first in the sequence is the default one."
 msgstr ""
-"Spočítáné množství bude v násobcích této hodnoty. Použijte 1.0 pro měrnou "
-"jednotku, kterou nelze dále dělit (například kusy)."
 
 #. module: product
-#: sql_constraint:product.uom:0
-msgid "The conversion ratio for a unit of measure cannot be 0!"
-msgstr "Převodní poměr mezi měrnými jednotkami nemůže být 0!"
-
-#. module: product
-#: help:product.price.type,currency_id:0
-msgid "The currency the field is expressed in."
-msgstr "Pole měny je vyjádřeno v."
-
-#. module: product
-#: help:product.template,weight:0
-msgid "The gross weight in Kg."
-msgstr "Hrubá váha v Kg."
-
-#. module: product
-#: help:product.ul,height:0
-msgid "The height of the package"
-msgstr "Výška balíku"
-
-#. module: product
-#: help:product.ul,length:0
-msgid "The length of the package"
-msgstr "Délka balíku"
-
-#. module: product
-#: help:product.supplierinfo,min_qty:0
+#: model:ir.model.fields,help:product.field_product_supplierinfo__min_qty
 msgid ""
-"The minimal quantity to purchase to this supplier, expressed in the supplier "
-"Product Unit of Measure if not empty, in the default unit of measure of the "
+"The minimal quantity to purchase from this vendor, expressed in the vendor "
+"Product Unit of Measure if not any, in the default unit of measure of the "
 "product otherwise."
 msgstr ""
-"Minimální nákupní množství pro nákup od tohoto dodavatele vyjádřené v "
-"měrných jednotkách dodavatele. Pokud je prázdné, tak výchozí měrná jednotka "
-"výrobku."
 
 #. module: product
-#: help:pricelist.partnerinfo,min_quantity:0
-msgid ""
-"The minimal quantity to trigger this rule, expressed in the supplier Unit of "
-"Measure if any or in the default Unit of Measure of the product otherrwise."
+#: code:addons/product/models/product_pricelist.py:434
+#, python-format
+msgid "The minimum margin should be lower than the maximum margin."
 msgstr ""
-"Minimální množství které spustí toto pravidlo vyjádřené v měrných jednotkách "
-"dodavatele (pokud jsou zadány) nebo měrných jednotkách výrobku."
 
 #. module: product
-#: help:product.template,weight_net:0
-msgid "The net weight in Kg."
-msgstr "Čistá váha v Kg."
+#: model:ir.model.fields,help:product.field_product_category__product_count
+msgid ""
+"The number of products under this category (Does not consider the children "
+"categories)"
+msgstr ""
 
 #. module: product
-#: help:product.packaging,rows:0
-msgid "The number of layers on a pallet or box"
-msgstr "Počet vrstev na paletě nebo v krabici"
-
-#. module: product
-#: help:product.packaging,ul_qty:0
-msgid "The number of packages by layer"
-msgstr "Počet balíků na vrstvu"
-
-#. module: product
-#: code:addons/product/product.py:385
+#: code:addons/product/models/product_attribute.py:75
 #, python-format
 msgid ""
 "The operation cannot be completed:\n"
-"You trying to delete an attribute value with a reference on a product "
-"variant."
+"You are trying to delete an attribute value with a reference on a product variant."
 msgstr ""
 
 #. module: product
-#: view:product.supplierinfo:product.product_supplierinfo_form_view
+#: model:ir.model.fields,help:product.field_product_supplierinfo__price
+msgid "The price to purchase a product"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_product__lst_price
 msgid ""
-"The prices below will only be taken into account when your pricelist is set "
-"as based on supplier prices."
-msgstr ""
-"Ceny níže budou brány v potaz pouze když je váš ceník založen na cenách "
-"dodavatele."
-
-#. module: product
-#: model:product.template,description_sale:product.product_product_9_product_template
-msgid ""
-"The sleek aluminium Apple Wireless Keyboard.\n"
-"            "
+"The sale price is managed from the product template. Click on the 'Variant "
+"Prices' button to set the extra attribute prices."
 msgstr ""
 
 #. module: product
-#: help:product.packaging,qty:0
-msgid "The total number of products you can put by pallet or box."
-msgstr "Celkový počet výrobků, který můžete dát na paletu nebo do krabice."
+#: model:ir.model.fields,help:product.field_product_packaging__qty
+msgid "The total number of products you can have per pallet or box."
+msgstr ""
 
 #. module: product
-#: help:product.template,volume:0
+#: model:ir.model.fields,help:product.field_product_product__volume
+#: model:ir.model.fields,help:product.field_product_template__volume
 msgid "The volume in m3."
-msgstr "Objem v m3."
+msgstr ""
 
 #. module: product
-#: help:product.packaging,weight:0
-msgid "The weight of a full package, pallet or box."
-msgstr "Váha celého balíku, palety nebo krabice."
-
-#. module: product
-#: help:product.ul,width:0
-msgid "The width of the package"
-msgstr "Šířka balíku"
+#: model:ir.model.fields,help:product.field_product_template__weight
+msgid "The weight of the contents in Kg, not including any packaging, etc."
+msgstr ""
 
 #. module: product
 #: sql_constraint:product.attribute.value:0
@@ -2661,475 +1770,418 @@ msgid "This attribute value already exists !"
 msgstr ""
 
 #. module: product
-#: help:product.supplierinfo,product_uom:0
+#: model:ir.model.fields,help:product.field_product_supplierinfo__product_uom
 msgid "This comes from the product form."
-msgstr "Pochází z formuláře výrobku."
-
-#. module: product
-#: help:product.product,image_variant:0
-msgid ""
-"This field holds the image used as image for the product variant, limited to "
-"1024x1024px."
 msgstr ""
 
 #. module: product
-#: help:product.template,image:0
+#: model:ir.model.fields,help:product.field_product_product__image_variant
+msgid ""
+"This field holds the image used as image for the product variant, limited to"
+" 1024x1024px."
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_template__image
 msgid ""
 "This field holds the image used as image for the product, limited to "
 "1024x1024px."
 msgstr ""
-"Toto pole obsahuje obrázek použitý pro výrobek o velikosti maximálně "
-"1024x1024 px."
 
 #. module: product
-#: help:product.supplierinfo,qty:0
-msgid "This is a quantity which is converted into Default Unit of Measure."
-msgstr "Množství výrobků převedené na výchozí měrnou jednotku."
-
-#. module: product
-#: help:product.product,price_extra:0
-msgid "This is le sum of the extra price of all attributes"
+#: model:ir.model.fields,help:product.field_product_product__price_extra
+msgid "This is the sum of the extra price of all attributes"
 msgstr ""
 
 #. module: product
-#: help:product.template,seller_qty:0
-msgid "This is minimum quantity to purchase from Main Supplier."
-msgstr "Nejmenší množství k objednání od Hlavního dodavatele"
-
-#. module: product
-#: help:product.template,seller_delay:0
-msgid ""
-"This is the average delay in days between the purchase order confirmation "
-"and the receipts for this product and for the default supplier. It is used "
-"by the scheduler to order requests based on reordering delays."
+#: model:ir.ui.view,arch_db:product.product_template_form_view
+msgid "This note is only for internal purposes."
 msgstr ""
 
 #. module: product
-#: view:product.template:product.product_template_form_view
-msgid "This note will be displayed on requests for quotation..."
-msgstr "Tato poznámka bude zobrazena na poptávkách..."
-
-#. module: product
-#: help:pricelist.partnerinfo,price:0
-msgid ""
-"This price will be considered as a price for the supplier Unit of Measure if "
-"any or the default Unit of Measure of the product otherwise"
+#: model:ir.ui.view,arch_db:product.product_template_form_view
+msgid "This note will show up on sales orders & invoices."
 msgstr ""
-"Tato cena bude považována za měrnou jednotku dodavatele (pokud je zadána) "
-"nebo výchozí měrnou jednotku výrobku."
 
 #. module: product
-#: help:res.partner,property_product_pricelist:0
+#: model:ir.model.fields,help:product.field_res_partner__property_product_pricelist
+#: model:ir.model.fields,help:product.field_res_users__property_product_pricelist
 msgid ""
 "This pricelist will be used, instead of the default one, for sales to the "
 "current partner"
 msgstr ""
-"Místo výchozího ceníku bude použít tento ceník pro prodej aktuálnímu "
-"partnerovi"
 
 #. module: product
-#: model:product.template,description:product.product_product_9_product_template
-msgid "This product is configured with example of push/pull flows"
-msgstr "Tento výrobek je nastaven s příkladem tlačných/tažných toků"
-
-#. module: product
-#: help:product.supplierinfo,product_code:0
+#: model:ir.model.fields,help:product.field_product_supplierinfo__product_code
 msgid ""
-"This supplier's product code will be used when printing a request for "
+"This vendor's product code will be used when printing a request for "
 "quotation. Keep empty to use the internal one."
 msgstr ""
-"Kód výrobku od dodavatele bude použit při tisku žádosti o nabídku. Ponechte "
-"prázdné pro použití vnitřního kódu."
 
 #. module: product
-#: help:product.supplierinfo,product_name:0
+#: model:ir.model.fields,help:product.field_product_supplierinfo__product_name
 msgid ""
-"This supplier's product name will be used when printing a request for "
+"This vendor's product name will be used when printing a request for "
 "quotation. Keep empty to use the internal one."
 msgstr ""
-"Název výrobku od dodavatele bude použit při tisku požadavku na cenovou "
-"nabídku. Ponechte prázdné pro použití vnitřního."
 
 #. module: product
-#: model:product.template,description:product.product_product_2_product_template
-msgid ""
-"This type of service include assistance for security questions, system "
-"configuration requirements, implementation or special needs."
+#: selection:product.product,activity_state:0
+#: selection:product.template,activity_state:0
+msgid "Today"
 msgstr ""
-"Tento druh služby zahrnuje asistenci v bezpečnostních otázkách, požadavcích "
-"systémového nastavení, implementace nebo zvláštních požadavcích."
 
 #. module: product
-#: model:product.template,description:product.product_product_1_product_template
-#: model:product.template,description_sale:product.product_product_1_product_template
-msgid "This type of service include basic monitoring of products."
-msgstr "Tento druh služby zahrnuje základní sledování výrobků."
+#: model:ir.ui.view,arch_db:product.product_template_search_view
+msgid "Today Activities"
+msgstr ""
 
 #. module: product
-#: model:product.template,name:product.product_product_39_product_template
-msgid "Toner Cartridge"
-msgstr "Náplň toneru"
-
-#. module: product
-#: field:product.packaging,weight:0
-msgid "Total Package Weight"
-msgstr "Celková hmotnost balíku"
-
-#. module: product
-#: view:product.template:product.product_template_search_view
-#: field:product.ul,type:0
-#: field:product.uom,uom_type:0
-msgid "Type"
-msgstr "Typ"
-
-#. module: product
-#: model:product.template,name:product.product_product_48_product_template
-msgid "USB Adapter"
-msgstr "USB adaptér"
-
-#. module: product
-#: selection:product.ul,type:0
-#: model:product.uom.categ,name:product.product_uom_categ_unit
-msgid "Unit"
-msgstr "Jednotka"
-
-#. module: product
-#: field:pricelist.partnerinfo,price:0
-msgid "Unit Price"
-msgstr "Jednotková cena"
-
-#. module: product
-#: view:product.template:product.product_template_form_view
-#: field:product.template,uom_id:0
-#: field:product.uom,name:0
+#: model:ir.model.fields,field_description:product.field_product_product__uom_id
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__product_uom
+#: model:ir.model.fields,field_description:product.field_product_template__uom_id
 msgid "Unit of Measure"
-msgstr "Měrná jednotka"
-
-#. module: product
-#: field:product.template,uos_coeff:0
-msgid "Unit of Measure -> UOS Coeff"
-msgstr "Koeficient MJ -> PJ"
-
-#. module: product
-#: model:ir.actions.act_window,name:product.product_uom_categ_form_action
-#: model:ir.ui.menu,name:product.menu_product_uom_categ_form_action
-msgid "Unit of Measure Categories"
-msgstr "Kategorie měrných jednotek"
-
-#. module: product
-#: code:addons/product/product.py:705
-#, python-format
-msgid "Unit of Measure categories Mismatch!"
-msgstr "Neshoda kategorií měrných jednotek"
-
-#. module: product
-#: field:product.template,uos_id:0
-msgid "Unit of Sale"
-msgstr "Prodejní jednotka"
-
-#. module: product
-#: model:product.uom,name:product.product_uom_unit
-msgid "Unit(s)"
-msgstr "Jednotek"
-
-#. module: product
-#: model:ir.actions.act_window,name:product.product_uom_form_action
-#: model:ir.ui.menu,name:product.menu_product_uom_form_action
-#: model:ir.ui.menu,name:product.next_id_16
-#: view:product.uom:product.product_uom_form_view
-#: view:product.uom:product.product_uom_tree_view
-msgid "Units of Measure"
-msgstr "Měrné jednotky"
-
-#. module: product
-#: view:product.uom.categ:product.product_uom_categ_form_view
-msgid "Units of Measure categories"
-msgstr "Kategorie měrných jednotek"
-
-#. module: product
-#: field:product.product,message_unread:0
-#: field:product.template,message_unread:0
-msgid "Unread Messages"
-msgstr "Nepřečtené zprávy"
-
-#. module: product
-#: help:product.pricelist.type,key:0
-msgid ""
-"Used in the code to select specific prices based on the context. Keep "
-"unchanged."
 msgstr ""
-"Použito v kódu k výběru určitých cen založených na kontextu. Nechejte bez "
-"změny."
 
 #. module: product
-#: field:product.attribute.value,name:0
+#: model:ir.model.fields,field_description:product.field_product_product__uom_name
+#: model:ir.model.fields,field_description:product.field_product_template__uom_name
+msgid "Unit of Measure Name"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_res_config_settings__group_uom
+msgid "Units of Measure"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_product__message_unread
+#: model:ir.model.fields,field_description:product.field_product_template__message_unread
+msgid "Unread Messages"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_product__message_unread_counter
+#: model:ir.model.fields,field_description:product.field_product_template__message_unread_counter
+msgid "Unread Messages Counter"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_res_config_settings__group_sale_pricelist
+msgid "Use pricelists to adapt your price per customers"
+msgstr ""
+
+#. module: product
+#: model:ir.model,name:product.model_res_users
+msgid "Users"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.product_supplierinfo_form_view
+msgid "Validity"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_attribute_value__name
 msgid "Value"
 msgstr ""
 
 #. module: product
-#: field:product.attribute,value_ids:0
+#: model:ir.model.fields,field_description:product.field_product_attribute__value_ids
+#: model:ir.ui.view,arch_db:product.product_attribute_line_form
+#: model:ir.ui.view,arch_db:product.product_attribute_view_form
 msgid "Values"
 msgstr ""
 
 #. module: product
-#: selection:product.template,mes_type:0
-msgid "Variable"
-msgstr "Proměnné"
-
-#. module: product
-#: field:product.product,price_extra:0
-msgid "Variant Extra Price"
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__product_variant_count
+msgid "Variant Count"
 msgstr ""
 
 #. module: product
-#: field:product.product,image_variant:0
+#: model:ir.model.fields,field_description:product.field_product_product__image_variant
 msgid "Variant Image"
 msgstr ""
 
 #. module: product
-#: view:product.template:product.product_template_only_form_view
+#: model:ir.ui.view,arch_db:product.product_variant_easy_edit_view
+msgid "Variant Information"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_product__price_extra
+msgid "Variant Price Extra"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.product_template_form_view
 msgid "Variant Prices"
 msgstr ""
 
 #. module: product
-#: model:ir.actions.act_window,name:product.variants_template_action
-#: view:product.attribute:product.attribute_tree_view
-#: view:product.attribute.value:product.variants_template_tree_view
-#: view:product.attribute.value:product.variants_tree_view
+#: model:ir.model.fields,field_description:product.field_product_product__variant_seller_ids
+#: model:ir.model.fields,field_description:product.field_product_template__variant_seller_ids
+msgid "Variant Seller"
+msgstr ""
+
+#. module: product
+#: model:ir.actions.act_window,name:product.product_attribute_value_action
+#: model:ir.ui.view,arch_db:product.attribute_tree_view
+#: model:ir.ui.view,arch_db:product.variants_tree_view
 msgid "Variant Values"
 msgstr ""
 
 #. module: product
-#: field:product.attribute.value,product_ids:0
-#: view:product.template:product.product_template_kanban_view
-#: view:product.template:product.product_template_only_form_view
+#: model:ir.model.fields,field_description:product.field_product_attribute_value__product_ids
+#: model:ir.ui.view,arch_db:product.product_template_kanban_view
+#: model:ir.ui.view,arch_db:product.product_template_only_form_view
 msgid "Variants"
-msgstr "Varianty"
-
-#. module: product
-#: model:product.public.category,name:product.video_acquisition
-msgid "Video Acquisition"
 msgstr ""
 
 #. module: product
-#: selection:product.category,type:0
-msgid "View"
-msgstr "Pohled"
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__name
+#: model:ir.ui.view,arch_db:product.product_supplierinfo_form_view
+#: model:ir.ui.view,arch_db:product.product_supplierinfo_search_view
+msgid "Vendor"
+msgstr ""
 
 #. module: product
-#: field:product.template,volume:0
-#: model:product.uom.categ,name:product.product_uom_categ_vol
+#: model:ir.ui.view,arch_db:product.product_template_form_view
+msgid "Vendor Bills"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.product_supplierinfo_form_view
+#: model:ir.ui.view,arch_db:product.product_supplierinfo_tree_view
+msgid "Vendor Information"
+msgstr ""
+
+#. module: product
+#: model:ir.actions.act_window,name:product.product_supplierinfo_type_action
+msgid "Vendor Pricelists"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__product_code
+msgid "Vendor Product Code"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_supplierinfo__product_name
+msgid "Vendor Product Name"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_supplierinfo__name
+msgid "Vendor of this product"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_product__seller_ids
+#: model:ir.model.fields,field_description:product.field_product_template__seller_ids
+msgid "Vendors"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_product__volume
+#: model:ir.model.fields,field_description:product.field_product_template__volume
+#: model:ir.ui.view,arch_db:product.product_template_form_view
 msgid "Volume"
-msgstr "Objem"
+msgstr ""
 
 #. module: product
-#: code:addons/product/pricelist.py:208
-#: code:addons/product/product.py:210
-#, python-format
-msgid "Warning!"
-msgstr "Varování!"
+#: model:ir.model.fields,field_description:product.field_product_product__website_message_ids
+#: model:ir.model.fields,field_description:product.field_product_template__website_message_ids
+msgid "Website Messages"
+msgstr ""
 
 #. module: product
-#: field:product.template,warranty:0
-msgid "Warranty"
-msgstr "Záruka"
+#: model:ir.model.fields,help:product.field_product_product__website_message_ids
+#: model:ir.model.fields,help:product.field_product_template__website_message_ids
+msgid "Website communication history"
+msgstr ""
 
 #. module: product
-#: model:product.template,name:product.product_product_34_product_template
-msgid "Webcam"
-msgstr "Webkamera"
-
-#. module: product
-#: model:product.uom.categ,name:product.product_uom_categ_kgm
+#: model:ir.model.fields,field_description:product.field_product_product__weight
+#: model:ir.model.fields,field_description:product.field_product_template__weight
 msgid "Weight"
-msgstr "Hmotnost"
+msgstr ""
 
 #. module: product
-#: view:product.template:product.product_template_form_view
+#: model:ir.model.fields,field_description:product.field_product_product__weight_uom_id
+#: model:ir.model.fields,field_description:product.field_product_template__weight_uom_id
+msgid "Weight Unit of Measure"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,help:product.field_product_product__weight
+msgid ""
+"Weight of the product, packaging not included. The unit of measure can be "
+"changed in the general settings"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_res_config_settings__product_weight_in_lbs
+msgid "Weight unit of measure"
+msgstr ""
+
+#. module: product
+#: model:ir.model.fields,field_description:product.field_product_product__weight_uom_name
+#: model:ir.model.fields,field_description:product.field_product_template__weight_uom_name
+msgid "Weight unit of measure label"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.product_variant_easy_edit_view
 msgid "Weights"
-msgstr "Váhy"
+msgstr ""
 
 #. module: product
-#: help:product.pricelist.version,active:0
+#: model:ir.actions.act_window,help:product.product_pricelist_action2
 msgid ""
-"When a version is duplicated it is set to non active, so that the dates do "
-"not overlaps with original version. You should change the dates and "
-"reactivate the pricelist"
-msgstr ""
-"Když je verze zdvojená, tak je nastaveno na neaktivní, takže data se "
-"nepřekrávají s původní verzí. Měli byste změnit data a znovu aktivovat ceník"
-
-#. module: product
-#: model:product.attribute.value,name:product.product_attribute_value_3
-msgid "White"
+"You can assign pricelists to your customers or select one when creating a "
+"new sales quotation."
 msgstr ""
 
 #. module: product
-#: model:product.attribute,name:product.product_attribute_3
-msgid "Wi-Fi"
-msgstr ""
-
-#. module: product
-#: field:product.ul,width:0
-msgid "Width"
-msgstr "Šířka"
-
-#. module: product
-#: model:product.template,name:product.product_product_40_product_template
-msgid "Windows 7 Professional"
-msgstr "Windows 7 Professional"
-
-#. module: product
-#: model:product.template,name:product.product_product_41_product_template
-msgid "Windows Home Server 2011"
-msgstr "Windows Home Server 2011"
-
-#. module: product
-#: model:product.uom.categ,name:product.uom_categ_wtime
-msgid "Working Time"
-msgstr "Pracovní doba"
-
-#. module: product
-#: constraint:product.pricelist.version:0
-msgid "You cannot have 2 pricelist versions that overlap!"
-msgstr "Nemůžete mít dvě překrývající se verze ceníku!"
-
-#. module: product
-#: constraint:product.product:0
+#: code:addons/product/models/product_pricelist.py:428
+#, python-format
 msgid ""
-"You provided an invalid \"EAN13 Barcode\" reference. You may use the "
-"\"Internal Reference\" field instead."
-msgstr ""
-"Zadali jste neplatný odkaz na \"Čárový kód EAN13\". Můžete místo toho použít "
-"pole \"Vnitřní odkaz\"."
-
-#. module: product
-#: model:product.template,name:product.product_product_43_product_template
-msgid "Zed+ Antivirus"
-msgstr "Antivirový program Zed+"
-
-#. module: product
-#: model:product.uom,name:product.product_uom_cm
-msgid "cm"
-msgstr "cm"
-
-#. module: product
-#: view:product.template:product.product_template_form_view
-msgid "describe the product characteristics..."
-msgstr "popište vlastnosti výrobku..."
-
-#. module: product
-#: view:product.uom:product.product_uom_form_view
-msgid "e.g: 1 * (reference unit) = ratio * (this unit)"
-msgstr "např.: 1 * (referenční jednotka) = poměr * (tato jednotka)"
-
-#. module: product
-#: view:product.uom:product.product_uom_form_view
-msgid "e.g: 1 * (this unit) = ratio * (reference unit)"
-msgstr "např.: 1 * (tato jednotka) = poměr * (referenční jednotka)"
-
-#. module: product
-#: model:product.uom,name:product.product_uom_floz
-msgid "fl oz"
+"You cannot assign the Main Pricelist as Other Pricelist in PriceList Item"
 msgstr ""
 
 #. module: product
-#: model:product.uom,name:product.product_uom_foot
-msgid "foot(ft)"
+#: code:addons/product/models/product.py:54
+#, python-format
+msgid "You cannot create recursive categories."
 msgstr ""
 
 #. module: product
-#: model:product.uom,name:product.product_uom_gal
-msgid "gal(s)"
+#: code:addons/product/models/decimal_precision.py:16
+#, python-format
+msgid ""
+"You cannot define the decimal precision of 'Account' as greater than the "
+"rounding factor of the company's main currency"
 msgstr ""
 
 #. module: product
-#: model:product.template,name:product.product_product_8_product_template
-msgid "iMac"
+#: code:addons/product/models/product_attribute.py:102
+#, python-format
+msgid "You cannot use this attribute with the following value."
 msgstr ""
 
 #. module: product
-#: model:product.template,name:product.product_product_6_product_template
-msgid "iPad Mini"
+#: code:addons/product/wizard/product_price_list.py:26
+#, python-format
+msgid "You have to set a logo or a layout for your company."
 msgstr ""
 
 #. module: product
-#: model:product.template,name:product.product_product_4_product_template
-#: model:product.template,name:product.product_product_4b_product_template
-#: model:product.template,name:product.product_product_4c_product_template
-#: model:product.template,name:product.product_product_4d_product_template
-msgid "iPad Retina Display"
+#: code:addons/product/wizard/product_price_list.py:28
+#, python-format
+msgid "You have to set your reports's header and footer layout."
 msgstr ""
 
 #. module: product
-#: model:product.template,name:product.product_product_11_product_template
-#: model:product.template,name:product.product_product_11b_product_template
-msgid "iPod"
+#: model:ir.actions.act_window,help:product.product_normal_action
+#: model:ir.actions.act_window,help:product.product_template_action
+msgid ""
+"You must define a product for everything you purchase,\n"
+"                whether it's a physical product, a consumable or services."
 msgstr ""
 
 #. module: product
-#: model:product.uom,name:product.product_uom_inch
-msgid "inch(es)"
+#: model:ir.actions.act_window,help:product.product_normal_action_sell
+#: model:ir.actions.act_window,help:product.product_variant_action
+msgid ""
+"You must define a product for everything you sell, whether it's a physical product,\n"
+"                a consumable or a service you offer to customers.\n"
+"                The product form contains information to simplify the sale process:\n"
+"                price, notes in the quotation, accounting data, procurement methods, etc."
 msgstr ""
 
 #. module: product
-#: model:product.uom,name:product.product_uom_kgm
-msgid "kg"
-msgstr "kg"
-
-#. module: product
-#: model:product.uom,name:product.product_uom_km
-msgid "km"
-msgstr "km"
-
-#. module: product
-#: model:product.uom,name:product.product_uom_lb
-msgid "lb(s)"
+#: code:addons/product/models/product_template.py:29
+#, python-format
+msgid ""
+"You must define at least one product category in order to be able to create "
+"products."
 msgstr ""
 
 #. module: product
-#: view:product.product:product.product_normal_form_view
-msgid "lst_price"
+#: model:ir.ui.view,arch_db:product.product_supplierinfo_form_view
+#: model:ir.ui.view,arch_db:product.product_supplierinfo_view_kanban
+msgid "days"
 msgstr ""
 
 #. module: product
-#: model:product.uom,name:product.product_uom_mile
-msgid "mile(s)"
+#: model:ir.model,name:product.model_decimal_precision
+msgid "decimal.precision"
 msgstr ""
 
 #. module: product
-#: view:product.template:product.product_template_form_view
-msgid "months"
-msgstr "měsíců"
-
-#. module: product
-#: view:product.template:product.product_template_form_view
-msgid "note to be displayed on quotations..."
-msgstr "poznámka, která se má zobrazit v nabídkách..."
-
-#. module: product
-#: model:product.uom,name:product.product_uom_oz
-msgid "oz(s)"
+#: model:ir.ui.view,arch_db:product.product_category_form_view
+msgid "e.g. Lamps"
 msgstr ""
 
 #. module: product
-#: model:product.uom,name:product.product_uom_qt
-msgid "qt"
+#: model:ir.ui.view,arch_db:product.product_variant_easy_edit_view
+msgid "e.g. Odoo Enterprise Subscription"
 msgstr ""
 
 #. module: product
-#: view:res.partner:product.view_partner_property_form
+#: model:ir.ui.view,arch_db:product.product_pricelist_view
+msgid "e.g. USD Retailers"
+msgstr ""
+
+#. module: product
+#: code:addons/product/models/product.py:571
+#: code:addons/product/models/product_template.py:491
+#, python-format
+msgid "product"
+msgstr ""
+
+#. module: product
+#: model:ir.model,name:product.model_product_attribute_line
+msgid "product.attribute.line"
+msgstr ""
+
+#. module: product
+#: model:ir.model,name:product.model_product_attribute_price
+msgid "product.attribute.price"
+msgstr ""
+
+#. module: product
+#: model:ir.model,name:product.model_product_attribute_value
+msgid "product.attribute.value"
+msgstr ""
+
+#. module: product
+#: model:ir.model,name:product.model_product_price_history
+msgid "product.price.history"
+msgstr ""
+
+#. module: product
+#: model:ir.model,name:product.model_report_product_report_pricelist
+msgid "report.product.report_pricelist"
+msgstr ""
+
+#. module: product
+#: model:ir.model,name:product.model_res_config_settings
+msgid "res.config.settings"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.view_partner_property_form
 msgid "the parent company"
-msgstr "nadřazená společnost"
-
-#. module: product
-#: field:product.price.history,company_id:0
-msgid "unknown"
 msgstr ""
 
-#~ msgid ""
-#~ "Specify the minimum quantity that needs to be bought/sold for the rule to "
-#~ "apply."
-#~ msgstr ""
-#~ "Zadejte minimální množství, které musí být zakoupeno/prodáno aby se pravidlo "
-#~ "použilo."
+#. module: product
+#: model:ir.ui.view,arch_db:product.product_variant_easy_edit_view
+msgid "the product template"
+msgstr ""
+
+#. module: product
+#: model:ir.ui.view,arch_db:product.product_supplierinfo_form_view
+msgid "to"
+msgstr ""
