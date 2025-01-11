@@ -1,35 +1,41 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from datetime import timedelta
-
 from odoo import api, fields, models, _
 from odoo.addons.base.models.res_partner import WARNING_MESSAGE, WARNING_HELP
 from odoo.tools.float_utils import float_round
+from odoo.exceptions import UserError
+from dateutil.relativedelta import relativedelta
 
 
 class ProductTemplate(models.Model):
-    _name = 'product.template'
     _inherit = 'product.template'
 
-    property_account_creditor_price_difference = fields.Many2one(
-        'account.account', string="Price Difference Account", company_dependent=True,
-        help="This account is used in automated inventory valuation to "\
-            "record the price difference between a purchase order and its related vendor bill "\
-            "when validating this vendor bill.")
-    purchased_product_qty = fields.Float(compute='_compute_purchased_product_qty', string='Purchased')
+    purchased_product_qty = fields.Float(compute='_compute_purchased_product_qty', string='Purchased', digits='Product Unit of Measure')
     purchase_method = fields.Selection([
         ('purchase', 'On ordered quantities'),
         ('receive', 'On received quantities'),
-    ], string="Control Policy", help="On ordered quantities: control bills based on ordered quantities.\n"
-        "On received quantities: control bills based on received quantity.", default="receive")
-    purchase_line_warn = fields.Selection(WARNING_MESSAGE, 'Purchase Order Line', help=WARNING_HELP, required=True, default="no-message")
+    ], string="Control Policy", compute='_compute_purchase_method', precompute=True, store=True, readonly=False,
+        help="On ordered quantities: Control bills based on ordered quantities.\n"
+            "On received quantities: Control bills based on received quantities.")
+    purchase_line_warn = fields.Selection(WARNING_MESSAGE, 'Purchase Order Line Warning', help=WARNING_HELP, required=True, default="no-message")
     purchase_line_warn_msg = fields.Text('Message for Purchase Order Line')
 
-    @api.multi
+    @api.depends('type')
+    def _compute_purchase_method(self):
+        default_purchase_method = self.env['product.template'].default_get(['purchase_method']).get('purchase_method', 'receive')
+        for product in self:
+            if product.type == 'service':
+                product.purchase_method = 'purchase'
+            else:
+                product.purchase_method = default_purchase_method
+
     def _compute_purchased_product_qty(self):
         for template in self:
             template.purchased_product_qty = float_round(sum([p.purchased_product_qty for p in template.product_variant_ids]), precision_rounding=template.uom_id.rounding)
+
+    def _get_backend_root_menu_ids(self):
+        return super()._get_backend_root_menu_ids() + [self.env.ref('purchase.menu_purchase_root').id]
 
     @api.model
     def get_import_templates(self):
@@ -41,54 +47,82 @@ class ProductTemplate(models.Model):
             }]
         return res
 
-    @api.multi
     def action_view_po(self):
-        action = self.env.ref('purchase.action_purchase_order_report_all').read()[0]
-        action['domain'] = [('state', 'in', ['purchase', 'done']), '&', ('product_tmpl_id', 'in', self.ids)]
-        action['context'] = {
-            'search_default_last_year_purchase': 1,
-            'search_default_status': 1, 'search_default_order_month': 1,
-            'graph_measure': 'unit_quantity'
-        }
+        action = self.env["ir.actions.actions"]._for_xml_id("purchase.action_purchase_history")
+        action['domain'] = ['&', ('state', 'in', ['purchase', 'done']), ('product_id', 'in', self.product_variant_ids.ids)]
+        action['display_name'] = _("Purchase History for %s", self.display_name)
         return action
 
 
 class ProductProduct(models.Model):
-    _name = 'product.product'
     _inherit = 'product.product'
 
-    purchased_product_qty = fields.Float(compute='_compute_purchased_product_qty', string='Purchased')
+    purchased_product_qty = fields.Float(compute='_compute_purchased_product_qty', string='Purchased',
+        digits='Product Unit of Measure')
 
-    @api.multi
+    is_in_purchase_order = fields.Boolean(
+        compute='_compute_is_in_purchase_order',
+        search='_search_is_in_purchase_order',
+    )
+
     def _compute_purchased_product_qty(self):
-        date_from = fields.Datetime.to_string(fields.datetime.now() - timedelta(days=365))
+        date_from = fields.Datetime.to_string(fields.Date.context_today(self) - relativedelta(years=1))
         domain = [
-            ('state', 'in', ['purchase', 'done']),
-            ('product_id', 'in', self.mapped('id')),
-            ('date_order', '>', date_from)
+            ('order_id.state', 'in', ['purchase', 'done']),
+            ('product_id', 'in', self.ids),
+            ('order_id.date_approve', '>=', date_from)
         ]
-        PurchaseOrderLines = self.env['purchase.order.line'].search(domain)
-        order_lines = self.env['purchase.order.line'].read_group(domain, ['product_id', 'product_uom_qty'], ['product_id'])
-        purchased_data = dict([(data['product_id'][0], data['product_uom_qty']) for data in order_lines])
+        order_lines = self.env['purchase.order.line']._read_group(domain, ['product_id'], ['product_uom_qty:sum'])
+        purchased_data = {product.id: qty for product, qty in order_lines}
         for product in self:
+            if not product.id:
+                product.purchased_product_qty = 0.0
+                continue
             product.purchased_product_qty = float_round(purchased_data.get(product.id, 0), precision_rounding=product.uom_id.rounding)
 
-    @api.multi
+    @api.depends_context('order_id')
+    def _compute_is_in_purchase_order(self):
+        order_id = self.env.context.get('order_id')
+        if not order_id:
+            self.is_in_purchase_order = False
+            return
+
+        read_group_data = self.env['purchase.order.line']._read_group(
+            domain=[('order_id', '=', order_id)],
+            groupby=['product_id'],
+            aggregates=['__count'],
+        )
+        data = {product.id: count for product, count in read_group_data}
+        for product in self:
+            product.is_in_purchase_order = bool(data.get(product.id, 0))
+
+    def _search_is_in_purchase_order(self, operator, value):
+        if operator not in ['=', '!='] or not isinstance(value, bool):
+            raise UserError(_("Operation not supported"))
+        product_ids = self.env['purchase.order.line'].search([
+            ('order_id', 'in', [self.env.context.get('order_id', '')]),
+        ]).product_id.ids
+        return [('id', 'in', product_ids)]
+
     def action_view_po(self):
-        action = self.env.ref('purchase.action_purchase_order_report_all').read()[0]
-        action['domain'] = [('state', 'in', ['purchase', 'done']), '&', ('product_id', 'in', self.ids)]
-        action['context'] = {
-            'search_default_last_year_purchase': 1,
-            'search_default_status': 1, 'search_default_order_month': 1,
-            'graph_measure': 'unit_quantity'
-        }
+        action = self.env["ir.actions.actions"]._for_xml_id("purchase.action_purchase_history")
+        action['domain'] = ['&', ('state', 'in', ['purchase', 'done']), ('product_id', 'in', self.ids)]
+        action['display_name'] = _("Purchase History for %s", self.display_name)
         return action
 
+    def _get_backend_root_menu_ids(self):
+        return super()._get_backend_root_menu_ids() + [self.env.ref('purchase.menu_purchase_root').id]
 
-class ProductCategory(models.Model):
-    _inherit = "product.category"
 
-    property_account_creditor_price_difference_categ = fields.Many2one(
-        'account.account', string="Price Difference Account",
-        company_dependent=True,
-        help="This account will be used to value price difference between purchase price and accounting cost.")
+class ProductSupplierinfo(models.Model):
+    _inherit = "product.supplierinfo"
+
+    @api.onchange('partner_id')
+    def _onchange_partner_id(self):
+        self.currency_id = self.partner_id.property_purchase_currency_id.id or self.env.company.currency_id.id
+
+
+class ProductPackaging(models.Model):
+    _inherit = 'product.packaging'
+
+    purchase = fields.Boolean("Purchase", default=True, help="If true, the packaging can be used for purchase orders")

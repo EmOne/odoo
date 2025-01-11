@@ -5,8 +5,8 @@ from odoo import api, fields, models
 
 
 class BaseModuleUninstall(models.TransientModel):
-    _name = "base.module.uninstall"
-    _description = "Module Uninstallation"
+    _name = 'base.module.uninstall'
+    _description = "Module Uninstall"
 
     show_all = fields.Boolean()
     module_id = fields.Many2one(
@@ -26,8 +26,12 @@ class BaseModuleUninstall(models.TransientModel):
     @api.depends('module_id', 'show_all')
     def _compute_module_ids(self):
         for wizard in self:
-            modules = wizard._get_modules()
-            wizard.module_ids = modules if wizard.show_all else modules.filtered('application')
+            modules = wizard._get_modules().sorted(lambda m: (not m.application, m.sequence))
+            wizard.module_ids = modules if wizard.show_all else wizard._modules_to_display(modules)
+
+    @api.model
+    def _modules_to_display(self, modules):
+        return modules.filtered('application')
 
     def _get_models(self):
         """ Return the models (ir.model) to consider for the impact. """
@@ -40,10 +44,12 @@ class BaseModuleUninstall(models.TransientModel):
         for wizard in self:
             if wizard.module_id:
                 module_names = set(wizard._get_modules().mapped('name'))
-                # find the models that have all their XIDs in the given modules
+
                 def lost(model):
-                    return all(xid.split('.')[0] in module_names
-                               for xid in ir_models_xids.get(model.id, ()))
+                    xids = ir_models_xids.get(model.id, ())
+                    return xids and all(xid.split('.')[0] in module_names for xid in xids)
+
+                # find the models that have all their XIDs in the given modules
                 self.model_ids = ir_models.filtered(lost).sorted('name')
 
     @api.onchange('module_id')
@@ -52,7 +58,6 @@ class BaseModuleUninstall(models.TransientModel):
         if not self.module_id.application:
             self.show_all = True
 
-    @api.multi
     def action_uninstall(self):
-        modules = self.mapped('module_id')
+        modules = self.module_id
         return modules.button_immediate_uninstall()

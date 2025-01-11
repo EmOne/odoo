@@ -1,23 +1,64 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import fields, models
+from odoo import models, fields, _
 
 
 class ResUsers(models.Model):
     _inherit = 'res.users'
 
-    has_group_hr_attendance = fields.Boolean(
-        'Manual Attendance', compute='_compute_groups_id', inverse='_inverse_groups_id',
-        group_xml_id='hr_attendance.group_hr_attendance',
-        help='The user will gain access to the human resources attendance menu, enabling him to manage his own attendance.')
+    hours_last_month = fields.Float(related='employee_id.hours_last_month')
+    hours_last_month_display = fields.Char(related='employee_id.hours_last_month_display')
+    attendance_state = fields.Selection(related='employee_id.attendance_state')
+    last_check_in = fields.Datetime(related='employee_id.last_attendance_id.check_in')
+    last_check_out = fields.Datetime(related='employee_id.last_attendance_id.check_out')
+    total_overtime = fields.Float(related='employee_id.total_overtime')
+    attendance_manager_id = fields.Many2one(related='employee_id.attendance_manager_id', readonly=False)
+    display_extra_hours = fields.Boolean(related='company_id.hr_attendance_display_overtime')
 
-    has_group_hr_attendance_use_pin = fields.Boolean(
-        'Enable PIN use', compute='_compute_groups_id', inverse='_inverse_groups_id',
-        group_xml_id='hr_attendance.group_hr_attendance_use_pin',
-        help='The user will have to enter his PIN to check in and out manually at the company screen.')
+    @property
+    def SELF_READABLE_FIELDS(self):
+        return super().SELF_READABLE_FIELDS + [
+            'hours_last_month',
+            'hours_last_month_display',
+            'attendance_state',
+            'last_check_in',
+            'last_check_out',
+            'total_overtime',
+            'attendance_manager_id',
+            'display_extra_hours',
+        ]
 
-    group_hr_attendance_user = fields.Selection(
-        selection=lambda self: self._get_group_selection('base.module_category_hr_attendance'),
-        string='Attendance', compute='_compute_groups_id', inverse='_inverse_groups_id',
-        category_xml_id='base.module_category_hr_attendance')
+    def _clean_attendance_officers(self):
+        attendance_officers = self.env['hr.employee'].search(
+            [('attendance_manager_id', 'in', self.ids)]).attendance_manager_id
+        officers_to_remove_ids = self - attendance_officers
+        if officers_to_remove_ids:
+            self.env.ref('hr_attendance.group_hr_attendance_officer').users = [(3, user.id) for user in
+                                                                               officers_to_remove_ids]
+    def action_open_last_month_attendances(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Attendances This Month"),
+            "res_model": "hr.attendance",
+            "views": [[self.env.ref('hr_attendance.hr_attendance_employee_simple_tree_view').id, "list"]],
+            "context": {
+                "create": 0
+            },
+            "domain": [('employee_id', '=', self.employee_id.id),
+                       ('check_in', ">=", fields.Datetime.today().replace(day=1))]
+        }
+
+    def action_open_last_month_overtime(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Overtime"),
+            "res_model": "hr.attendance.overtime",
+            "views": [[False, "list"]],
+            "context": {
+                "create": 0
+            },
+            "domain": [('employee_id', '=', self.employee_id.id)]
+        }

@@ -1,405 +1,394 @@
-odoo.define('website_links.website_links', function (require) {
-'use strict';
+import { _t } from "@web/core/l10n/translation";
+import { Component, onWillStart, useState } from "@odoo/owl";
+import publicWidget from "@web/legacy/js/public/public_widget";
+import { addLoadingEffect } from '@web/core/utils/ui';
+import { browser } from "@web/core/browser/browser";
+import { rpc } from "@web/core/network/rpc";
+import { KeepLast } from "@web/core/utils/concurrency";
+import { attachComponent } from "@web_editor/js/core/owl_utils";
+import { SelectMenu } from "@web/core/select_menu/select_menu";
+import { useService } from "@web/core/utils/hooks";
+import { DropdownItem } from "@web/core/dropdown/dropdown_item";
 
-require('web.dom_ready');
-var ajax = require('web.ajax');
-var core = require('web.core');
-var rpc = require('web.rpc');
-var Widget = require('web.Widget');
-var base = require('web_editor.base');
+class WebsiteLinksTagsWrapper extends Component {
+    static template = "website_links.WebsiteLinksTagsWrapper";
+    static components = { SelectMenu, DropdownItem };
+    static props = {
+        placeholder: { optional: true, type: String },
+        model: { optional: true, type: String },
+    };
 
-var qweb = core.qweb;
-var _t = core._t;
+    setup() {
+        this.orm = useService("orm");
+        this.keepLast = new KeepLast();
+        this.state = useState({
+            placeholder: this.props.placeholder,
+            choices: [],
+            value: undefined,
+        });
+        onWillStart(async () => {
+            this.canCreateLinkTracker = await this.orm.call(this.props.model, "has_access", [[], "create"]);
+            await this.loadChoice();
+        });
+    }
 
-var exports = {};
+    get showCreateOption() {
+        return this.select.data.searchValue && !this.state.choices.some(c => c.label === this.select.data.searchValue) && this.canCreateLinkTracker;
+    }
 
-if (!$('.o_website_links_create_tracked_url').length) {
-    return $.Deferred().reject("DOM doesn't contain '.o_website_links_create_tracked_url'");
+    onSelect(value) {
+        this.state.value = value;
+    }
+
+    async onCreateOption(string, closeFn) {
+        const record = await this.orm.call("utm.mixin", "find_or_create_record", [
+            this.props.model,
+            string,
+        ]);
+        const choice = {
+            label: record.name,
+            value: record.id,
+        };
+        this.state.choices.push(choice);
+        this.onSelect(choice.value);
+    }
+
+    loadChoice(searchString = "") {
+        return new Promise((resolve, reject) => {
+            // We want to search with a limit and not care about any
+            // pagination implementation. To make this work, we
+            // display the exact match first though, which requires
+            // an extra RPC (could be refactored into a new
+            // controller in master but... see TODO).
+            // TODO at some point this whole app will be moved as a
+            // backend screen, with real m2o fields etc... in which
+            // case the "exact match" feature should be handled by
+            // the ORM somehow ?
+            const limit = 100;
+            const searchReadParams = [
+                ["id", "name"],
+                {
+                    limit: limit,
+                    order: "name, id desc", // Allows to have exact match first
+                },
+            ];
+            const proms = [];
+            proms.push(
+                this.orm.searchRead(
+                    this.props.model,
+                    // Exact match + results that start with the search
+                    [["name", "=ilike", `${searchString}%`]],
+                    ...searchReadParams
+                )
+            );
+            proms.push(
+                this.orm.searchRead(
+                    this.props.model,
+                    // Results that contain the search but do not start
+                    // with it
+                    [["name", "=ilike", `%_${searchString}%`]],
+                    ...searchReadParams
+                )
+            );
+            // Keep last is there in case a RPC takes longer than
+            // the debounce delay + next rpc delay for some reason.
+            this.keepLast
+                .add(Promise.all(proms))
+                .then(([startingMatches, endingMatches]) => {
+                    const formatChoice = (choice) => {
+                        choice.value = choice.id;
+                        choice.label = choice.name;
+                        return choice;
+                    };
+                    startingMatches.map(formatChoice);
+
+                    // We loaded max a 2 * limit amount of records but
+                    // ensure that we do not display "ending matches" if
+                    // we may not have loaded all "starting matches".
+                    if (startingMatches.length < limit) {
+                        const startingMatchesId = startingMatches.map((value) => value.id);
+                        const extraEndingMatches = endingMatches.filter(
+                            (value) => !startingMatchesId.includes(value.id)
+                        );
+                        extraEndingMatches.map(formatChoice);
+                        return startingMatches.concat(extraEndingMatches);
+                    }
+                    // In that case, we made one RPC too much but this
+                    // was chosen over not making them go in parallel.
+                    // We don't want to display "ending matches" if not
+                    // all "starting matches" have been loaded.
+                    return startingMatches;
+                })
+                .then((result) => {
+                    this.state.choices = result;
+                    resolve();
+                })
+                .catch(reject);
+        });
+    }
 }
 
-    var SelectBox = Widget.extend({
-        init: function (obj) {
-            this.obj = obj;
-        },
-        start: function (element, placeholder) {
-            var self = this;
-            this.element = element;
-            this.placeholder = placeholder;
+var RecentLinkBox = publicWidget.Widget.extend({
+    template: 'website_links.RecentLink',
+    events: {
+        'click .btn_shorten_url_clipboard': '_onCopyShortenUrl',
+    },
 
-            this.fetch_objects().then(function (results) {
-                self.objects = results;
+    /**
+     * @constructor
+     * @param {Object} parent
+     * @param {Object} obj
+     */
+    init: function (parent, obj) {
+        this._super.apply(this, arguments);
+        this.link_obj = obj;
+    },
 
-                element.select2({
-                    placeholder: self.placeholder,
-                    allowClear: true,
-                    createSearchChoice: function (term) {
-                        if (self.object_exists(term)) { return null; }
+    //--------------------------------------------------------------------------
+    // Private
+    //--------------------------------------------------------------------------
 
-                        return {id:term, text:_.str.sprintf("Create '%s'", term)};
-                    },
-                    createSearchChoicePosition: 'bottom',
-                    multiple: false,
-                    data: self.objects,
-                });
+    /**
+     * @private
+     */
+    _onCopyShortenUrl: async function (ev) {
+        ev.preventDefault();
+        const copyBtn = ev.currentTarget;
+        const tooltip = Tooltip.getOrCreateInstance(copyBtn, {
+            title: _t("Link Copied!"),
+            trigger: "manual",
+            placement: "top",
+        });
+        setTimeout(
+            async () => await browser.navigator.clipboard.writeText(copyBtn.dataset.url)
+        );
+        tooltip.show();
+        setTimeout(() => tooltip.hide(), 1200);
+    },
+});
 
-                element.on('change', function (e) {
-                    self.on_change(e);
-                });
+var RecentLinks = publicWidget.Widget.extend({
+    //--------------------------------------------------------------------------
+    // Private
+    //--------------------------------------------------------------------------
+
+    /**
+     * @private
+     */
+    getRecentLinks: function (filter) {
+        var self = this;
+        return rpc('/website_links/recent_links', {
+            filter: filter,
+            limit: 20,
+        }).then(function (result) {
+            result.reverse().forEach((link) => {
+                self._addLink(link);
             });
-        },
-        fetch_objects: function () {
-            return rpc.query({
-                    model: this.obj,
-                    method: 'search_read',
-                })
-                .then(function (result) {
-                    return _.map(result, function (val) {
-                        return {id: val.id, text:val.name};
-                    });
-                });
-        },
-        object_exists: function (query) {
-            return _.find(this.objects, function (val) {
-                return val.text.toLowerCase() === query.toLowerCase();
-            }) !== undefined;
-        },
-        on_change: function (e) {
-            if (e.added && _.isString(e.added.id)) {
-                this.create_object(e.added.id);
+            self._updateNotification();
+            self._updateFilters(filter);
+        }, function () {
+            var message = _t("Unable to get recent links");
+            self.$el.append('<div class="alert alert-danger">' + message + '</div>');
+        });
+    },
+    /**
+     * @private
+     */
+    _addLink: function (link) {
+        var nbLinks = this.getChildren().length;
+        var recentLinkBox = new RecentLinkBox(this, link);
+        recentLinkBox.prependTo(this.$el);
+        $('.link-tooltip').tooltip();
+
+        if (nbLinks === 0) {
+            this._updateNotification();
+        }
+    },
+    /**
+     * @private
+     */
+    removeLinks: function () {
+        this.getChildren().forEach((child) => {
+            child.destroy();
+        });
+    },
+    /**
+     * @private
+     * Updates the dropdown with the selected filter
+     */
+    _updateFilters: function(filter) {
+        const dropdownBtns = document.querySelectorAll('#recent_links_sort_by a');
+        dropdownBtns.forEach((button) => {
+            if (button.dataset.filter === filter) {
+                document.querySelector('.o_website_links_sort_by').textContent = button.textContent;
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
             }
-        },
-        create_object: function (name) {
-            var self = this;
+        });
+    },
+    /**
+     * @private
+     */
+    _updateNotification: function () {
+        if (this.getChildren().length === 0) {
+            var message = _t("You don't have any recent links.");
+            $('.o_website_links_recent_links_notification').html('<div class="alert alert-info">' + message + '</div>');
+        } else {
+            $('.o_website_links_recent_links_notification').empty();
+        }
+    },
+});
 
-            return rpc.query({
-                    model: this.obj,
-                    method: 'create',
-                    args: [{name:name}],
-                })
-                .then(function (record) {
-                    self.element.attr('value', record);
-                    self.objects.push({'id': record, 'text': name});
-                });
-        },
-    });
+publicWidget.registry.websiteLinks = publicWidget.Widget.extend({
+    selector: '.o_website_links_create_tracked_url',
+    events: {
+        'click #recent_links_sort_by a': '_onRecentLinksFilterChange',
+        'click .o_website_links_new_link_tracker': '_onCreateNewLinkTrackerClick',
+        'submit #o_website_links_link_tracker_form': '_onFormSubmit',
+    },
 
-    var RecentLinkBox = Widget.extend({
-        template: 'website_links.RecentLink',
-        events: {
-            'click .btn_shorten_url_clipboard':'toggle_copy_button',
-            'click .o_website_links_edit_code':'edit_code',
-            'click .o_website_links_ok_edit':function (e) {
-                e.preventDefault();
-                this.submit_code();
-            },
-            'click .o_website_links_cancel_edit': function (e) {
-                e.preventDefault();
-                this.cancel_edit();
-            },
-            'submit #o_website_links_edit_code_form': function (e) {
-                e.preventDefault();
-                this.submit_code();
-            },
-        },
-        init: function (parent, link_obj) {
-            this._super(parent);
-            this.link_obj = link_obj;
-            this.animating_copy = false;
-        },
-        start: function () {
-            new ClipboardJS(this.$('.btn_shorten_url_clipboard').get(0));
-            return this._super.apply(this, arguments);
-        },
-        toggle_copy_button: function () {
-            var self = this;
+    /**
+     * @override
+     */
+    start: async function () {
+        var defs = [this._super.apply(this, arguments)];
 
-            if (!this.animating_copy) {
-                this.animating_copy = true;
-                var top = this.$('.o_website_links_short_url').position().top;
-                this.$('.o_website_links_short_url').clone()
-                    .css('position', 'absolute')
-                    .css('left', 15)
-                    .css('top', top-2)
-                    .css('z-index', 2)
-                    .removeClass('o_website_links_short_url')
-                    .addClass('animated-link')
-                    .insertAfter(this.$('.o_website_links_short_url'))
-                    .animate({
-                        opacity: 0,
-                        top: "-=20",
-                    }, 500, function () {
-                        self.$('.animated-link').remove();
-                        self.animating_copy = false;
-                    });
-            }
-        },
-        remove: function () {
-            this.getParent().remove_link(this);
-        },
-        notification: function (message) {
-            this.$('.notification').append('<strong>' + message + '</strong>');
-        },
-        edit_code: function () {
-            var init_code = this.$('#o_website_links_code').html();
+        async function attachSelectComponent(model, placeholderText, el) {
+            const props = {
+                placeholder: placeholderText,
+                model: model,
+            };
+            await attachComponent(this, el, WebsiteLinksTagsWrapper, props);
+        }
 
-            this.$('#o_website_links_code').html("<form style='display:inline;' id='o_website_links_edit_code_form'><input type='hidden' id='init_code' value='" + init_code + "'/><input type='text' id='new_code' value='" + init_code + "'/></form>");
-            this.$('.o_website_links_edit_code').hide();
-            this.$('.copy-to-clipboard').hide();
-            this.$('.o_website_links_edit_tools').show();
-        },
-        cancel_edit: function () {
-            this.$('.o_website_links_edit_code').show();
-            this.$('.copy-to-clipboard').show();
-            this.$('.o_website_links_edit_tools').hide();
-            this.$('.o_website_links_code_error').hide();
-
-            var old_code = this.$('#o_website_links_edit_code_form #init_code').val();
-            this.$('#o_website_links_code').html(old_code);
-
-            this.$('#code-error').remove();
-            this.$('#o_website_links_code form').remove();
-        },
-        submit_code: function () {
-            var self = this;
-
-            var init_code = this.$('#o_website_links_edit_code_form #init_code').val();
-            var new_code = this.$('#o_website_links_edit_code_form #new_code').val();
-
-            if (new_code === '') {
-                self.$('.o_website_links_code_error').html("The code cannot be left empty");
-                self.$('.o_website_links_code_error').show();
-                return;
-            }
-
-            function show_new_code(new_code) {
-                self.$('.o_website_links_code_error').html('');
-                self.$('.o_website_links_code_error').hide();
-
-                self.$('#o_website_links_code form').remove();
-
-                // Show new code
-                var host = self.$('#o_website_links_host').html();
-                self.$('#o_website_links_code').html(new_code);
-
-                // Update button copy to clipboard
-                self.$('.btn_shorten_url_clipboard').attr('data-clipboard-text', host + new_code);
-
-                // Show action again
-                self.$('.o_website_links_edit_code').show();
-                self.$('.copy-to-clipboard').show();
-                self.$('.o_website_links_edit_tools').hide();
-            }
-
-            if (init_code === new_code) {
-                show_new_code(new_code);
-            }
-            else {
-                ajax.jsonRpc('/website_links/add_code', 'call', {'init_code':init_code, 'new_code':new_code})
-                    .then(function (result) {
-                        show_new_code(result[0].code);
-                    })
-                    .fail(function () {
-                        self.$('.o_website_links_code_error').show();
-                        self.$('.o_website_links_code_error').html("This code is already taken");
-                    }) ;
-            }
-        },
-    });
-
-    var RecentLinks = Widget.extend({
-        init: function () {
-            this._super();
-        },
-        get_recent_links: function (filter) {
-            var self = this;
-
-            ajax.jsonRpc('/website_links/recent_links', 'call', {'filter':filter, 'limit':20})
-                .then(function (result) {
-                    _.each(result.reverse(), function (link) {
-                        self.add_link(link);
-                    });
-
-                    self.update_notification();
-                })
-                .fail(function () {
-                    var message = _t("Unable to get recent links");
-                    self.$el.append("<div class='alert alert-danger'>" + message + "</div>");
-                });
-        },
-        add_link: function (link) {
-            var nb_links = this.getChildren().length;
-
-            var recent_link_box = new RecentLinkBox(this, link);
-            recent_link_box.prependTo(this.$el);
-            $('.link-tooltip').tooltip();
-
-            if (nb_links === 0) {
-                this.update_notification();
-            }
-        },
-        remove_links: function () {
-            _.invoke(this.getChildren(), 'remove');
-        },
-        remove_link: function (link) {
-            link.destroy();
-        },
-        update_notification: function () {
-            if (this.getChildren().length === 0) {
-                var message = _t("You don't have any recent links.");
-                $('.o_website_links_recent_links_notification').html("<div class='alert alert-info'>" + message + "</div>");
-            }
-            else {
-                $('.o_website_links_recent_links_notification').empty();
-            }
-        },
-    });
-
-    ajax.loadXML('/website_links/static/src/xml/recent_link.xml', qweb);
-
-    base.ready().done(function () {
-
-        // UTMS selects widgets
-        var campaign_select = new SelectBox('utm.campaign');
-        campaign_select.start($("#campaign-select"), _t('e.g. Promotion of June, Winter Newsletter, ..'));
-
-        var medium_select = new SelectBox('utm.medium');
-        medium_select.start($("#channel-select"), _t('e.g. Newsletter, Social Network, ..'));
-
-        var source_select = new SelectBox('utm.source');
-        source_select.start($("#source-select"), _t('e.g. Search Engine, Website page, ..'));
+        attachSelectComponent.call(
+            this,
+            "utm.campaign",
+            _t("e.g. June Sale, Paris Roadshow, ..."),
+            this.el.querySelector("#campaign-select-wrapper"),
+        );
+        attachSelectComponent.call(
+            this,
+            "utm.medium",
+            _t("e.g. InMails, Ads, Social, ..."),
+            this.el.querySelector("#channel-select-wrapper"),
+        );
+        attachSelectComponent.call(
+            this,
+            "utm.source",
+            _t("e.g. LinkedIn, Facebook, Leads, ..."),
+            this.el.querySelector("#source-select-wrapper"),
+        );
 
         // Recent Links Widgets
-        var recent_links = new RecentLinks();
-            recent_links.appendTo($("#o_website_links_recent_links"));
-            recent_links.get_recent_links('newest');
+        this.recentLinks = new RecentLinks(this);
+        defs.push(this.recentLinks.appendTo($('#o_website_links_recent_links')));
+        this.recentLinks.getRecentLinks('newest');
 
-        $('#filter-newest-links').click(function () {
-            recent_links.remove_links();
-            recent_links.get_recent_links('newest');
-        });
+        $('[data-bs-toggle="tooltip"]').tooltip();
 
-        $('#filter-most-clicked-links').click(function () {
-            recent_links.remove_links();
-            recent_links.get_recent_links('most-clicked');
-        });
+        return Promise.all(defs);
+    },
 
-        $('#filter-recently-used-links').click(function () {
-            recent_links.remove_links();
-            recent_links.get_recent_links('recently-used');
-        });
+    //--------------------------------------------------------------------------
+    // Handlers
+    //--------------------------------------------------------------------------
 
-        // Clipboard Library
-        new ClipboardJS($("#btn_shorten_url").get(0));
+    /**
+     * @private
+     */
+    _onRecentLinksFilterChange(ev) {
+        this.recentLinks.removeLinks();
+        this.recentLinks.getRecentLinks(ev.currentTarget.dataset.filter);
+    },
+    /**
+     * @private
+     * @param {Event} ev
+     * Show the link tracker form back
+     */
+    _onCreateNewLinkTrackerClick: function (ev) {
+        const utmForm = document.querySelector(".o_website_links_utm_forms");
+        if (!utmForm.classList.contains("d-none")) {
+            return;
+        }
+        utmForm.classList.remove("d-none");
+        document.querySelector("#generated_tracked_link").classList.add("d-none");
+        document.querySelector("#btn_shorten_url").classList.remove("d-none");
+        document.querySelector("input#url").value = '';
+    },
+    /**
+     * Add the RecentLinkBox widget and send the form when the user generate the link
+     *
+     * @private
+     * @param {Event} ev
+     */
+    _onFormSubmit: function (ev) {
+        var self = this;
+        ev.preventDefault();
+        const generateLinkTrackerBtn = document.querySelector("#btn_shorten_url");
+        if (generateLinkTrackerBtn.classList.contains("d-none")) {
+            return;
+        }
+        const restoreLoadingBtn = addLoadingEffect(generateLinkTrackerBtn);
 
-        $("#generated_tracked_link a").click(function () {
-            $("#generated_tracked_link a").text("Copied").removeClass("btn-primary").addClass("btn-success");
-            setTimeout(function () {
-                $("#generated_tracked_link a").text("Copy").removeClass("btn-success").addClass("btn-primary");
-            }, '5000');
-        });
+        ev.stopPropagation();
 
-        $('#url').on('keyup', function (e) {
-            if ($('#btn_shorten_url').hasClass('btn-copy') && e.which !== 13) {
-                $('#btn_shorten_url').removeClass('btn-success btn-copy').addClass('btn-primary').html('Get tracked link');
-                $('#generated_tracked_link').css('display', 'none');
-                $('.o_website_links_utm_forms').show();
-            }
-        });
+        // Get URL and UTMs
+        const campaignInputEl = document.querySelector("input[name='campaign-select']");
+        const mediumInputEl = document.querySelector("input[name='medium-select']");
+        const sourceInputEl = document.querySelector("input[name='source-select']");
 
-        var url_copy_animating = false;
-        $('#btn_shorten_url').click(function () {
-            if ($('#btn_shorten_url').hasClass('btn-copy')) {
-                if (!url_copy_animating) {
-                    url_copy_animating = true;
+        const label = document.querySelector('#label');
+        const params = { label: label.value || undefined };
+        params.url = $('#url').val();
+        if (campaignInputEl.value !== "") {
+            params.campaign_id = parseInt(campaignInputEl.value);
+        }
+        if (mediumInputEl.value !== "") {
+            params.medium_id = parseInt(mediumInputEl.value);
+        }
+        if (sourceInputEl.value !== "") {
+            params.source_id = parseInt(sourceInputEl.value);
+        }
 
-                    $('#generated_tracked_link').clone()
-                        .css('position', 'absolute')
-                        .css('left', '78px')
-                        .css('bottom', '8px')
-                        .css('z-index', 2)
-                        .removeClass('#generated_tracked_link')
-                        .addClass('url-animated-link')
-                        .appendTo($('#generated_tracked_link'))
-                        .animate({
-                            opacity: 0,
-                            bottom: "+=20",
-                        }, 500, function () {
-                            $('.url-animated-link').remove();
-                            url_copy_animating = false;
-                        });
+        rpc('/website_links/new', params).then(function (result) {
+            restoreLoadingBtn();
+            if ('error' in result) {
+                // Handle errors
+                if (result.error === 'empty_url') {
+                    $('.notification').html('<div class="alert alert-danger">The URL is empty.</div>');
+                } else if (result.error === 'url_not_found') {
+                    $('.notification').html('<div class="alert alert-danger">URL not found (404)</div>');
+                } else {
+                    $('.notification').html('<div class="alert alert-danger">An error occur while trying to generate your link. Try again later.</div>');
                 }
+            } else {
+                // Link generated, clean the form and show the link
+                var link = result[0];
+
+                document.querySelector("#generated_tracked_link").classList.remove("d-none");
+                document.querySelector("#btn_shorten_url").classList.add("d-none");
+
+                document.querySelector(".copy-to-clipboard").dataset.clipboardText = link.short_url;
+                document.querySelector("#short-url-host").textContent = link.short_url_host;
+                document.querySelector("#o_website_links_code").textContent = link.code;
+
+                self.recentLinks._addLink(link);
+
+                // Clean notifications, URL and UTM selects
+                $('.notification').html('');
+                campaignInputEl.value = "";
+                mediumInputEl.value = "";
+                sourceInputEl.value = "";
+                label.value = '';
+                document.querySelector(".o_website_links_utm_forms").classList.add("d-none");
             }
         });
-
-        // Add the RecentLinkBox widget and send the form when the user generate the link
-        $("#o_website_links_link_tracker_form").submit(function (event) {
-
-            if ($('#btn_shorten_url').hasClass('btn-copy')) {
-                event.preventDefault();
-                return;
-            }
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            // Get URL and UTMs
-            var campaign_id = $('#campaign-select').attr('value');
-            var medium_id = $('#channel-select').attr('value');
-            var source_id = $('#source-select').attr('value');
-
-            var params = {};
-            params.url = $("#url").val();
-            if (campaign_id !== '') { params.campaign_id = parseInt(campaign_id); }
-            if (medium_id !== '') { params.medium_id = parseInt(medium_id); }
-            if (source_id !== '') { params.source_id = parseInt(source_id); }
-
-            $('#btn_shorten_url').text(_t('Generating link...'));
-
-            ajax.jsonRpc("/website_links/new", 'call', params)
-                .then(function (result) {
-                    if ('error' in result) {
-                        // Handle errors
-                        if (result.error === 'empty_url')  {
-                            $('.notification').html("<div class='alert alert-danger'>The URL is empty.</div>");
-                        }
-                        else if (result.error === 'url_not_found') {
-                            $('.notification').html("<div class='alert alert-danger'>URL not found (404)</div>");
-                        }
-                        else {
-                            $('.notification').html("<div class='alert alert-danger'>An error occur while trying to generate your link. Try again later.</div>");
-                        }
-                    }
-                    else {
-                        // Link generated, clean the form and show the link
-                        var link = result[0];
-
-                        $('#btn_shorten_url').removeClass('btn-primary').addClass('btn-success btn-copy').html('Copy');
-                        $('#btn_shorten_url').attr('data-clipboard-text', link.short_url);
-
-                        $('.notification').html('');
-                        $('#generated_tracked_link').html(link.short_url);
-                        $('#generated_tracked_link').css('display', 'inline');
-
-                        recent_links.add_link(link);
-
-                        // Clean URL and UTM selects
-                        $('#campaign-select').select2('val', '');
-                        $('#channel-select').select2('val', '');
-                        $('#source-select').select2('val', '');
-
-                        $('.o_website_links_utm_forms').hide();
-                    }
-                });
-        });
-
-        $(function () {
-          $('[data-toggle="tooltip"]').tooltip();
-        });
-    });
-
-    exports.SelectBox = SelectBox;
-    exports.RecentLinkBox = RecentLinkBox;
-    exports.RecentLinks = RecentLinks;
-
-return exports;
+    },
 });
+
+export default {
+    RecentLinkBox: RecentLinkBox,
+    RecentLinks: RecentLinks,
+};

@@ -3,7 +3,8 @@
 
 from odoo import fields, models
 
-class Company(models.Model):
+
+class ResCompany(models.Model):
     _inherit = 'res.company'
 
     po_lead = fields.Float(string='Purchase Lead Time', required=True,

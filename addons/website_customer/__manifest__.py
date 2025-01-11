@@ -3,7 +3,7 @@
 
 {
     'name': 'Customer References',
-    'category': 'Website',
+    'category': 'Website/Website',
     'summary': 'Publish your customer references',
     'version': '1.0',
     'description': """
@@ -18,12 +18,12 @@ Publish your customers as business references on your website to attract new pot
         'data/res_partner_demo.xml',
     ],
     'data': [
-        'data/website_customer_data.xml',
         'views/website_customer_templates.xml',
         'views/res_partner_views.xml',
         'security/ir.model.access.csv',
         'security/ir_rule.xml',
+        'views/snippets.xml',
     ],
-    'qweb': [],
     'installable': True,
+    'license': 'LGPL-3',
 }

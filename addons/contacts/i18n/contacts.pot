@@ -1,14 +1,14 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* contacts
+# 	* contacts
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server saas~11.2\n"
+"Project-Id-Version: Odoo Server saas~18.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-22 14:10+0000\n"
-"PO-Revision-Date: 2018-03-22 14:10+0000\n"
-"Last-Translator: <>\n"
+"POT-Creation-Date: 2024-12-24 15:31+0000\n"
+"PO-Revision-Date: 2024-12-24 15:31+0000\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -32,13 +32,13 @@ msgid "Configuration"
 msgstr ""
 
 #. module: contacts
-#: model:ir.ui.menu,name:contacts.menu_partner_category_form
-msgid "Contact Tags"
+#: model:ir.model,name:contacts.model_res_partner
+msgid "Contact"
 msgstr ""
 
 #. module: contacts
-#: model:ir.ui.menu,name:contacts.menu_partner_title_contact
-msgid "Contact Titles"
+#: model:ir.ui.menu,name:contacts.menu_partner_category_form
+msgid "Contact Tags"
 msgstr ""
 
 #. module: contacts
@@ -59,8 +59,14 @@ msgid "Country Group"
 msgstr ""
 
 #. module: contacts
-#: model:ir.actions.act_window,help:contacts.action_contacts
-msgid "Create a contact in your address book"
+#: model_terms:ir.actions.act_window,help:contacts.action_contacts
+msgid "Create a Contact in your address book"
+msgstr ""
+
+#. module: contacts
+#: model:ir.model.fields,field_description:contacts.field_res_partner__display_name
+#: model:ir.model.fields,field_description:contacts.field_res_users__display_name
+msgid "Display Name"
 msgstr ""
 
 #. module: contacts
@@ -69,17 +75,27 @@ msgid "Fed. States"
 msgstr ""
 
 #. module: contacts
+#: model:ir.model.fields,field_description:contacts.field_res_partner__id
+#: model:ir.model.fields,field_description:contacts.field_res_users__id
+msgid "ID"
+msgstr ""
+
+#. module: contacts
+#: model:ir.ui.menu,name:contacts.res_partner_industry_menu
+msgid "Industries"
+msgstr ""
+
+#. module: contacts
 #: model:ir.ui.menu,name:contacts.menu_localisation
 msgid "Localization"
 msgstr ""
 
 #. module: contacts
-#: model:ir.actions.act_window,help:contacts.action_contacts
-msgid "Odoo helps you to easily track all activities related to a customer."
+#: model_terms:ir.actions.act_window,help:contacts.action_contacts
+msgid "Odoo helps you track all activities related to your contacts."
 msgstr ""
 
 #. module: contacts
-#: model:ir.ui.menu,name:contacts.res_partner_industry_menu
-msgid "Sectors of Activity"
+#: model:ir.model,name:contacts.model_res_users
+msgid "User"
 msgstr ""
-

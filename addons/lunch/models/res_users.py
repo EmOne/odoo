@@ -7,7 +7,5 @@ from odoo import fields, models
 class ResUsers(models.Model):
     _inherit = 'res.users'
 
-    group_lunch_user = fields.Selection(
-        selection=lambda self: self._get_group_selection('lunch.module_lunch_category'),
-        string='Lunch', compute='_compute_groups_id', inverse='_inverse_groups_id',
-        category_xml_id='lunch.module_lunch_category')
+    last_lunch_location_id = fields.Many2one('lunch.location')
+    favorite_lunch_product_ids = fields.Many2many('lunch.product', 'lunch_product_favorite_user_rel', 'user_id', 'product_id')

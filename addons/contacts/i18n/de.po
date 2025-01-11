@@ -1,25 +1,22 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# * contacts
-# 
+# 	* contacts
+#
 # Translators:
-# Wolfgang Taferner, 2017
-# Martin Trigaux, 2017
-# darenkster <inactive+darenkster@transifex.com>, 2017
-# AppleMentalist <felix.schnatbaum@gmail.com>, 2017
-# Niki Waibel, 2017
+# Martin Trigaux, 2022
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server saas~11.2\n"
+"Project-Id-Version: Odoo Server 15.5alpha1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-22 14:10+0000\n"
-"PO-Revision-Date: 2018-03-22 14:10+0000\n"
-"Last-Translator: Niki Waibel, 2017\n"
-"Language-Team: German (https://www.transifex.com/odoo/teams/41243/de/)\n"
+"POT-Creation-Date: 2022-09-20 09:01+0000\n"
+"PO-Revision-Date: 2022-09-22 05:45+0000\n"
+"Last-Translator: Martin Trigaux, 2022\n"
+"Language-Team: German (https://app.transifex.com/odoo/teams/41243/de/)\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. module: contacts
@@ -46,7 +43,7 @@ msgstr "Kontakt Tags"
 #. module: contacts
 #: model:ir.ui.menu,name:contacts.menu_partner_title_contact
 msgid "Contact Titles"
-msgstr "Partner-Kontaktanrede"
+msgstr "Kontakt-Titel"
 
 #. module: contacts
 #: model:ir.actions.act_window,name:contacts.action_contacts
@@ -66,9 +63,9 @@ msgid "Country Group"
 msgstr "Ländergruppe"
 
 #. module: contacts
-#: model:ir.actions.act_window,help:contacts.action_contacts
-msgid "Create a contact in your address book"
-msgstr ""
+#: model_terms:ir.actions.act_window,help:contacts.action_contacts
+msgid "Create a Contact in your address book"
+msgstr "Erstellen Sie einen Kontakt in Ihrem Adressbuch"
 
 #. module: contacts
 #: model:ir.ui.menu,name:contacts.menu_country_state_partner
@@ -76,16 +73,21 @@ msgid "Fed. States"
 msgstr "Bundesländer / Regionen"
 
 #. module: contacts
+#: model:ir.ui.menu,name:contacts.res_partner_industry_menu
+msgid "Industries"
+msgstr "Branchen"
+
+#. module: contacts
 #: model:ir.ui.menu,name:contacts.menu_localisation
 msgid "Localization"
 msgstr "Lokalisierung"
 
 #. module: contacts
-#: model:ir.actions.act_window,help:contacts.action_contacts
-msgid "Odoo helps you to easily track all activities related to a customer."
-msgstr ""
+#: model_terms:ir.actions.act_window,help:contacts.action_contacts
+msgid "Odoo helps you track all activities related to your contacts."
+msgstr "Mit Odoo können Sie alle Aktivitäten im Zusammenhang mit Ihren Kontakten verfolgen."
 
 #. module: contacts
-#: model:ir.ui.menu,name:contacts.res_partner_industry_menu
-msgid "Sectors of Activity"
-msgstr "Tätigkeitsbereiche"
+#: model:ir.model,name:contacts.model_res_users
+msgid "User"
+msgstr "Benutzer"

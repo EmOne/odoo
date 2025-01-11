@@ -1,50 +1,34 @@
-odoo.define('sale.SalePortalSidebar.instance', function (require) {
-"use strict";
+import PortalSidebar from "@portal/js/portal_sidebar";
+import { uniqueId } from "@web/core/utils/functions";
+import publicWidget from "@web/legacy/js/public/public_widget";
 
-require('web.dom_ready');
-var SalePortalSidebar = require('sale.SalePortalSidebar');
+publicWidget.registry.SalePortalSidebar = PortalSidebar.extend({
+    selector: '.o_portal_sale_sidebar',
 
-if (!$('.o_portal_sale_sidebar').length) {
-    return $.Deferred().reject("DOM doesn't contain '.o_portal_sale_sidebar'");
-}
-
-var $spyWatch = $('body[data-target=".navspy"]'),
-    sale_portal_sidebar = new SalePortalSidebar($spyWatch);
-
-return sale_portal_sidebar.attachTo($('.o_portal_sale_sidebar')).then(function () {
-    return sale_portal_sidebar;
-});
-});
-
-//==============================================================================
-
-odoo.define('sale.SalePortalSidebar', function (require) {
-"use strict";
-
-var PortalSidebar = require('portal.PortalSidebar');
-
-var SalePortalSidebar = PortalSidebar.extend({
-    events: {
-        'click .o_portal_sale_print': '_onPrintSaleOrder',
-    },
     /**
-     * @override
-     * @param {Object} $watched_selector
+     * @constructor
      */
-    init: function ($watched_selector) {
+    init: function (parent, options) {
         this._super.apply(this, arguments);
         this.authorizedTextTag = ['em', 'b', 'i', 'u'];
-        this.spyWatched = $watched_selector;
+        this.spyWatched = $('body[data-target=".navspy"]');
     },
     /**
      * @override
      */
     start: function () {
-        this._super.apply(this, arguments);
+        var def = this._super.apply(this, arguments);
         var $spyWatcheElement = this.$el.find('[data-id="portal_sidebar"]');
         this._setElementId($spyWatcheElement);
         // Nav Menu ScrollSpy
         this._generateMenu();
+        // After signature, automatically open the popup for payment
+        const searchParams = new URLSearchParams(window.location.search.substring(1));
+        const payNowButton = this.$('#o_sale_portal_paynow')
+        if (searchParams.get("allow_payment") === "yes" && payNowButton) {
+            payNowButton[0].click();
+        }
+        return def;
     },
 
     //--------------------------------------------------------------------------
@@ -60,7 +44,7 @@ var SalePortalSidebar = PortalSidebar.extend({
      *
      */
     _setElementId: function (prefix, $el) {
-        var id = _.uniqueId(prefix);
+        var id = uniqueId(prefix);
         this.spyWatched.find($el).attr('id', id);
         return id;
     },
@@ -76,20 +60,20 @@ var SalePortalSidebar = PortalSidebar.extend({
             lastUL = null,
             $bsSidenav = this.$el.find('.bs-sidenav');
 
-        $("[id^=quote_header_], [id^=quote_]", this.spyWatched).attr("id", "");
-        _.each(this.spyWatched.find("h1, h2"), function (el) {
+        $("#quote_content [id^=quote_header_], #quote_content [id^=quote_]", this.spyWatched).attr("id", "");
+        this.spyWatched.find("#quote_content h2, #quote_content h3").toArray().forEach((el) => {
             var id, text;
             switch (el.tagName.toLowerCase()) {
-                case "h1":
+                case "h2":
                     id = self._setElementId('quote_header_', el);
                     text = self._extractText($(el));
                     if (!text) {
                         break;
                     }
-                    lastLI = $("<li class='nav-item'>").append($('<a class="nav-link" href="#' + id + '"/>').text(text)).appendTo($bsSidenav);
+                    lastLI = $("<li class='nav-item'>").append($('<a class="nav-link p-0" href="#' + id + '"/>').text(text)).appendTo($bsSidenav);
                     lastUL = false;
                     break;
-                case "h2":
+                case "h3":
                     id = self._setElementId('quote_', el);
                     text = self._extractText($(el));
                     if (!text) {
@@ -97,13 +81,15 @@ var SalePortalSidebar = PortalSidebar.extend({
                     }
                     if (lastLI) {
                         if (!lastUL) {
-                            lastUL = $("<ul class='nav'>").appendTo(lastLI);
+                            lastUL = $("<ul class='nav flex-column'>").appendTo(lastLI);
                         }
-                        $("<li class='nav-item'>").append($('<a class="nav-link" href="#' + id + '"/>').text(text)).appendTo(lastUL);
+                        $("<li class='nav-item'>").append($('<a class="nav-link p-0" href="#' + id + '"/>').text(text)).appendTo(lastUL);
                     }
                     break;
             }
+            el.setAttribute('data-anchor', true);
         });
+        this.trigger_up('widgets_start_request', {$target: $bsSidenav});
     },
     /**
      * extract text of menu title for sidebar
@@ -115,32 +101,19 @@ var SalePortalSidebar = PortalSidebar.extend({
     _extractText: function ($node) {
         var self = this;
         var rawText = [];
-        _.each($node.contents(), function (el) {
+        $node.contents().toArray().forEach((el) => {
             var current = $(el);
             if ($.trim(current.text())) {
                 var tagName = current.prop("tagName");
-                if (_.isUndefined(tagName) || (!_.isUndefined(tagName) && _.contains(self.authorizedTextTag, tagName.toLowerCase()))) {
+                if (
+                    typeof tagName === "undefined" ||
+                    (typeof tagName !== "undefined" &&
+                        self.authorizedTextTag.includes(tagName.toLowerCase()))
+                ) {
                     rawText.push($.trim(current.text()));
                 }
             }
         });
         return rawText.join(' ');
     },
-
-    //--------------------------------------------------------------------------
-    // Handlers
-    //--------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {MouseEvent} ev
-     */
-    _onPrintSaleOrder: function (ev) {
-        ev.preventDefault();
-        var href = $(ev.currentTarget).attr('href');
-        this._printIframeContent(href);
-    },
-});
-
-return SalePortalSidebar;
 });

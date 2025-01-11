@@ -11,43 +11,40 @@ AVAILABLE_PRIORITIES = [
 ]
 
 
-class Stage(models.Model):
+class CrmStage(models.Model):
     """ Model for case stages. This models the main stages of a document
         management flow. Main CRM objects (leads, opportunities, project
         issues, ...) will now use only stages, instead of state and stages.
         Stages are for example used to display the kanban view of records.
     """
-    _name = "crm.stage"
-    _description = "Stage of case"
+    _name = 'crm.stage'
+    _description = "CRM Stages"
     _rec_name = 'name'
     _order = "sequence, name, id"
 
     @api.model
     def default_get(self, fields):
-        """ Hack :  when going from the pipeline, creating a stage with a sales team in
-            context should not create a stage for the current Sales Team only
-        """
-        ctx = dict(self.env.context)
-        if ctx.get('default_team_id') and not ctx.get('crm_team_mono'):
+        """ As we have lots of default_team_id in context used to filter out
+        leads and opportunities, we pop this key from default of stage creation.
+        Otherwise stage will be created for a given team only which is not the
+        standard behavior of stages. """
+        if 'default_team_id' in self.env.context:
+            ctx = dict(self.env.context)
             ctx.pop('default_team_id')
-        return super(Stage, self.with_context(ctx)).default_get(fields)
+            self = self.with_context(ctx)
+        return super().default_get(fields)
 
     name = fields.Char('Stage Name', required=True, translate=True)
     sequence = fields.Integer('Sequence', default=1, help="Used to order stages. Lower is better.")
-    probability = fields.Float('Probability (%)', required=True, default=10.0, help="This percentage depicts the default/average probability of the Case for this stage to be a success")
-    on_change = fields.Boolean('Change Probability Automatically', help="Setting this stage will change the probability automatically on the opportunity.")
+    is_won = fields.Boolean('Is Won Stage?')
     requirements = fields.Text('Requirements', help="Enter here the internal requirements for this stage (ex: Offer sent to customer). It will appear as a tooltip over the stage's name.")
-    team_id = fields.Many2one('crm.team', string='Sales Team', ondelete='set null',
+    team_id = fields.Many2one('crm.team', string='Sales Team', ondelete="set null",
         help='Specific team that uses this stage. Other teams will not be able to see or use this stage.')
-    legend_priority = fields.Text('Priority Management Explanation', translate=True,
-        help='Explanation text to help users using the star and priority mechanism on stages or issues that are in this stage.')
     fold = fields.Boolean('Folded in Pipeline',
         help='This stage is folded in the kanban view when there are no records in that stage to display.')
-
-    #This field for interface only
+    # This field for interface only
     team_count = fields.Integer('team_count', compute='_compute_team_count')
 
-    @api.multi
+    @api.depends('team_id')
     def _compute_team_count(self):
-        for stage in self:
-            stage.team_count = self.env['crm.team'].search_count([])
+        self.team_count = self.env['crm.team'].search_count([])

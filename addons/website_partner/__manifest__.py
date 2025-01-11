@@ -3,7 +3,7 @@
 
 {
     'name': 'Website Partner',
-    'category': 'Technical Settings',
+    'category': 'Hidden',
     'summary': 'Partner module for website',
     'version': '0.1',
     'description': """
@@ -16,8 +16,6 @@ This is a base module. It holds website-related stuff for Contact model (res.par
         'data/website_partner_data.xml',
     ],
     'demo': ['data/website_partner_demo.xml'],
-    'qweb': [
-    ],
     'installable': True,
-    'auto_install': False,
+    'license': 'LGPL-3',
 }

@@ -1,105 +1,140 @@
-odoo.define('website_mass_mailing.editor', function (require) {
-'use strict';
+import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
+import { _t } from "@web/core/l10n/translation";
+import { renderToElement } from "@web/core/utils/render";
+import options from "@web_editor/js/editor/snippets.options";
 
-var ajax = require('web.ajax');
-var core = require('web.core');
-var rpc = require('web.rpc');
-var weContext = require('web_editor.context');
-var web_editor = require('web_editor.editor');
-var options = require('web_editor.snippets.options');
-var wUtils = require('website.utils');
-var _t = core._t;
+options.registry.mailing_list_subscribe = options.Class.extend({
+    init() {
+        this._super(...arguments);
+        this.orm = this.bindService("orm");
+    },
 
-var mass_mailing_common = options.Class.extend({
-    popup_template_id: "editor_new_mailing_list_subscribe_button",
-    popup_title: _t("Add a Newsletter Subscribe Button"),
-    select_mailing_list: function (previewMode, value) {
-        var self = this;
-        var def = wUtils.prompt({
-            'id': this.popup_template_id,
-            'window_title': this.popup_title,
-            'select': _t("Newsletter"),
-            'init': function (field) {
-                return rpc.query({
-                        model: 'mail.mass_mailing.list',
-                        method: 'name_search',
-                        args: ['', []],
-                        context: weContext.get(),
+    /**
+     * @override
+     */
+    onBuilt() {
+        this._super(...arguments);
+        if (this.mailingLists.length) {
+            this.$target.attr("data-list-id", this.mailingLists[0][0]);
+        } else {
+            this.call("dialog", "add", ConfirmationDialog, {
+                body: _t("No mailing list found, do you want to create a new one? This will save all your changes, are you sure you want to proceed?"),
+                confirm: () => {
+                    this.trigger_up("request_save", {
+                        reload: false,
+                        onSuccess: () => {
+                            window.location.href =
+                                "/odoo/action-mass_mailing.action_view_mass_mailing_lists";
+                        },
                     });
-            },
-        });
-        def.then(function (mailing_list_id) {
-            self.$target.attr("data-list-id", mailing_list_id);
-        });
-        return def;
-    },
-    onBuilt: function () {
-        var self = this;
-        this._super();
-        this.select_mailing_list('click').fail(function () {
-            self.getParent()._onRemoveClick($.Event( "click" ));
-        });
-    },
-});
-
-options.registry.mailing_list_subscribe = mass_mailing_common.extend({
-    cleanForSave: function () {
-        this.$target.addClass('d-none');
-    },
-});
-
-options.registry.newsletter_popup = mass_mailing_common.extend({
-    popup_template_id: "editor_new_mailing_list_subscribe_popup",
-    popup_title: _t("Add a Newsletter Subscribe Popup"),
-    select_mailing_list: function (previewMode, value) {
-        var self = this;
-        return this._super(previewMode, value).then(function (mailing_list_id) {
-            ajax.jsonRpc('/web/dataset/call', 'call', {
-                model: 'mail.mass_mailing.list',
-                method: 'read',
-                args: [[parseInt(mailing_list_id)], ['popup_content'], weContext.get()],
-            }).then(function (data) {
-                self.$target.find(".o_popup_content_dev").empty();
-                if (data && data[0].popup_content) {
-                    $(data[0].popup_content).appendTo(self.$target.find(".o_popup_content_dev"));
-                }
-            });
-        });
-    },
-});
-
-web_editor.Class.include({
-    start: function () {
-        $('body').on('click','#edit_dialog',_.bind(this.edit_dialog, this.rte.editor));
-        return this._super();
-    },
-    save: function () {
-        var $target = $('#wrapwrap').find('#o_newsletter_popup');
-        if ($target && $target.length) {
-            $target.modal('hide');
-            $target.css("display", "none");
-            $('.o_popup_bounce_small').show();
-            if (!$target.find('.o_popup_content_dev').length) {
-                $target.find('.o_popup_modal_body').prepend($('<div class="o_popup_content_dev" data-oe-placeholder="' + _t("Type Here ...") + '"></div>'));
-            }
-            var content = $('#wrapwrap .o_popup_content_dev').html();
-            var newsletter_id = $target.parent().attr('data-list-id');
-            ajax.jsonRpc('/web/dataset/call', 'call', {
-                model: 'mail.mass_mailing.list',
-                method: 'write',
-                args: [
-                    parseInt(newsletter_id),
-                    {'popup_content':content},
-                    weContext.get()
-                ],
+                },
+                cancel: () => {
+                    this.trigger_up("remove_snippet", {
+                        $snippet: this.$target,
+                    });
+                },
             });
         }
-        return this._super.apply(this, arguments);
     },
-    edit_dialog: function () {
-        $('#wrapwrap').find('#o_newsletter_popup').modal('show');
-        $('.o_popup_bounce_small').hide();
-        $('.modal-backdrop').css("z-index", "0");
+    /**
+     * @override
+     */
+    cleanForSave() {
+        const previewClasses = ['o_disable_preview', 'o_enable_preview'];
+        const toCleanElsSelector = ".js_subscribe_wrap, .js_subscribed_wrap";
+        const toCleanEls = this.$target[0].querySelectorAll(toCleanElsSelector);
+        toCleanEls.forEach(element => {
+            element.classList.remove(...previewClasses);
+        });
+    },
+
+    //--------------------------------------------------------------------------
+    // Options
+    //--------------------------------------------------------------------------
+
+    /**
+     * @see this.selectClass for parameters
+     */
+    toggleThanksMessage(previewMode, widgetValue, params) {
+        const toSubscribeEl = this.$target[0].querySelector(".js_subscribe_wrap");
+        const thanksMessageEl =
+            this.$target[0].querySelector(".js_subscribed_wrap");
+
+        thanksMessageEl.classList.toggle("o_disable_preview", !widgetValue);
+        thanksMessageEl.classList.toggle("o_enable_preview", widgetValue);
+        toSubscribeEl.classList.toggle("o_enable_preview", !widgetValue);
+        toSubscribeEl.classList.toggle("o_disable_preview", widgetValue);
+    },
+
+    //--------------------------------------------------------------------------
+    // Private
+    //--------------------------------------------------------------------------
+
+    /**
+     * @override
+     */
+    _computeWidgetState(methodName, params) {
+        if (methodName !== 'toggleThanksMessage') {
+            return this._super(...arguments);
+        }
+        const toSubscribeElSelector = ".js_subscribe_wrap.o_disable_preview";
+        return this.$target[0].querySelector(toSubscribeElSelector) ? "true" : "";
+    },
+    /**
+     * @override
+     */
+    async _renderCustomXML(uiFragment) {
+        this.mailingLists = await this.orm.call(
+            "mailing.list",
+            "name_search",
+            ["", [["is_public", "=", true]]],
+            { context: this.options.recordInfo.context }
+        );
+        if (this.mailingLists.length) {
+            const selectEl = uiFragment.querySelector('we-select[data-attribute-name="listId"]');
+            for (const mailingList of this.mailingLists) {
+                const button = document.createElement('we-button');
+                button.dataset.selectDataAttribute = mailingList[0];
+                button.textContent = mailingList[1];
+                selectEl.appendChild(button);
+            }
+        }
+        const checkboxEl = document.createElement('we-checkbox');
+        checkboxEl.setAttribute('string', _t("Display Thanks Message"));
+        checkboxEl.dataset.toggleThanksMessage = 'true';
+        checkboxEl.dataset.noPreview = 'true';
+        checkboxEl.dataset.dependencies = "!form_opt";
+        uiFragment.appendChild(checkboxEl);
     },
 });
+
+options.registry.recaptchaSubscribe = options.Class.extend({
+    /**
+     * Toggle the recaptcha legal terms
+     */
+    toggleRecaptchaLegal: function (previewMode, value, params) {
+        const recaptchaLegalEl = this.$target[0].querySelector('.o_recaptcha_legal_terms');
+        if (recaptchaLegalEl) {
+            recaptchaLegalEl.remove();
+        } else {
+            const template = document.createElement('template');
+            template.content.append(renderToElement("google_recaptcha.recaptcha_legal_terms"));
+            this.$target[0].appendChild(template.content.firstElementChild);
+        }
+    },
+
+    //----------------------------------------------------------------------
+    // Private
+    //----------------------------------------------------------------------
+
+    /**
+     * @override
+     */
+    _computeWidgetState: function (methodName, params) {
+        switch (methodName) {
+            case 'toggleRecaptchaLegal':
+                return !this.$target[0].querySelector('.o_recaptcha_legal_terms') || '';
+        }
+        return this._super(...arguments);
+    },
 });

@@ -1,25 +1,27 @@
-# -*- encoding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-
 {
     'name': 'Saudi Arabia - Accounting',
-    'version': '1.1',
-    'author': 'DVIT.ME',
-    'category': 'Localization',
+    'icon': '/account/static/description/l10n.png',
+    'countries': ['sa'],
+    'version': '2.0',
+    'author': 'Odoo S.A., DVIT.ME (http://www.dvit.me)',
+    'category': 'Accounting/Localizations/Account Charts',
     'description': """
-Odoo Arabic localization for most arabic countries and Saudi Arabia.
-
-This initially includes chart of accounts of USA translated to Arabic.
-
-In future this module will include some payroll rules for ME .
+Odoo Arabic localization for most Saudi Arabia.
 """,
-    'website': 'http://www.dvit.me',
-    'depends': ['account', 'l10n_multilang'],
-    'data': [
-        'data/account_chart_template_data.xml',
-        'data/account.account.template.csv',
-        'data/l10n_sa_chart_data.xml',
-        'data/account_chart_template_configure_data.xml',
+    'website': 'https://www.odoo.com/documentation/master/applications/finance/fiscal_localizations/saudi_arabia.html',
+    'depends': [
+        'l10n_gcc_invoice',
+        'account',
     ],
-    'post_init_hook': 'load_translations',
+    'auto_install': ['account'],
+    'data': [
+        'data/account_data.xml',
+        'data/account_tax_report_data.xml',
+        'views/report_invoice.xml',
+    ],
+    'demo': [
+        'demo/demo_company.xml',
+    ],
+    'license': 'LGPL-3',
 }

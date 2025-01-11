@@ -1,25 +1,24 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import api, models
+from odoo import api, models, fields
 
 
-class PurchaseOrderLine(models.Model):
-    _inherit = "purchase.order.line"
+class PurchaseOrder(models.Model):
+    _inherit = 'purchase.order'
 
-    @api.multi
-    def _prepare_stock_moves(self, picking):
-        res = super(PurchaseOrderLine, self)._prepare_stock_moves(picking)
-        for re in res:
-            re['sale_line_id'] = self.sale_line_id.id
-        return res
+    dropship_picking_count = fields.Integer("Dropship Count", compute='_compute_incoming_picking_count')
 
+    @api.depends('picking_ids.is_dropship')
+    def _compute_incoming_picking_count(self):
+        super()._compute_incoming_picking_count()
+        for order in self:
+            dropship_count = len(order.picking_ids.filtered(lambda p: p.is_dropship))
+            order.incoming_picking_count -= dropship_count
+            order.dropship_picking_count = dropship_count
 
-class StockRule(models.Model):
-    _inherit = 'stock.rule'
+    def action_view_picking(self):
+        return self._get_action_view_picking(self.picking_ids.filtered(lambda p: not p.is_dropship))
 
-    @api.model
-    def _prepare_purchase_order_line(self, product_id, product_qty, product_uom, values, po, supplier):
-        res = super(StockRule, self)._prepare_purchase_order_line(product_id, product_qty, product_uom, values, po, supplier)
-        res['sale_line_id'] = values.get('sale_line_id', False)
-        return res
+    def action_view_dropship(self):
+        return self._get_action_view_picking(self.picking_ids.filtered(lambda p: p.is_dropship))

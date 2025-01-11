@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo.tests.common import TransactionCase, tagged, TagsSelector
+from odoo.tests.common import TransactionCase, tagged, BaseCase
+from odoo.tests.tag_selector import TagsSelector
 
 
 @tagged('nodatabase')
@@ -17,7 +18,8 @@ class TestSetTags(TransactionCase):
         fc = FakeClass()
 
         self.assertTrue(hasattr(fc, 'test_tags'))
-        self.assertEqual(fc.test_tags, {'at_install', 'standard', 'base'})
+        self.assertEqual(fc.test_tags, {'at_install', 'standard'})
+        self.assertEqual(fc.test_module, 'base')
 
     def test_set_tags_not_decorated(self):
         """Test that a TransactionCase has some test_tags by default"""
@@ -28,7 +30,8 @@ class TestSetTags(TransactionCase):
         fc = FakeClass()
 
         self.assertTrue(hasattr(fc, 'test_tags'))
-        self.assertEqual(fc.test_tags, {'at_install', 'standard', 'base'})
+        self.assertEqual(fc.test_tags, {'at_install', 'standard'})
+        self.assertEqual(fc.test_module, 'base')
 
     def test_set_tags_single_tag(self):
         """Test the set_tags decorator with a single tag"""
@@ -39,7 +42,8 @@ class TestSetTags(TransactionCase):
 
         fc = FakeClass()
 
-        self.assertEqual(fc.test_tags, {'at_install', 'standard', 'base', 'slow'})
+        self.assertEqual(fc.test_tags, {'at_install', 'standard', 'slow'})
+        self.assertEqual(fc.test_module, 'base')
 
     def test_set_tags_multiple_tags(self):
         """Test the set_tags decorator with multiple tags"""
@@ -50,7 +54,8 @@ class TestSetTags(TransactionCase):
 
         fc = FakeClass()
 
-        self.assertEqual(fc.test_tags, {'at_install', 'standard', 'base', 'slow', 'nightly'})
+        self.assertEqual(fc.test_tags, {'at_install', 'standard', 'slow', 'nightly'})
+        self.assertEqual(fc.test_module, 'base')
 
     def test_inheritance(self):
         """Test inheritance when using the 'tagged' decorator"""
@@ -59,18 +64,18 @@ class TestSetTags(TransactionCase):
         class FakeClassA(TransactionCase):
             pass
 
-        @tagged('nightly')
-        class FakeClassB(FakeClassA):
-            pass
-
-        fc = FakeClassB()
-        self.assertEqual(fc.test_tags, {'at_install', 'standard', 'base', 'nightly'})
-
         class FakeClassC(FakeClassA):
             pass
 
         fc = FakeClassC()
-        self.assertEqual(fc.test_tags, {'at_install', 'standard', 'base'})
+        self.assertEqual(fc.test_tags, {'at_install', 'standard', 'slow'})
+
+        @tagged('-standard')
+        class FakeClassD(FakeClassA):
+            pass
+
+        fc = FakeClassD()
+        self.assertEqual(fc.test_tags, {'at_install', 'slow'})
 
     def test_untagging(self):
         """Test that one can remove the 'standard' tag"""
@@ -80,22 +85,34 @@ class TestSetTags(TransactionCase):
             pass
 
         fc = FakeClassA()
-        self.assertEqual(fc.test_tags, {'at_install', 'base'})
+        self.assertEqual(fc.test_tags, {'at_install'})
+        self.assertEqual(fc.test_module, 'base')
 
-        @tagged('-standard', '-base', '-at_install')
+        @tagged('-standard', '-base', '-at_install', 'post_install')
         class FakeClassB(TransactionCase):
             pass
 
         fc = FakeClassB()
-        self.assertEqual(fc.test_tags, set())
+        self.assertEqual(fc.test_tags, {'post_install'})
 
-        @tagged('-standard', '-base', '-at_install', 'fast')
+        @tagged('-standard', '-base', 'fast')
         class FakeClassC(TransactionCase):
             pass
 
         fc = FakeClassC()
-        self.assertEqual(fc.test_tags, {'fast', })
+        self.assertEqual(fc.test_tags, {'fast', 'at_install'})
 
+    def test_parental_advisory(self):
+        """Explicit test tags on the class should override anything
+        """
+        @tagged('flow')
+        class FakeClassA(TransactionCase):
+            pass
+        class FakeClassB(FakeClassA):
+            test_tags = {'foo', 'bar'}
+
+        self.assertEqual(FakeClassA().test_tags, {'standard', 'at_install', 'flow'})
+        self.assertEqual(FakeClassB().test_tags, {'foo', 'bar'})
 
 @tagged('nodatabase')
 class TestSelector(TransactionCase):
@@ -104,61 +121,115 @@ class TestSelector(TransactionCase):
         """Test the parser part of the TagsSelector class"""
 
         tags = TagsSelector('+slow')
-        self.assertEqual({'slow', }, tags.include)
+        self.assertEqual({('slow', None, None, None, None), }, tags.include)
         self.assertEqual(set(), tags.exclude)
 
         tags = TagsSelector('+slow,nightly')
-        self.assertEqual({'slow', 'nightly'}, tags.include)
+        self.assertEqual({('slow', None, None, None, None), ('nightly', None, None, None, None)}, tags.include)
         self.assertEqual(set(), tags.exclude)
 
         tags = TagsSelector('+slow,-standard')
-        self.assertEqual({'slow', }, tags.include)
-        self.assertEqual({'standard', }, tags.exclude)
+        self.assertEqual({('slow', None, None, None, None), }, tags.include)
+        self.assertEqual({('standard', None, None, None, None), }, tags.exclude)
 
         # same with space after the comma
         tags = TagsSelector('+slow, -standard')
-        self.assertEqual({'slow', }, tags.include)
-        self.assertEqual({'standard', }, tags.exclude)
+        self.assertEqual({('slow', None, None, None, None), }, tags.include)
+        self.assertEqual({('standard', None, None, None, None), }, tags.exclude)
 
-        # same with space befaore and after the comma
+        # same with space before and after the comma
         tags = TagsSelector('+slow , -standard')
-        self.assertEqual({'slow', }, tags.include)
-        self.assertEqual({'standard', }, tags.exclude)
+        self.assertEqual({('slow', None, None, None, None), }, tags.include)
+        self.assertEqual({('standard', None, None, None, None), }, tags.exclude)
 
         tags = TagsSelector('+slow ,-standard,+js')
-        self.assertEqual({'slow', 'js', }, tags.include)
-        self.assertEqual({'standard', }, tags.exclude)
+        self.assertEqual({('slow', None, None, None, None), ('js', None, None, None, None)}, tags.include)
+        self.assertEqual({('standard', None, None, None, None), }, tags.exclude)
 
+        # without +
         tags = TagsSelector('slow, ')
-        self.assertEqual({'slow', }, tags.include)
+        self.assertEqual({('slow', None, None, None, None), }, tags.include)
         self.assertEqual(set(), tags.exclude)
 
+        # duplicates
         tags = TagsSelector('+slow,-standard, slow,-standard ')
-        self.assertEqual({'slow', }, tags.include)
-        self.assertEqual({'standard', }, tags.exclude)
+        self.assertEqual({('slow', None, None, None, None), }, tags.include)
+        self.assertEqual({('standard', None, None, None, None), }, tags.exclude)
 
         tags = TagsSelector('')
         self.assertEqual(set(), tags.include)
         self.assertEqual(set(), tags.exclude)
 
+        tags = TagsSelector('/module')  # all standard test of a module
+        self.assertEqual({('standard', 'module', None, None, None), }, tags.include)
+        self.assertEqual(set(), tags.exclude)
+
+        tags = TagsSelector('/module/tests/test_file.py')  # all standard test of a module
+        self.assertEqual({('standard', None, None, None, '/module/tests/test_file.py'), }, tags.include)
+        self.assertEqual(set(), tags.exclude)
+
+        tags = TagsSelector('*/module')  # all tests of a module
+        self.assertEqual({(None, 'module', None, None, None), }, tags.include)
+        self.assertEqual(set(), tags.exclude)
+
+        tags = TagsSelector(':class')  # all standard test of a class
+        self.assertEqual({('standard', None, 'class', None, None), }, tags.include)
+        self.assertEqual(set(), tags.exclude)
+
+        tags = TagsSelector('.method')
+        self.assertEqual({('standard', None, None, 'method', None), }, tags.include)
+        self.assertEqual(set(), tags.exclude)
+
+        tags = TagsSelector(':class.method')
+        self.assertEqual({('standard', None, 'class', 'method', None), }, tags.include)
+        self.assertEqual(set(), tags.exclude)
+
+        tags = TagsSelector('/module:class.method')  # only a specific test func in a module (standard)
+        self.assertEqual({('standard', 'module', 'class', 'method', None), }, tags.include)
+        self.assertEqual(set(), tags.exclude)
+
+        tags = TagsSelector('*/module:class.method')  # only a specific test func in a module
+        self.assertEqual({(None, 'module', 'class', 'method', None), }, tags.include)
+        self.assertEqual(set(), tags.exclude)
+
+        tags = TagsSelector('-/module:class.method')  # disable a specific test func in a module
+        self.assertEqual({('standard', None, None, None, None), }, tags.include)  # all strandard
+        self.assertEqual({(None, 'module', 'class', 'method', None), }, tags.exclude)  # exept the test func
+
+        tags = TagsSelector('-*/module:class.method') 
+        self.assertEqual({('standard', None, None, None, None), }, tags.include)
+        self.assertEqual({(None, 'module', 'class', 'method', None), }, tags.exclude)
+
+        tags = TagsSelector('tag/module')
+        self.assertEqual({('tag', 'module', None, None, None), }, tags.include)
+        self.assertEqual(set(), tags.exclude)
+
+        tags = TagsSelector('tag.method')
+        self.assertEqual({('tag', None, None, 'method', None), }, tags.include)
+        self.assertEqual(set(), tags.exclude)
+
+        tags = TagsSelector('*/module,-standard')  # all non standard test of a module
+        self.assertEqual({(None, 'module', None, None, None), }, tags.include)  # all in module
+        self.assertEqual({('standard', None, None, None, None), }, tags.exclude)  # exept standard ones
+
+
 @tagged('nodatabase')
 class TestSelectorSelection(TransactionCase):
-
     def test_selector_selection(self):
         """Test check_tags use cases"""
         class Test_A(TransactionCase):
             pass
 
         @tagged('stock')
-        class Test_B():
+        class Test_B(BaseCase):
             pass
 
         @tagged('stock', 'slow')
-        class Test_C():
+        class Test_C(BaseCase):
             pass
 
         @tagged('standard', 'slow')
-        class Test_D():
+        class Test_D(BaseCase):
             pass
 
         @tagged('-at_install', 'post_install')
@@ -175,7 +246,6 @@ class TestSelectorSelection(TransactionCase):
         # considered tagged standard and they are run by default if
         # not explicitly deselected with '-standard' or if 'standard' is not
         # selectected along with another test tag
-
         # same as "--test-tags=''" parameters:
         tags = TagsSelector('')
         self.assertFalse(tags.check(no_tags_obj))
@@ -211,10 +281,10 @@ class TestSelectorSelection(TransactionCase):
         self.assertFalse(tags.check(stock_tag_obj))
 
         tags = TagsSelector('standard')
-        self.assertFalse(tags.check(stock_tag_obj))
+        self.assertTrue(tags.check(stock_tag_obj))
 
         tags = TagsSelector('slow,standard')
-        self.assertFalse(tags.check(stock_tag_obj))
+        self.assertTrue(tags.check(stock_tag_obj))
 
         tags = TagsSelector('slow,-standard')
         self.assertFalse(tags.check(stock_tag_obj))

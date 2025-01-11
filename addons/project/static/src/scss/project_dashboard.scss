@@ -1,25 +1,26 @@
-.o_kanban_view.o_kanban_dashboard.o_project_kanban {
+.o_project_kanban .o_kanban_renderer {
+
+    .o_project_kanban_main {
+        // Prevents the kanban settings menu from overflowing and creating a scrollbar.
+        .o_kanban_card_manage_pane .o_kanban_card_manage_section a {
+            white-space: normal;
+        }
+    }
+
     .o_project_kanban_boxes {
         display: flex;
-        flex-flow: row nowrap;
+        flex-flow: row wrap;
+        justify-content: space-between;
 
         .o_project_kanban_box {
             position: relative;
             text-align: center;
             padding: 0 0 0 0;
-            width: 33.33%;
-
-            &:last-child {
-                text-align: right;
-            }
-
-            &:nth-child(2){
-                width: 66.66%;
-            }
+            margin: 0 5px;
 
             &:first-child {
-                text-align: left;
-            }
+                 margin: 0 5px 0 0;
+             }
 
             .o_value {
                 font-weight: 800;
@@ -45,34 +46,24 @@
                 }
             }
         }
-        .o_project_timesheet_box{
-            position: relative;
-            padding: 0 0 0 0;
-            /* The important are here to assure this class is display in the center */
-            width: 33.33% !important;
-            text-align: center !important;
+    }
+
+    @include media-breakpoint-down(md) {
+        .o_view_nocontent {
+            top: 15%;
         }
     }
 }
 
-.o_kanban_task_cover_container {
-    .o_kanban_task_cover_image {
-        display: inline-block;
-        position: relative;
-        height: 120px;
-        width: 120px;
-        margin: 10px;
-        cursor: pointer;
-        outline: 2px solid transparent;
-        box-shadow: 0px 0px 1px 1px #ccc;
-        &.o_selected {
-            outline-color: $o-brand-primary;
-        }
-        > img {
-            @include o-position-absolute($top: 0, $left: 0, $right: 0, $bottom: 0);
-            margin: auto;
-            max-height: 100%;
-            max-width: 100%;
+.o_dow_widget {
+    th {
+        padding: 10px 10px 0 10px;
+    }
+
+    .o_dow_days {
+        td {
+            text-align: center;
+            vertical-align: middle;
         }
     }
 }

@@ -1,8 +1,16 @@
-import odoo.tests
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-@odoo.tests.tagged('post_install', '-at_install')
-class TestUi(odoo.tests.HttpCase):
+from odoo.tests.common import HttpCase, tagged
+
+from odoo.addons.account.tests.common import AccountTestInvoicingCommon
+
+
+@tagged('post_install', '-at_install')
+class TestUi(AccountTestInvoicingCommon, HttpCase):
 
     def test_01_sale_tour(self):
-        self.phantom_js("/web", "odoo.__DEBUG__.services['web_tour.tour'].run('sale_tour')", "odoo.__DEBUG__.services['web_tour.tour'].tours.sale_tour.ready", login="admin")
+        self.env.ref('base.user_admin').write({
+            'email': 'mitchell.admin@example.com',
+        })
+        self.env['res.partner'].create({'name': 'Agrolait', 'email': 'agro@lait.be'})
+        self.start_tour("/odoo", 'sale_tour', login="admin")

@@ -7,15 +7,16 @@
 Send KPI Digests periodically
 =============================
 """,
-    'version': '1.0',
+    'version': '1.1',
     'depends': [
         'mail',
-        'portal'
+        'portal',
+        'resource',
     ],
     'data': [
         'security/ir.model.access.csv',
-        'data/digest_template_data.xml',
         'data/digest_data.xml',
+        'data/digest_tips_data.xml',
         'data/ir_cron_data.xml',
         'data/res_config_settings_data.xml',
         'views/digest_views.xml',
@@ -23,4 +24,5 @@ Send KPI Digests periodically
         'views/res_config_settings_views.xml',
     ],
     'installable': True,
+    'license': 'LGPL-3',
 }

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import os.path
-import unittest
 
-from odoo.tests.common import tagged
+from odoo.tests.common import BaseCase
+from odoo.tools.misc import file_open
 from odoo.tools.mimetypes import guess_mimetype
 
 def contents(extension):
-    with open(os.path.join(
+    with file_open(os.path.join(
         os.path.dirname(__file__),
         'testfiles',
         'case.{}'.format(extension)
@@ -14,8 +14,7 @@ def contents(extension):
         return f.read()
 
 
-@tagged('standard', 'at_install')
-class TestMimeGuessing(unittest.TestCase):
+class TestMimeGuessing(BaseCase):
     def test_doc(self):
         self.assertEqual(
             guess_mimetype(contents('doc')),
@@ -67,5 +66,5 @@ class TestMimeGuessing(unittest.TestCase):
     def test_unknown(self):
         self.assertEqual(
             guess_mimetype(contents('csv')),
-            'application/octet-stream'
+            'text/plain'
         )

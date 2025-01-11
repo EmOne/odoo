@@ -2,12 +2,15 @@
 
 import re
 
-from odoo import api, fields, models, _
+from odoo import api, models
 from odoo.exceptions import UserError, ValidationError
+from odoo. tools import LazyTranslate
+
+_lt = LazyTranslate(__name__)  # TODO pass env to functions and remove _lt
 
 
 def normalize_iban(iban):
-    return re.sub('[\W_]', '', iban or '')
+    return re.sub(r'[\W_]', '', iban or '')
 
 def pretty_iban(iban):
     """ return iban in groups of four characters separated by a single space """
@@ -28,21 +31,21 @@ def get_bban_from_iban(iban):
 def validate_iban(iban):
     iban = normalize_iban(iban)
     if not iban:
-        raise ValidationError(_("There is no IBAN code."))
+        raise ValidationError(_lt("There is no IBAN code."))
 
     country_code = iban[:2].lower()
     if country_code not in _map_iban_template:
-        raise ValidationError(_("The IBAN is invalid, it should begin with the country code"))
+        raise ValidationError(_lt("The IBAN is invalid, it should begin with the country code"))
 
     iban_template = _map_iban_template[country_code]
-    if len(iban) != len(iban_template.replace(' ', '')):
-        raise ValidationError(_("The IBAN does not seem to be correct. You should have entered something like this %s\n"
-            "Where B = National bank code, S = Branch code, C = Account No, k = Check digit") % iban_template)
+    if len(iban) != len(iban_template.replace(' ', '')) or not re.fullmatch("[a-zA-Z0-9]+", iban):
+        raise ValidationError(_lt("The IBAN does not seem to be correct. You should have entered something like this %s\n"
+            "Where B = National bank code, S = Branch code, C = Account No, k = Check digit", iban_template))
 
     check_chars = iban[4:] + iban[:4]
     digits = int(''.join(str(int(char, 36)) for char in check_chars))  # BASE 36: 0..9,A..Z -> 0..35
     if digits % 97 != 1:
-        raise ValidationError(_("This IBAN does not pass the validation check, please verify it."))
+        raise ValidationError(_lt("This IBAN does not pass the validation check, please verify it."))
 
 
 class ResPartnerBank(models.Model):
@@ -51,7 +54,7 @@ class ResPartnerBank(models.Model):
     @api.model
     def _get_supported_account_types(self):
         rslt = super(ResPartnerBank, self)._get_supported_account_types()
-        rslt.append(('iban', _('IBAN')))
+        rslt.append(('iban', self.env._('IBAN')))
         return rslt
 
     @api.model
@@ -64,27 +67,41 @@ class ResPartnerBank(models.Model):
 
     def get_bban(self):
         if self.acc_type != 'iban':
-            raise UserError(_("Cannot compute the BBAN because the account number is not an IBAN."))
+            raise UserError(self.env._("Cannot compute the BBAN because the account number is not an IBAN."))
         return get_bban_from_iban(self.acc_number)
 
-    @api.model
-    def create(self, vals):
-        if vals.get('acc_number'):
-            vals['acc_number'] = pretty_iban(normalize_iban(vals['acc_number']))
-        return super(ResPartnerBank, self).create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('acc_number'):
+                try:
+                    validate_iban(vals['acc_number'])
+                    vals['acc_number'] = pretty_iban(normalize_iban(vals['acc_number']))
+                except ValidationError:
+                    pass
+        return super(ResPartnerBank, self).create(vals_list)
 
-    @api.multi
     def write(self, vals):
         if vals.get('acc_number'):
-            vals['acc_number'] = pretty_iban(normalize_iban(vals['acc_number']))
+            try:
+                validate_iban(vals['acc_number'])
+                vals['acc_number'] = pretty_iban(normalize_iban(vals['acc_number']))
+            except ValidationError:
+                pass
         return super(ResPartnerBank, self).write(vals)
 
-    @api.one
     @api.constrains('acc_number')
     def _check_iban(self):
-        if self.acc_type == 'iban':
-            validate_iban(self.acc_number)
+        for bank in self:
+            if bank.acc_type == 'iban':
+                validate_iban(bank.acc_number)
 
+    def check_iban(self, iban=''):
+        try:
+            validate_iban(iban)
+            return True
+        except ValidationError:
+            return False
 
 # Map ISO 3166-1 -> IBAN template, as described here :
 # http://en.wikipedia.org/wiki/International_Bank_Account_Number#IBAN_formats_by_country
@@ -101,7 +118,7 @@ _map_iban_template = {
     'br': 'BRkk BBBB BBBB SSSS SCCC CCCC CCCT N',  # Brazil
     'by': 'BYkk BBBB AAAA CCCC CCCC CCCC CCCC',  # Belarus
     'ch': 'CHkk BBBB BCCC CCCC CCCC C',  # Switzerland
-    'cr': 'CRkk BBBC CCCC CCCC CCCC C',  # Costa Rica
+    'cr': 'CRkk BBBC CCCC CCCC CCCC CC',  # Costa Rica
     'cy': 'CYkk BBBS SSSS CCCC CCCC CCCC CCCC',  # Cyprus
     'cz': 'CZkk BBBB SSSS SSCC CCCC CCCC',  # Czech Republic
     'de': 'DEkk BBBB BBBB CCCC CCCC CC',  # Germany
@@ -141,6 +158,7 @@ _map_iban_template = {
     'mu': 'MUkk BBBB BBSS CCCC CCCC CCCC CCCC CC',  # Mauritius
     'nl': 'NLkk BBBB CCCC CCCC CC',  # Netherlands
     'no': 'NOkk BBBB CCCC CCK',  # Norway
+    'om': 'OMkk BBBC CCCC CCCC CCCC CCC', # Oman
     'pk': 'PKkk BBBB CCCC CCCC CCCC CCCC',  # Pakistan
     'pl': 'PLkk BBBS SSSK CCCC CCCC CCCC CCCC',  # Poland
     'ps': 'PSkk BBBB XXXX XXXX XCCC CCCC CCCC C',  # Palestinian
@@ -155,6 +173,7 @@ _map_iban_template = {
     'sm': 'SMkk KBBB BBSS SSSC CCCC CCCC CCC',  # San Marino
     'tn': 'TNkk BBSS SCCC CCCC CCCC CCCC',  # Tunisia
     'tr': 'TRkk BBBB BRCC CCCC CCCC CCCC CC',  # Turkey
+    'ua': 'UAkk BBBB BBCC CCCC CCCC CCCC CCCC C',  # Ukraine
     'vg': 'VGkk BBBB CCCC CCCC CCCC CCCC',  # Virgin Islands
     'xk': 'XKkk BBBB CCCC CCCC CCCC',  # Kosovo
 }

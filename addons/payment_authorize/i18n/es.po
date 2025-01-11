@@ -1,132 +1,172 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# * payment_authorize
-# 
+# 	* payment_authorize
+#
 # Translators:
-# Martin Trigaux, 2016
-# Humberto Garza De Koster <garzadekoster@gmail.com>, 2016
-# David Arnold <blaggacao@users.noreply.github.com>, 2017
-# RGB Consulting <odoo@rgbconsulting.com>, 2017
-# Luis M. Ontalba <luis.martinez@tecnativa.com>, 2017
-# e2f <projects@e2f.com>, 2018
-# Nicolás Broggi <rnbroggi@gmail.com>, 2018
-# Pedro M. Baeza <pedro.baeza@gmail.com>, 2018
-# Antonio Trueba, 2018
+# Martin Trigaux, 2019
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server saas~11.4\n"
+"Project-Id-Version: Odoo Server saas~12.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-02 09:56+0000\n"
-"PO-Revision-Date: 2018-08-02 09:56+0000\n"
-"Last-Translator: Antonio Trueba, 2018\n"
+"POT-Creation-Date: 2023-10-26 21:56+0000\n"
+"PO-Revision-Date: 2019-08-26 09:12+0000\n"
+"Last-Translator: Martin Trigaux, 2019\n"
 "Language-Team: Spanish (https://www.transifex.com/odoo/teams/41243/es/)\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Language: es\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. module: payment_authorize
-#: model:ir.model.fields,field_description:payment_authorize.field_payment_acquirer__authorize_login
-msgid "API Login Id"
-msgstr "API Login Id "
+#: model_terms:ir.ui.view,arch_db:payment_authorize.inline_form
+msgid ""
+"<select id=\"o_authorize_account_type\" required=\"\" class=\"form-"
+"select\">\n"
+"                        <option value=\"checking\">Personal Checking</"
+"option>\n"
+"                        <option value=\"savings\">Personal Savings</option>\n"
+"                        <option value=\"businessChecking\">Business "
+"Checking</option>\n"
+"                    </select>"
+msgstr ""
 
 #. module: payment_authorize
-#: model:ir.model.fields,field_description:payment_authorize.field_payment_acquirer__authorize_transaction_key
+#: model_terms:ir.ui.view,arch_db:payment_authorize.inline_form
+msgid "ABA Routing Number"
+msgstr ""
+
+#. module: payment_authorize
+#: model:ir.model.fields,field_description:payment_authorize.field_payment_provider__authorize_client_key
+msgid "API Client Key"
+msgstr ""
+
+#. module: payment_authorize
+#: model:ir.model.fields,field_description:payment_authorize.field_payment_provider__authorize_login
+msgid "API Login ID"
+msgstr ""
+
+#. module: payment_authorize
+#: model:ir.model.fields,field_description:payment_authorize.field_payment_provider__authorize_signature_key
+msgid "API Signature Key"
+msgstr ""
+
+#. module: payment_authorize
+#: model:ir.model.fields,field_description:payment_authorize.field_payment_provider__authorize_transaction_key
 msgid "API Transaction Key"
 msgstr "API Clave de la transacción"
 
 #. module: payment_authorize
-#: selection:payment.acquirer,provider:0
-msgid "Adyen"
-msgstr "Adyen"
+#: model_terms:ir.ui.view,arch_db:payment_authorize.inline_form
+msgid "Account Number"
+msgstr ""
 
 #. module: payment_authorize
-#: selection:payment.acquirer,provider:0
+#: model:ir.model.fields.selection,name:payment_authorize.selection__payment_provider__code__authorize
 msgid "Authorize.Net"
 msgstr "Authorize.Net"
 
 #. module: payment_authorize
 #: model:ir.model.fields,field_description:payment_authorize.field_payment_token__authorize_profile
-msgid "Authorize.net Profile ID"
-msgstr "Authorize.net perfil ID"
-
-#. module: payment_authorize
-#: code:addons/payment_authorize/models/payment.py:177
-#, python-format
-msgid ""
-"Authorize: received data with missing reference (%s) or trans_id (%s) or "
-"fingerprint (%s)"
+msgid "Authorize.Net Profile ID"
 msgstr ""
-"Authorize: datos recibidos sin referencia (%s) o trans_id (%s) o huella "
-"digital (%s)"
 
 #. module: payment_authorize
-#: selection:payment.acquirer,provider:0
-msgid "Buckaroo"
-msgstr "Buckaroo"
+#: model_terms:ir.ui.view,arch_db:payment_authorize.inline_form
+msgid "Bank Account Type"
+msgstr ""
 
 #. module: payment_authorize
-#: model:ir.ui.view,arch_db:payment_authorize.authorize_s2s_form
-msgid "CVC"
-msgstr "CVC"
+#: model_terms:ir.ui.view,arch_db:payment_authorize.inline_form
+msgid "Bank Name"
+msgstr ""
 
 #. module: payment_authorize
-#: model:ir.ui.view,arch_db:payment_authorize.authorize_s2s_form
-msgid "Card number"
-msgstr "Número de la tarjeta"
+#: model_terms:ir.ui.view,arch_db:payment_authorize.inline_form
+msgid "Card Code"
+msgstr ""
 
 #. module: payment_authorize
-#: model:ir.ui.view,arch_db:payment_authorize.authorize_s2s_form
-msgid "Cardholder name"
-msgstr "Nombre del titular de la tarjeta"
+#: model_terms:ir.ui.view,arch_db:payment_authorize.inline_form
+msgid "Card Number"
+msgstr ""
 
 #. module: payment_authorize
-#: model:ir.ui.view,arch_db:payment_authorize.authorize_s2s_form
-msgid "Expires (MM / YY)"
-msgstr "Caducidad (MM / AA)"
+#: model:ir.model.fields,field_description:payment_authorize.field_payment_provider__code
+msgid "Code"
+msgstr ""
 
 #. module: payment_authorize
-#: model:ir.ui.view,arch_db:payment_authorize.acquirer_form_authorize
+#. odoo-python
+#: code:addons/payment_authorize/models/payment_provider.py:0
+msgid ""
+"Could not fetch merchant details:\n"
+"%s"
+msgstr ""
+
+#. module: payment_authorize
+#. odoo-python
+#: code:addons/payment_authorize/models/payment_transaction.py:0
+msgid ""
+"Could not retrieve the transaction details. (error code: %s; error_details: "
+"%s)"
+msgstr ""
+
+#. module: payment_authorize
+#: model_terms:ir.ui.view,arch_db:payment_authorize.inline_form
+msgid "Expiration"
+msgstr ""
+
+#. module: payment_authorize
+#. odoo-python
+#: code:addons/payment_authorize/models/payment_provider.py:0
+msgid ""
+"Failed to authenticate.\n"
+"%s"
+msgstr ""
+
+#. module: payment_authorize
+#: model_terms:ir.ui.view,arch_db:payment_authorize.payment_provider_form
+msgid "Generate Client Key"
+msgstr ""
+
+#. module: payment_authorize
+#: model_terms:ir.ui.view,arch_db:payment_authorize.payment_provider_form
 msgid "How to get paid with Authorize.Net"
 msgstr "Cómo recibir pagos con Authorize.Net"
 
 #. module: payment_authorize
-#: code:addons/payment_authorize/controllers/main.py:61
-#, python-format
-msgid ""
-"If you don't have any account, please ask your salesperson to update your "
-"profile. "
-msgstr ""
-"Si no tiene ninguna cuenta, pida a su vendedor que actualice su perfil."
-
-#. module: payment_authorize
-#: code:addons/payment_authorize/models/payment.py:261
-#, python-format
-msgid ""
-"Invalid token found: the Authorize profile is missing.Please make sure the "
-"token has a valid acquirer reference."
+#: model_terms:ir.ui.view,arch_db:payment_authorize.inline_form
+msgid "MM"
 msgstr ""
 
 #. module: payment_authorize
-#: selection:payment.acquirer,provider:0
-msgid "Manual Configuration"
-msgstr "Configuración manual"
+#: model_terms:ir.ui.view,arch_db:payment_authorize.inline_form
+msgid "Name On Account"
+msgstr ""
 
 #. module: payment_authorize
-#: selection:payment.acquirer,provider:0
-msgid "Ogone"
-msgstr "Ogone"
+#. odoo-python
+#: code:addons/payment_authorize/models/payment_transaction.py:0
+msgid "No transaction found matching reference %s."
+msgstr ""
 
 #. module: payment_authorize
-#: selection:payment.acquirer,provider:0
-msgid "PayUmoney"
-msgstr "PayUmoney"
+#. odoo-python
+#: code:addons/payment_authorize/models/payment_provider.py:0
+msgid "Only one currency can be selected by Authorize.Net account."
+msgstr ""
 
 #. module: payment_authorize
-#: model:ir.model,name:payment_authorize.model_payment_acquirer
-msgid "Payment Acquirer"
-msgstr "Método de pago"
+#: model:ir.model,name:payment_authorize.model_payment_provider
+msgid "Payment Provider"
+msgstr ""
+
+#. module: payment_authorize
+#: model:ir.model,name:payment_authorize.model_payment_token
+msgid "Payment Token"
+msgstr "Token de pago"
 
 #. module: payment_authorize
 #: model:ir.model,name:payment_authorize.model_payment_transaction
@@ -134,87 +174,73 @@ msgid "Payment Transaction"
 msgstr "Transacción de pago"
 
 #. module: payment_authorize
-#: selection:payment.acquirer,provider:0
-msgid "Paypal"
-msgstr "Paypal"
-
-#. module: payment_authorize
-#: code:addons/payment_authorize/controllers/main.py:63
-#, python-format
-msgid "Please complete your profile. "
-msgstr "Por favor complete su perfil."
-
-#. module: payment_authorize
-#: code:addons/payment_authorize/controllers/main.py:58
-#, python-format
-msgid "Please sign in to complete your profile."
-msgstr "Por favor inicie sesión para completar su perfil."
-
-#. module: payment_authorize
-#: model:ir.model.fields,field_description:payment_authorize.field_payment_acquirer__provider
-#: model:ir.model.fields,field_description:payment_authorize.field_payment_token__provider
-msgid "Provider"
-msgstr "Proveedor"
-
-#. module: payment_authorize
-#: model:ir.model.fields,field_description:payment_authorize.field_payment_token__save_token
-msgid "Save Cards"
-msgstr "Guardar las tarjetas"
-
-#. module: payment_authorize
-#: selection:payment.acquirer,provider:0
-msgid "Sips"
-msgstr "Sips"
-
-#. module: payment_authorize
-#: selection:payment.acquirer,provider:0
-msgid "Stripe"
-msgstr "Stripe"
-
-#. module: payment_authorize
-#: code:addons/payment_authorize/models/payment.py:365
-#, python-format
-msgid "The Customer Profile creation in Authorize.NET failed."
-msgstr "Fallo en la creación del perfil de cliente en Authorize.NET."
-
-#. module: payment_authorize
-#: code:addons/payment_authorize/controllers/main.py:55
-#, python-format
-msgid ""
-"The transaction cannot be processed because some contact details are missing"
-" or invalid: "
+#. odoo-javascript
+#: code:addons/payment_authorize/static/src/js/payment_form.js:0
+msgid "Payment processing failed"
 msgstr ""
-"La transacción no se puede procesar porque algunos detalles de contacto "
-"faltan o no son válidos:"
+
+#. module: payment_authorize
+#. odoo-python
+#: code:addons/payment_authorize/models/payment_transaction.py:0
+msgid ""
+"Received data with status code \"%(status)s\" and error code \"%(error)s\""
+msgstr ""
+
+#. module: payment_authorize
+#. odoo-python
+#: code:addons/payment_authorize/controllers/main.py:0
+msgid "Received tampered payment request data."
+msgstr ""
+
+#. module: payment_authorize
+#: model_terms:ir.ui.view,arch_db:payment_authorize.payment_provider_form
+msgid "Set Account Currency"
+msgstr ""
+
+#. module: payment_authorize
+#: model:ir.model.fields,help:payment_authorize.field_payment_provider__authorize_login
+msgid "The ID solely used to identify the account with Authorize.Net"
+msgstr ""
+
+#. module: payment_authorize
+#: model:ir.model.fields,help:payment_authorize.field_payment_provider__authorize_client_key
+msgid ""
+"The public client key. To generate directly from Odoo or from Authorize.Net "
+"backend."
+msgstr ""
+
+#. module: payment_authorize
+#: model:ir.model.fields,help:payment_authorize.field_payment_provider__code
+msgid "The technical code of this payment provider."
+msgstr ""
+
+#. module: payment_authorize
+#. odoo-python
+#: code:addons/payment_authorize/models/payment_transaction.py:0
+msgid ""
+"The transaction is not in a status to be refunded. (status: %s, details: %s)"
+msgstr ""
+
+#. module: payment_authorize
+#. odoo-python
+#: code:addons/payment_authorize/models/payment_transaction.py:0
+msgid "The transaction is not linked to a token."
+msgstr ""
 
 #. module: payment_authorize
 #: model:ir.model.fields,help:payment_authorize.field_payment_token__authorize_profile
 msgid ""
-"This contains the unique reference for this partner/payment token "
-"combination in the Authorize.net backend"
+"The unique reference for the partner/token combination in the Authorize.net "
+"backend."
 msgstr ""
-"Esto contiene la única referencia para esta combinación de empresa/pago de "
-"token en el backend de Authorize.net"
 
 #. module: payment_authorize
-#: model:ir.model.fields,help:payment_authorize.field_payment_token__save_token
-msgid ""
-"This option allows customers to save their credit card as a payment token "
-"and to reuse it for a later purchase. If you manage subscriptions (recurring"
-" invoicing), you need it to automatically charge the customer when you issue"
-" an invoice."
+#. odoo-python
+#: code:addons/payment_authorize/models/payment_provider.py:0
+msgid "This action cannot be performed while the provider is disabled."
 msgstr ""
-"Esta opción permite a los clientes guardar su tarjeta de crédito como un "
-"token de pago y reutilizarla para una compra posterior. Si administra las "
-"suscripciones (facturación recurrente), necesita que se le cobre "
-"automáticamente al cliente cuando emite una factura."
 
 #. module: payment_authorize
-#: selection:payment.acquirer,provider:0
-msgid "Wire Transfer"
-msgstr "Transferencia bancaria"
-
-#. module: payment_authorize
-#: model:ir.model,name:payment_authorize.model_payment_token
-msgid "payment.token"
-msgstr "payment.token"
+#: model_terms:ir.ui.view,arch_db:payment_authorize.inline_form
+msgid "YY"
+msgstr ""

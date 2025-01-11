@@ -1,34 +1,23 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import models, _
+from odoo import models
+from odoo.tools.misc import format_datetime
 
 
 class StockQuantityHistory(models.TransientModel):
     _inherit = 'stock.quantity.history'
 
-    def open_table(self):
-        if not self.env.context.get('valuation'):
-            return super(StockQuantityHistory, self).open_table()
-
-        self.env['stock.move']._run_fifo_vacuum()
-
-        if self.compute_at_date:
-            tree_view_id = self.env.ref('stock_account.view_stock_product_tree2').id
-            form_view_id = self.env.ref('stock.product_form_view_procurement_button').id
-            search_view_id = self.env.ref('stock_account.view_inventory_valuation_search').id
-            # We pass `to_date` in the context so that `qty_available` will be computed across
-            # moves until date.
-            action = {
-                'type': 'ir.actions.act_window',
-                'views': [(tree_view_id, 'tree'), (form_view_id, 'form')],
-                'view_mode': 'tree,form',
-                'name': _('Inventory Valuation'),
-                'res_model': 'product.product',
-                'domain': "[('type', '=', 'product'), ('qty_available', '!=', 0)]",
-                'context': dict(self.env.context, to_date=self.date, company_owned=True, create=False, edit=False),
-                'search_view_id': search_view_id
-            }
+    def open_at_date(self):
+        active_model = self.env.context.get('active_model')
+        if active_model == 'stock.valuation.layer':
+            action = self.env["ir.actions.actions"]._for_xml_id("stock_account.stock_valuation_layer_action")
+            action['views'] = [(self.env.ref('stock_account.stock_valuation_layer_valuation_at_date_tree_inherited').id, 'list'),
+                               (self.env.ref('stock_account.stock_valuation_layer_form').id, 'form'),
+                               (self.env.ref('stock_account.stock_valuation_layer_pivot').id, 'pivot'),
+                               (self.env.ref('stock_account.stock_valuation_layer_graph').id, 'graph')]
+            action['domain'] = [('create_date', '<=', self.inventory_datetime), ('product_id.is_storable', '=', True)]
+            action['display_name'] = format_datetime(self.env, self.inventory_datetime)
+            action['context'] = "{}"
             return action
-        else:
-            return self.env.ref('stock_account.product_valuation_action').read()[0]
 
+        return super(StockQuantityHistory, self).open_at_date()

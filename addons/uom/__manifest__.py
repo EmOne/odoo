@@ -4,7 +4,7 @@
 {
     'name': 'Units of measure',
     'version': '1.0',
-    'category': 'Sales',
+    'category': 'Sales/Sales',
     'depends': ['base'],
     'description': """
 This is the base module for managing Units of measure.
@@ -15,8 +15,7 @@ This is the base module for managing Units of measure.
         'security/uom_security.xml',
         'security/ir.model.access.csv',
         'views/uom_uom_views.xml',
-        'views/res_users_views.xml',
     ],
     'installable': True,
-    'auto_install': False,
+    'license': 'LGPL-3',
 }

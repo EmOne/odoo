@@ -1,19 +1,12 @@
-# -*- coding: utf-8 -*-
-from odoo import api, models
+# Part of Odoo. See LICENSE file for full copyright and licensing details.
+
+from odoo import fields, models
+
 
 class Website(models.Model):
     _inherit = 'website'
 
-    @api.multi
-    def _prepare_sale_order_values(self, partner, pricelist):
-        self.ensure_one()
-        values = super(Website, self)._prepare_sale_order_values(partner, pricelist)
-        if values['company_id']:
-            warehouse_id = (
-                self.env['ir.default'].get('sale.order', 'warehouse_id', company_id=values.get('company_id')) or
-                self.env['ir.default'].get('sale.order', 'warehouse_id') or
-                self.env['stock.warehouse'].sudo().search([('company_id', '=', values['company_id'])], limit=1).id
-            )
-            if warehouse_id:
-                values['warehouse_id'] = warehouse_id
-        return values
+    warehouse_id = fields.Many2one('stock.warehouse', string='Warehouse')
+
+    def _get_product_available_qty(self, product, **kwargs):
+        return product.with_context(warehouse_id=self.warehouse_id.id).free_qty

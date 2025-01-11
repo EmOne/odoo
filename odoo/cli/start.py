@@ -1,12 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-from __future__ import print_function
-import argparse
 import glob
 import itertools
 import os
 import sys
 
+import odoo
 from . import Command
 from .server import main
 from odoo.modules.module import get_module_root, MANIFEST_NAMES
@@ -14,7 +11,7 @@ from odoo.service.db import _create_empty_database, DatabaseExists
 
 
 class Start(Command):
-    """Quick start the Odoo server for your project"""
+    """ Quickly start the odoo server with default options """
 
     def get_module_list(self, path):
         mods = itertools.chain.from_iterable(
@@ -24,17 +21,13 @@ class Start(Command):
         return [mod.split(os.path.sep)[-2] for mod in mods]
 
     def run(self, cmdargs):
-        parser = argparse.ArgumentParser(
-            prog="%s start" % sys.argv[0].split(os.path.sep)[-1],
-            description=self.__doc__
-        )
-        parser.add_argument('--path', default=".",
+        odoo.tools.config.parser.prog = self.prog
+        self.parser.add_argument('--path', default=".",
             help="Directory where your project's modules are stored (will autodetect from current dir)")
-        parser.add_argument("-d", "--database", dest="db_name", default=None,
-                         help="Specify the database name (default to project's directory name")
+        self.parser.add_argument("-d", "--database", dest="db_name", default=None,
+            help="Specify the database name (default to project's directory name")
 
-
-        args, unknown = parser.parse_known_args(args=cmdargs)
+        args, _unknown = self.parser.parse_known_args(args=cmdargs)
 
         # When in a virtualenv, by default use it's path rather than the cwd
         if args.path == '.' and os.environ.get('VIRTUAL_ENV'):
@@ -60,6 +53,7 @@ class Start(Command):
         # TODO: forbid some database names ? eg template1, ...
         try:
             _create_empty_database(args.db_name)
+            odoo.tools.config['init']['base'] = True
         except DatabaseExists as e:
             pass
         except Exception as e:

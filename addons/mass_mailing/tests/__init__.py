@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from . import test_mass_mailing_list_merge
-from . import test_mass_mailing_content
-from . import test_mail_auto_blacklist
-from . import test_blacklist_access_rights
-from . import test_mass_mailing
-from . import test_blacklisted_channel_partner
+from . import common
+from . import test_mailing_ab_testing
+from . import test_mailing_internals
+from . import test_mailing_list
+from . import test_mailing_controllers
+from . import test_mailing_mailing_schedule_date
+from . import test_mailing_ui
+from . import test_utm
+from . import test_mailing_retry

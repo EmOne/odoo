@@ -7,11 +7,11 @@ from odoo.exceptions import UserError
 
 class ProjectCreateInvoice(models.TransientModel):
     _name = 'project.create.invoice'
-    _description = "Create a Invoice from project"
+    _description = "Create Invoice from project"
 
     @api.model
     def default_get(self, fields):
-        result = super(ProjectCreateInvoice, self).default_get(fields)
+        result = super().default_get(fields)
 
         active_model = self._context.get('active_model')
         if active_model != 'project.project':
@@ -23,18 +23,21 @@ class ProjectCreateInvoice(models.TransientModel):
         return result
 
     project_id = fields.Many2one('project.project', "Project", help="Project to make billable", required=True)
-    sale_order_id = fields.Many2one('sale.order', string="Choose the Sales Order to invoice", required=True)
+    _candidate_orders = fields.Many2many('sale.order', compute='_compute_candidate_orders', export_string_translation=False)
+    sale_order_id = fields.Many2one(
+        'sale.order', string="Choose the Sales Order to invoice", required=True,
+        domain="[('id', 'in', _candidate_orders)]"
+    )
     amount_to_invoice = fields.Monetary("Amount to invoice", compute='_compute_amount_to_invoice', currency_field='currency_id', help="Total amount to invoice on the sales order, including all items (services, storables, expenses, ...)")
-    currency_id = fields.Many2one(related='sale_order_id.currency_id', readonly=True)
+    currency_id = fields.Many2one(related='sale_order_id.currency_id', readonly=True, export_string_translation=False)
 
-    @api.onchange('project_id')
-    def _onchange_project_id(self):
-        sale_orders = self.project_id.tasks.mapped('sale_line_id.order_id').filtered(lambda so: so.invoice_status == 'to invoice')
-        return {
-            'domain': {'sale_order_id': [('id', 'in', sale_orders.ids)]},
-        }
+    @api.depends('project_id.tasks.sale_line_id.order_id.invoice_status')
+    def _compute_candidate_orders(self):
+        for p in self:
+            p._candidate_orders = p.project_id\
+                .mapped('tasks.sale_line_id.order_id')\
+                .filtered(lambda so: so.invoice_status == 'to invoice')
 
-    @api.multi
     @api.depends('sale_order_id')
     def _compute_amount_to_invoice(self):
         for wizard in self:
@@ -45,11 +48,10 @@ class ProjectCreateInvoice(models.TransientModel):
                 amount_tax += line.price_tax
             wizard.amount_to_invoice = amount_untaxed + amount_tax
 
-    @api.multi
     def action_create_invoice(self):
         if not self.sale_order_id and self.sale_order_id.invoice_status != 'to invoice':
             raise UserError(_("The selected Sales Order should contain something to invoice."))
-        action = self.env.ref('sale.action_view_sale_advance_payment_inv').read()[0]
+        action = self.env["ir.actions.actions"]._for_xml_id("sale.action_view_sale_advance_payment_inv")
         action['context'] = {
             'active_ids': self.sale_order_id.ids
         }

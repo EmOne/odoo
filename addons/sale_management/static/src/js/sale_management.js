@@ -1,51 +1,105 @@
-odoo.define('sale_management.sale_management', function (require) {
-'use strict';
+import { rpc } from "@web/core/network/rpc";
+import publicWidget from "@web/legacy/js/public/public_widget";
 
-require('web.dom_ready');
-var ajax = require('web.ajax');
-var Widget = require('web.Widget');
+publicWidget.registry.SaleUpdateLineButton = publicWidget.Widget.extend({
+    selector: '.o_portal_sale_sidebar',
+    events: {
+        'click a.js_update_line_json': '_onClickOptionQuantityButton',
+        'click a.js_add_optional_products': '_onClickAddOptionalProduct',
+        'change .js_quantity': '_onChangeOptionQuantity',
+    },
 
-if (!$('.o_portal_sale_sidebar').length) {
-    return $.Deferred().reject("DOM doesn't contain '.o_portal_sale_sidebar'");
-}
+    /**
+     * @override
+     */
+    async start() {
+        await this._super(...arguments);
+        this.orderDetail = this.$el.find('table#sales_order_table').data();
+    },
 
-    // Add to SO button
-    var UpdateLineButton = Widget.extend({
-        events: {
-            'click' : 'onClick',
-        },
-        onClick: function (ev) {
-            ev.preventDefault();
-            var self = this;
-            var href = this.$el.attr("href");
-            var order_id = href.match(/my\/orders\/([0-9]+)/);
-            var line_id = href.match(/update_line\/([0-9]+)/);
-            var params = {
-                'line_id': line_id[1],
-                'remove': self.$el.is('[href*="remove"]'),
-                'unlink': self.$el.is('[href*="unlink"]'),
-            };
-            var token = href.match(/token=(.*)/);
-            if (token) {
-                params.access_token = token;
-            }
-            var url = "/my/orders/" + parseInt(order_id[1]) + "/update_line";
-            ajax.jsonRpc(url, 'call', params).then(function (data) {
-                if (!data) {
-                    window.location.reload();
-                }
-                self.$el.parents('.input-group:first').find('.js_quantity').val(data[0]);
-                $('[data-id="total_amount"]>span').html(data[1]);
-            });
-            return false;
-        },
-    });
+    /**
+     * Calls the route to get updated values of the line and order
+     * when the quantity of a product has changed
+     *
+     * @private
+     * @param {integer} order_id
+     * @param {Object} params
+     * @return {Deferred}
+     */
+     _callUpdateLineRoute(order_id, params) {
+        return rpc("/my/orders/" + order_id + "/update_line_dict", params);
+    },
 
-    var update_button_list = [];
-    $('a.js_update_line_json').each(function (index) {
-        var button = new UpdateLineButton();
-        button.setElement($(this)).start();
-        update_button_list.push(button);
-    });
+    /**
+     * Refresh the UI of the order details
+     *
+     * @private
+     * @param {Object} data: contains order html details
+     */
+    _refreshOrderUI(data){
+        window.location.reload();
+    },
+
+    /**
+     * Process the change in line quantity
+     *
+     * @private
+     * @param {Event} ev
+     */
+    async _onChangeOptionQuantity(ev) {
+        ev.preventDefault();
+        let self = this,
+            $target = $(ev.currentTarget),
+            quantity = parseInt($target.val());
+
+        const result = await this._callUpdateLineRoute(self.orderDetail.orderId, {
+            'line_id': $target.data('lineId'),
+            'input_quantity': quantity >= 0 ? quantity : false,
+            'access_token': self.orderDetail.token
+        });
+        this._refreshOrderUI(result);
+    },
+
+    /**
+     * Reacts to the click on the -/+ buttons
+     *
+     * @private
+     * @param {Event} ev
+     */
+    async _onClickOptionQuantityButton(ev) {
+        ev.preventDefault();
+        let self = this,
+            $target = $(ev.currentTarget);
+
+        const result = await this._callUpdateLineRoute(self.orderDetail.orderId, {
+            'line_id': $target.data('lineId'),
+            'remove': $target.data('remove'),
+            'unlink': $target.data('unlink'),
+            'access_token': self.orderDetail.token
+        });
+        this._refreshOrderUI(result);
+    },
+
+    /**
+     * Triggered when optional product added to order from portal.
+     *
+     * @private
+     * @param {Event} ev
+     */
+     _onClickAddOptionalProduct(ev) {
+        ev.preventDefault();
+        let self = this,
+            $target = $(ev.currentTarget);
+
+        // to avoid double click on link with href.
+        $target.css('pointer-events', 'none');
+
+        rpc(
+            "/my/orders/" + self.orderDetail.orderId + "/add_option/" + $target.data('optionId'),
+            {access_token: self.orderDetail.token}
+        ).then((data) => {
+            this._refreshOrderUI(data);
+        });
+    },
 
 });

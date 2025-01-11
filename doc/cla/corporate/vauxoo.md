@@ -44,3 +44,34 @@ Alexander Olivares alexander@vauxoo.com https://github.com/alxolivares
 Jose Manuel Robles josemanuel@vauxoo.com https://github.com/keylor2906
 Erick Birbe erick@vauxoo.com https://github.com/ebirbe
 Tomas Alvarez tomas@vauxoo.com https://github.com/tomeyro
+Carmen Liliana Miranda González carmen@vauxoo.com https://github.com/CarmenMiranda
+Arturo Flores arturo@vauxoo.com https://github.com/umiphos
+Deivis Laya deivis@vauxoo.com https://github.com/deivislaya
+Yennifer Santiago yennifer@vauxoo.com https://github.com/ysantiago
+Randall Castro randall@vauxoo.com https://github.com/randall-vx
+Alejandro Santillan asantillan@vauxoo.com https://github.com/R4Alex
+Williams Estrada williams@vauxoo.com https://github.com/WR-96
+Fernanda Hernández fernanda@vauxoo.com https://github.com/fernandahf
+Luigys Toro luigys@vauxoo.com https://github.com/desdelinux
+Francisco J. Luna fluna@vauxoo.com https://github.com/frahikLV
+Andrea Arce andrea@vauxoo.com https://github.com/andreaarce
+Francisco Alejandro González Luna aluna@vauxoo.com https://github.com/TheAlekLuna
+Juan Benavente jbenavente@vauxoo.com https://github.com/jjbenavaz
+Alejandro Garza agarza@vauxoo.com https://github.com/agarzaarvizu
+Ulises Rivadeneyra ulises@vauxoo.com https://github.com/UlisesRivadeneyra
+Alexis Hernandez alexis@vauxoo.com https://github.com/sebasdrk17
+Agustin Payen payen@vauxoo.com https://github.com/payen000
+Rodrigo Serrano rodrigosu@vauxoo.com https://github.com/Rodrigosu-Vauxoo
+Isaac López isaac@vauxoo.com https://github.com/isaako34
+Rolando Duarte rolando@vauxoo.com https://github.com/rolandojduartem
+Andy Quijada andy@vauxoo.com https://github.com/ajqn9094
+Carlos Carral carlos.c@vauxoo.com https://github.com/carralc
+Luis Manuel luis.manuel@vauxoo.com https://github.com/LuisMzz
+Alejandro Mellado alejandromm@vauxoo.com https://github.com/alejandromellado
+Andrea Geraldo myrna.andrea@vauxoo.com https://github.com/AndreaGeraldo
+Andrea Gidalti andreag@vauxoo.com  https://github.com/andreagidaltig
+German Loredo german@vauxoo.com https://github.com/xmglord 
+Antonio Aguilar antonio@vauxoo.com https://github.com/antonag32
+Christihan Laurel laurel@vauxoo.com https://github.com/CLaurelB
+Andrea Manenti manenti@vauxoo.com https://github.com/maneandrea
+Eduardo Martinez eduardoms@vauxoo.com https://github.com/emtz10

@@ -1,33 +1,39 @@
-from odoo import api, fields, models
-from odoo.exceptions import UserError
-from odoo.tools.translate import _
+from odoo import fields, models
 
-class AccountTaxTemplate(models.Model):
-    _inherit = 'account.tax.template'
-
-    l10n_de_datev_code = fields.Char(size=2)
-
-    def _get_tax_vals(self, company, tax_template_to_tax):
-        vals = super(AccountTaxTemplate, self)._get_tax_vals(company, tax_template_to_tax)
-        vals['l10n_de_datev_code'] = self.l10n_de_datev_code
-        return vals
 
 class AccountTax(models.Model):
     _inherit = "account.tax"
 
-    l10n_de_datev_code = fields.Char(size=2, help="2 digits code use by Datev")
+    l10n_de_datev_code = fields.Char(size=4, help="4 digits code use by Datev", tracking=True)
 
-class AccountInvoice(models.Model):
-    _inherit = "account.invoice"
 
-    def invoice_validate(self):
-        for invoice in self:
-            for line in invoice.invoice_line_ids:
-                account_tax = line.account_id.tax_ids.ids
-                if account_tax and invoice.company_id.country_id.code == 'DE':
-                    account_name = line.account_id.name
-                    for tax in line.invoice_line_tax_ids:
-                        if tax.id not in account_tax:
-                            raise UserError(_('Account %s does not authorize to have tax %s specified on the line. \
-                                Change the tax used in this invoice or remove all taxes from the account') % (account_name, tax.name))
-        return super(AccountInvoice, self).invoice_validate()
+class ProductTemplate(models.Model):
+    _inherit = "product.template"
+
+    def _get_product_accounts(self):
+        """ As taxes with a different rate need a different income/expense account, we add this logic in case people only use
+         invoicing to not be blocked by the above constraint"""
+        result = super(ProductTemplate, self)._get_product_accounts()
+        company = self.env.company
+        if company.account_fiscal_country_id.code == "DE":
+            if not self.property_account_income_id:
+                taxes = self.taxes_id.filtered_domain(self.env['account.tax']._check_company_domain(company))
+                if not result['income'] or (result['income'].tax_ids and taxes and taxes[0] not in result['income'].tax_ids):
+                    result_income = self.env['account.account'].with_company(company).search([
+                        *self.env['account.account']._check_company_domain(company),
+                        ('internal_group', '=', 'income'),
+                        ('deprecated', '=', False),
+                        ('tax_ids', 'in', taxes.ids)
+                    ], limit=1)
+                    result['income'] = result_income or result['income']
+            if not self.property_account_expense_id:
+                supplier_taxes = self.supplier_taxes_id.filtered_domain(self.env['account.tax']._check_company_domain(company))
+                if not result['expense'] or (result['expense'].tax_ids and supplier_taxes and supplier_taxes[0] not in result['expense'].tax_ids):
+                    result_expense = self.env['account.account'].with_company(company).search([
+                        *self.env['account.account']._check_company_domain(company),
+                        ('internal_group', '=', 'expense'),
+                        ('deprecated', '=', False),
+                        ('tax_ids', 'in', supplier_taxes.ids),
+                    ], limit=1)
+                    result['expense'] = result_expense or result['expense']
+        return result

@@ -1,4 +1,12 @@
-.o_report_stock_rule{
+.o_report_stock_rule {
+    .table > :not(:first-child) {
+        border-top: $border-width * 2 solid currentColor;
+    }
+
+    .table {
+        --table-border-color: #{$o-gray-300};
+    }
+
     .o_report_stock_rule_rule {
         display: flex;
         flex-flow: row nowrap;
@@ -66,6 +74,18 @@
         }
     }
 
+    .o_report_stock_rule_vertical_bar {
+        flex: 0 0 auto;
+        height: 20px;
+        width: 2px;
+        >svg {
+            >line {
+                stroke: black;
+                stroke-width: 2;
+            }
+        }
+    }
+
     .o_report_stock_rule_rule_name {
         text-align: center;
     }
@@ -106,5 +126,9 @@
                 background-color: #efefef;
             }
         }
+    }
+
+    .o_report_stock_rule_rtl {
+        transform: scaleX(-1);
     }
 }

@@ -4,16 +4,16 @@
 {
     'name': 'Default Theme',
     'description': 'Default website theme',
-    'category': 'Theme/Corporate',
+    'category': 'Theme',
     'sequence': 1000,
     'version': '1.0',
-    'depends': ['website', 'website_theme_install'],
+    'depends': ['website'],
     'data': [
-        'data/theme_default_data.xml',
+        'data/generate_primary_template.xml',
     ],
     'images': [
         'static/description/cover.png',
         'static/description/theme_default_screenshot.jpg',
     ],
-    'application': False,
+    'license': 'LGPL-3',
 }

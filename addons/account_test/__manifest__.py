@@ -7,7 +7,7 @@
 {
     'name': 'Accounting Consistency Tests',
     'version': '1.0',
-    'category': 'Accounting',
+    'category': 'Accounting/Accounting',
     'description': """
 Asserts on accounting.
 ======================
@@ -25,6 +25,6 @@ and print the report from Print button in header area.
         'data/accounting_assert_test_data.xml',
         'report/report_account_test_templates.xml',
     ],
-    'active': False,
-    'installable': True
+    'installable': True,
+    'license': 'LGPL-3',
 }

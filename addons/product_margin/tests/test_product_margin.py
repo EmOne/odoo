@@ -1,47 +1,62 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-from odoo import tools
-from odoo.tests import common, Form
-from odoo.modules.module import get_resource_path
+from unittest.mock import patch
+
+from odoo.addons.account.tests.common import AccountTestInvoicingCommon
+from odoo.tests import tagged
 
 
-class TestProductMargin(common.TransactionCase):
+@tagged('post_install', '-at_install')
+class TestProductMargin(AccountTestInvoicingCommon):
 
-    def create_account_invoice(self, invoice_type, partner, product, quantity=0.0, price_unit=0.0):
-        """ Create an invoice as in a view by triggering its onchange methods"""
-
-        invoice_form = Form(self.env['account.invoice'].with_context(type=invoice_type))
-        invoice_form.partner_id = partner
-        with invoice_form.invoice_line_ids.new() as line:
-            line.product_id = product
-            line.quantity = quantity
-            line.price_unit = price_unit
-
-        invoice = invoice_form.save()
-        invoice.action_invoice_open()
-        return invoice
+    def test_aggregates(self):
+        model = self.env['product.product']
+        field_names = [
+            'turnover', 'sale_avg_price', 'sale_num_invoiced', 'purchase_num_invoiced',
+            'sales_gap', 'purchase_gap', 'total_cost', 'sale_expected', 'normal_cost',
+            'total_margin', 'expected_margin', 'total_margin_rate', 'expected_margin_rate',
+        ]
+        self.assertEqual(
+            model.fields_get(field_names, ['aggregator']),
+            dict.fromkeys(field_names, {'aggregator': 'sum'}),
+            f"Fields {', '.join(map(repr, field_names))} must be flagged as aggregatable.",
+        )
 
     def test_product_margin(self):
         ''' In order to test the product_margin module '''
 
-        # load account_minimal_test.xml file for chart of account in configuration
-        tools.convert_file(self.cr, 'product_margin',
-                           get_resource_path('account', 'test', 'account_minimal_test.xml'),
-                           {}, 'init', False, 'test', self.registry._assertion_report)
+        supplier = self.env['res.partner'].create({'name': 'Supplier'})
+        customer = self.env['res.partner'].create({'name': 'Customer'})
+        ipad = self.env['product.product'].create({
+            'name': 'Ipad',
+            'standard_price': 500.0,
+            'list_price': 750.0,
+        })
 
-        supplier = self.env['res.partner'].create({'name': 'Supplier', 'supplier': True})
-        customer = self.env['res.partner'].create({'name': 'Customer', 'customer': True})
-        ipad = self.env.ref("product.product_product_4")
-
-        # Create supplier invoice and customer invoice to test product margin.
-        # Define supplier invoices
-        self.create_account_invoice('in_invoice', supplier, ipad, 10.0, 300.00)
-        self.create_account_invoice('in_invoice', supplier, ipad, 4.0, 450.00)
-        # Define Customer Invoices
-        self.create_account_invoice('out_invoice', customer, ipad, 20.0, 750.00)
-        self.create_account_invoice('out_invoice', customer, ipad, 10.0, 550.00)
-
-        result = ipad._compute_product_margin_fields_values()
+        invoices = self.env['account.move'].create([
+            {
+                'move_type': 'in_invoice',
+                'partner_id': supplier.id,
+                'invoice_line_ids': [(0, 0, {'product_id': ipad.id, 'quantity': 10.0, 'price_unit': 300.0})],
+            },
+            {
+                'move_type': 'in_invoice',
+                'partner_id': supplier.id,
+                'invoice_line_ids': [(0, 0, {'product_id': ipad.id, 'quantity': 4.0, 'price_unit': 450.0})],
+            },
+            {
+                'move_type': 'out_invoice',
+                'partner_id': customer.id,
+                'invoice_line_ids': [(0, 0, {'product_id': ipad.id, 'quantity': 20.0, 'price_unit': 750.0})],
+            },
+            {
+                'move_type': 'out_invoice',
+                'partner_id': customer.id,
+                'invoice_line_ids': [(0, 0, {'product_id': ipad.id, 'quantity': 10.0, 'price_unit': 550.0})],
+            },
+        ])
+        invoices.invoice_date = invoices[0].date
+        invoices.action_post()
 
         # Sale turnover ( Quantity * Price Subtotal / Quantity)
         sale_turnover = ((20.0 * 750.00) + (10.0 * 550.00))
@@ -59,7 +74,18 @@ class TestProductMargin(common.TransactionCase):
         expected_margin = sale_expected - purchase_normal_cost
 
         # Check total margin
-        self.assertEqual(result[ipad.id]['total_margin'], total_margin, "Wrong Total Margin.")
+        self.assertEqual(ipad.total_margin, total_margin, "Wrong Total Margin.")
 
         # Check expected margin
-        self.assertEqual(result[ipad.id]['expected_margin'], expected_margin, "Wrong Expected Margin.")
+        self.assertEqual(ipad.expected_margin, expected_margin, "Wrong Expected Margin.")
+
+        # Check that read_group doesn't generate an UPDATE and returns the right answer
+        ipad.invalidate_recordset()
+        with patch.object(self.registry['product.product'], 'write') as write_method:
+            total_margin_sum, expected_margin_sum = self.env['product.product']._read_group(
+                [('id', '=', ipad.id)],
+                aggregates=['total_margin:sum', 'expected_margin:sum'],
+            )[0]
+            self.assertEqual(total_margin_sum, total_margin)
+            self.assertEqual(expected_margin_sum, expected_margin)
+            write_method.assert_not_called()

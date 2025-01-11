@@ -1,24 +1,24 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-import logging
-
-from odoo import api, fields, models, tools
-
+from odoo import SUPERUSER_ID, api, fields, models, tools
 from odoo.http import request
+from odoo.osv import expression
+from odoo.tools.translate import LazyTranslate, _
 
-_logger = logging.getLogger(__name__)
+
+_lt = LazyTranslate(__name__)
 
 
 class Website(models.Model):
     _inherit = 'website'
 
-    pricelist_id = fields.Many2one('product.pricelist', compute='_compute_pricelist_id', string='Default Pricelist')
-    currency_id = fields.Many2one('res.currency', related='pricelist_id.currency_id', related_sudo=False, string='Default Currency')
-    salesperson_id = fields.Many2one('res.users', string='Salesperson')
-    salesteam_id = fields.Many2one('crm.team', string='Sales Team')
-    pricelist_ids = fields.One2many('product.pricelist', compute="_compute_pricelist_ids",
-                                    string='Price list available for this Ecommerce/Website')
+    #=== DEFAULT METHODS ===#
+
+    def _default_salesteam_id(self):
+        team = self.env.ref('sales_team.salesteam_website_sales', raise_if_not_found=False)
+        if team and team.active:
+            return team.id
+        return None
 
     def _default_recovery_mail_template(self):
         try:
@@ -26,84 +26,283 @@ class Website(models.Model):
         except ValueError:
             return False
 
-    cart_recovery_mail_template_id = fields.Many2one('mail.template', string='Cart Recovery Email', default=_default_recovery_mail_template, domain="[('model', '=', 'sale.order')]")
-    cart_abandoned_delay = fields.Float("Abandoned Delay", default=1.0)
+    #=== FIELDS ===#
 
-    @api.one
+    enabled_portal_reorder_button = fields.Boolean(string="Re-order From Portal")
+    salesperson_id = fields.Many2one(
+        string="Salesperson", comodel_name='res.users', domain="[('share', '=', False)]",
+    )
+    salesteam_id = fields.Many2one(
+        string="Sales Team",
+        comodel_name='crm.team',
+        ondelete='set null',
+        default=_default_salesteam_id,
+    )
+    show_line_subtotals_tax_selection = fields.Selection(
+        string="Line Subtotals Tax Display",
+        selection=[
+            ('tax_excluded', "Tax Excluded"),
+            ('tax_included', "Tax Included"),
+        ],
+        required=True,
+        default='tax_excluded',
+    )
+
+    add_to_cart_action = fields.Selection(
+        selection=[
+            ('stay', "Stay on Product Page"),
+            ('go_to_cart', "Go to cart"),
+            ('force_dialog', "Let the user decide (dialog)"),
+        ],
+        default='stay',
+    )
+    auth_signup_uninvited = fields.Selection(default='b2c')
+    account_on_checkout = fields.Selection(
+        string="Customer Accounts",
+        selection=[
+            ('optional', "Optional"),
+            ('disabled', "Disabled (buy as guest)"),
+            ('mandatory', "Mandatory (no guest checkout)"),
+        ],
+        default='optional',
+    )
+    cart_recovery_mail_template_id = fields.Many2one(
+        string="Cart Recovery Email",
+        comodel_name='mail.template',
+        domain=[('model', '=', 'sale.order')],
+        default=_default_recovery_mail_template,
+    )
+    contact_us_button_url = fields.Char(
+        string="Contact Us Button URL", translate=True, default="/contactus",
+    )
+    cart_abandoned_delay = fields.Float(string="Abandoned Delay", default=10.0)
+    send_abandoned_cart_email = fields.Boolean(
+        string="Send email to customers who abandoned their cart.",
+    )
+    shop_ppg = fields.Integer(
+        string="Number of products in the grid on the shop", default=20,
+    )
+    shop_ppr = fields.Integer(string="Number of grid columns on the shop", default=4)
+
+    shop_gap = fields.Char(string="Grid-gap on the shop", default="16px", required=False)
+
+    shop_default_sort = fields.Selection(
+        selection='_get_product_sort_mapping', required=True, default='website_sequence asc')
+
+    shop_extra_field_ids = fields.One2many(
+        string="E-Commerce Extra Fields",
+        comodel_name='website.sale.extra.field',
+        inverse_name='website_id',
+    )
+
+    product_page_image_layout = fields.Selection(
+        selection=[
+            ('carousel', "Carousel"),
+            ('grid', "Grid"),
+        ],
+        required=True,
+        default='carousel',
+    )
+    product_page_image_width = fields.Selection(
+        selection=[
+            ('none', "Hidden"),
+            ('50_pc', "50 %"),
+            ('66_pc', "66 %"),
+            ('100_pc', "100 %"),
+        ],
+        required=True,
+        default='50_pc',
+    )
+    product_page_image_spacing = fields.Selection(
+        selection=[
+            ('none', "None"),
+            ('small', "Small"),
+            ('medium', "Medium"),
+            ('big', "Big"),
+        ],
+        required=True,
+        default='small',
+    )
+    ecommerce_access = fields.Selection(
+        selection=[
+            ('everyone', "All users"),
+            ('logged_in', "Logged in users"),
+        ],
+        required=True,
+        default='everyone',
+    )
+    product_page_grid_columns = fields.Integer(default=2)
+
+    prevent_zero_price_sale = fields.Boolean(string="Hide 'Add To Cart' when price = 0")
+    prevent_zero_price_sale_text = fields.Char(
+        string="Text to show instead of price",
+        translate=True,
+        default="Not Available For Sale",
+    )
+
+    # Computed fields
+    fiscal_position_id = fields.Many2one(
+        comodel_name='account.fiscal.position',
+        compute='_compute_fiscal_position_id',
+    )
+    pricelist_id = fields.Many2one(
+        string="Default Pricelist if any",
+        comodel_name='product.pricelist',
+        compute='_compute_pricelist_id',
+    )
+    currency_id = fields.Many2one(
+        string="Default Currency",
+        comodel_name='res.currency',
+        compute='_compute_currency_id',
+    )
+    pricelist_ids = fields.One2many(
+        string="Price list available for this Ecommerce/Website",
+        comodel_name='product.pricelist',
+        compute="_compute_pricelist_ids",
+    )
+    # Technical: Used to recompute pricelist_ids
+    all_pricelist_ids = fields.One2many(
+        string="All pricelists",
+        comodel_name='product.pricelist',
+        inverse_name='website_id',
+    )
+
+    #=== COMPUTE METHODS ===#
+
+    @api.depends('all_pricelist_ids')
     def _compute_pricelist_ids(self):
-        self.pricelist_ids = self.env["product.pricelist"].search([("website_id", "=", self.id)])
+        for website in self:
+            website = website.with_company(website.company_id)
+            ProductPricelist = website.env['product.pricelist']  # with correct company in env
+            website.pricelist_ids = ProductPricelist.sudo().search(
+                ProductPricelist._get_website_pricelists_domain(website)
+            )
 
-    @api.multi
     def _compute_pricelist_id(self):
         for website in self:
-            if website._context.get('website_id') != website.id:
-                website = website.with_context(website_id=website.id)
-            website.pricelist_id = website.get_current_pricelist()
+            website.pricelist_id = website._get_current_pricelist()
+
+    def _compute_fiscal_position_id(self):
+        for website in self:
+            website.fiscal_position_id = website._get_current_fiscal_position()
+
+    @api.depends('all_pricelist_ids', 'pricelist_id', 'company_id')
+    def _compute_currency_id(self):
+        for website in self:
+            website.currency_id = website.pricelist_id.currency_id or website.company_id.currency_id
+
+    #=== SELECTION METHODS ===#
+
+    @staticmethod
+    def _get_product_sort_mapping():
+        return [
+            ('website_sequence asc', _("Featured")),
+            ('publish_date desc', _("Newest Arrivals")),
+            ('name asc', _("Name (A-Z)")),
+            ('list_price asc', _("Price - Low to High")),
+            ('list_price desc', _("Price - High to Low")),
+        ]
+
+    #=== BUSINESS METHODS ===#
 
     # This method is cached, must not return records! See also #8795
-    @tools.ormcache('self.env.uid', 'country_code', 'show_visible', 'website_pl', 'current_pl', 'all_pl', 'partner_pl', 'order_pl')
-    def _get_pl_partner_order(self, country_code, show_visible, website_pl, current_pl, all_pl, partner_pl=False, order_pl=False):
+    @tools.ormcache(
+        'country_code', 'show_visible',
+        'current_pl_id', 'website_pricelist_ids',
+        'partner_pl_id', 'order_pl_id',
+    )
+    def _get_pl_partner_order(
+        self, country_code, show_visible, current_pl_id, website_pricelist_ids,
+        partner_pl_id=False, order_pl_id=False
+    ):
         """ Return the list of pricelists that can be used on website for the current user.
+
         :param str country_code: code iso or False, If set, we search only price list available for this country
         :param bool show_visible: if True, we don't display pricelist where selectable is False (Eg: Code promo)
-        :param int website_pl: The default pricelist used on this website
-        :param int current_pl: The current pricelist used on the website
-                               (If not selectable but the current pricelist we had this pricelist anyway)
-        :param list all_pl: List of all pricelist available for this website
-        :param int partner_pl: the partner pricelist
-        :param int order_pl: the current cart pricelist
-        :returns: list of pricelist ids
+        :param int current_pl_id: The current pricelist used on the website
+            (If not selectable but currently used anyway, e.g. pricelist with promo code)
+        :param tuple website_pricelist_ids: List of ids of pricelists available for this website
+        :param int partner_pl_id: the partner pricelist
+        :param int order_pl_id: the current cart pricelist
+        :returns: list of product.pricelist ids
+        :rtype: list
         """
+        self.ensure_one()
         pricelists = self.env['product.pricelist']
+
+        if show_visible:
+            # Only show selectable or currently used pricelist (cart or session)
+            check_pricelist = lambda pl: pl.selectable or pl.id in (current_pl_id, order_pl_id)
+        else:
+            check_pricelist = lambda _pl: True
+
+        # Note: 1. pricelists from all_pl are already website compliant (went through
+        #          `_get_website_pricelists_domain`)
+        #       2. do not read `property_product_pricelist` here as `_get_pl_partner_order`
+        #          is cached and the result of this method will be impacted by that field value.
+        #          Pass it through `partner_pl_id` parameter instead to invalidate the cache.
+
+        # If there is a GeoIP country, find a pricelist for it
         if country_code:
-            for cgroup in self.env['res.country.group'].search([('country_ids.code', '=', country_code)]):
-                for group_pricelists in cgroup.pricelist_ids:
-                    if not show_visible or group_pricelists.selectable or group_pricelists.id in (current_pl, order_pl):
-                        pricelists |= group_pricelists
+            pricelists |= self.env['res.country.group'].search(
+                [('country_ids.code', '=', country_code)]
+            ).pricelist_ids.filtered(
+                lambda pl: pl._is_available_on_website(self) and check_pricelist(pl)
+            )
 
-        partner = self.env.user.partner_id
-        is_public = self.user_id.id == self.env.user.id
-        if not is_public and (not pricelists or (partner_pl or partner.property_product_pricelist.id) != website_pl):
-            if partner.property_product_pricelist.website_id:
-                pricelists |= partner.property_product_pricelist
+        # no GeoIP or no pricelist for this country
+        if not pricelists:
+            pricelists = pricelists.browse(website_pricelist_ids).filtered(
+                lambda pl: check_pricelist(pl) and not (country_code and pl.country_group_ids))
 
-        if not pricelists:  # no pricelist for this country, or no GeoIP
-            pricelists |= all_pl.filtered(lambda pl: not show_visible or pl.selectable or pl.id in (current_pl, order_pl))
-        if not show_visible and not country_code:
-            pricelists |= all_pl.filtered(lambda pl: pl.sudo().code)
+        # if logged in, add partner pl (which is `property_product_pricelist`, might not be website compliant)
+        if not self.env.user._is_public():
+            # keep partner_pricelist only if website compliant
+            partner_pricelist = pricelists.browse(partner_pl_id).filtered(
+                lambda pl:
+                    pl._is_available_on_website(self)
+                    and check_pricelist(pl)
+                    and pl._is_available_in_country(country_code)
+            )
+            pricelists |= partner_pricelist
 
         # This method is cached, must not return records! See also #8795
-        return pricelists.ids
-
-    def _get_pl(self, country_code, show_visible, website_pl, current_pl, all_pl):
-        pl_ids = self._get_pl_partner_order(country_code, show_visible, website_pl, current_pl, all_pl)
-        return self.env['product.pricelist'].browse(pl_ids)
+        # sudo is needed to ensure no records rules are applied during the sorted call,
+        # we only want to reorder the records on hand, not filter them.
+        return pricelists.sudo().sorted().ids
 
     def get_pricelist_available(self, show_visible=False):
-
         """ Return the list of pricelists that can be used on website for the current user.
         Country restrictions will be detected with GeoIP (if installed).
         :param bool show_visible: if True, we don't display pricelist where selectable is False (Eg: Code promo)
         :returns: pricelist recordset
         """
-        website = request and hasattr(request, 'website') and request.website or None
-        if not website:
-            if self.env.context.get('website_id'):
-                website = self.browse(self.env.context['website_id'])
-            else:
-                # In the weird case we are coming from the backend (https://github.com/odoo/odoo/issues/20245)
-                website = len(self) == 1 and self or self.search([], limit=1)
-        isocountry = request and request.session.geoip and request.session.geoip.get('country_code') or False
-        partner = self.env.user.partner_id
-        order_pl = partner.last_website_so_id and partner.last_website_so_id.state == 'draft' and partner.last_website_so_id.pricelist_id
-        partner_pl = partner.property_product_pricelist
-        pricelists = website._get_pl_partner_order(isocountry, show_visible,
-                                                   website.user_id.sudo().partner_id.property_product_pricelist.id,
-                                                   request and request.session.get('website_sale_current_pl') or None,
-                                                   website.pricelist_ids,
-                                                   partner_pl=partner_pl and partner_pl.id or None,
-                                                   order_pl=order_pl and order_pl.id or None)
-        return self.env['product.pricelist'].browse(pricelists)
+        self.ensure_one()
+
+        country_code = self._get_geoip_country_code()
+        website = self.with_company(self.company_id)
+
+        partner_sudo = website.env.user.partner_id
+        is_user_public = self.env.user._is_public()
+        if not is_user_public:
+            last_order_pricelist = partner_sudo.last_website_so_id.pricelist_id
+            partner_pricelist = partner_sudo.property_product_pricelist
+        else:  # public user: do not compute partner pl (not used)
+            last_order_pricelist = self.env['product.pricelist']
+            partner_pricelist = self.env['product.pricelist']
+        website_pricelists = website.sudo().pricelist_ids
+
+        current_pricelist_id = self._get_cached_pricelist_id()
+
+        pricelist_ids = website._get_pl_partner_order(
+            country_code,
+            show_visible,
+            current_pl_id=current_pricelist_id,
+            website_pricelist_ids=tuple(website_pricelists.ids),
+            partner_pl_id=partner_pricelist.id,
+            order_pl_id=last_order_pricelist.id)
+
+        return self.env['product.pricelist'].browse(pricelist_ids)
 
     def is_pricelist_available(self, pl_id):
         """ Return a boolean to specify if a specific pricelist can be manually set on the website.
@@ -113,214 +312,324 @@ class Website(models.Model):
         """
         return pl_id in self.get_pricelist_available(show_visible=False).ids
 
-    def get_current_pricelist(self):
+    def _get_geoip_country_code(self):
+        return request and request.geoip.country_code or False
+
+    def _get_cached_pricelist_id(self):
+        return request and request.session.get('website_sale_current_pl') or None
+
+    def _get_current_pricelist(self):
         """
         :returns: The current pricelist record
         """
-        # The list of available pricelists for this user.
-        # If the user is signed in, and has a pricelist set different than the public user pricelist
-        # then this pricelist will always be considered as available
-        available_pricelists = self.get_pricelist_available()
-        pl = None
-        partner = self.env.user.partner_id
+        self = self.with_company(self.company_id)
+        ProductPricelist = self.env['product.pricelist']
+
+        pricelist = ProductPricelist
         if request and request.session.get('website_sale_current_pl'):
             # `website_sale_current_pl` is set only if the user specifically chose it:
             #  - Either, he chose it from the pricelist selection
             #  - Either, he entered a coupon code
-            pl = self.env['product.pricelist'].browse(request.session['website_sale_current_pl'])
-            if pl not in available_pricelists:
-                pl = None
+            pricelist = ProductPricelist.browse(request.session['website_sale_current_pl']).exists().sudo()
+            country_code = self._get_geoip_country_code()
+            if not pricelist or not pricelist._is_available_on_website(self) or not pricelist._is_available_in_country(country_code):
                 request.session.pop('website_sale_current_pl')
-        if not pl:
-            # If the user has a saved cart, it take the pricelist of this cart, except if
-            # the order is no longer draft (It has already been confirmed, or cancelled, ...)
-            pl = partner.last_website_so_id.state == 'draft' and partner.last_website_so_id.pricelist_id
-            if not pl:
+                pricelist = ProductPricelist
+
+        if not pricelist:
+            partner_sudo = self.env.user.partner_id
+
+            # If the user has a saved cart, it take the pricelist of this last unconfirmed cart
+            pricelist = partner_sudo.last_website_so_id.pricelist_id
+            if not pricelist:
                 # The pricelist of the user set on its partner form.
                 # If the user is not signed in, it's the public user pricelist
-                pl = partner.property_product_pricelist
-            if available_pricelists and pl not in available_pricelists:
+                pricelist = partner_sudo.property_product_pricelist
+
+            # The list of available pricelists for this user.
+            # If the user is signed in, and has a pricelist set different than the public user pricelist
+            # then this pricelist will always be considered as available
+            available_pricelists = self.get_pricelist_available()
+            if available_pricelists and pricelist not in available_pricelists:
                 # If there is at least one pricelist in the available pricelists
                 # and the chosen pricelist is not within them
                 # it then choose the first available pricelist.
                 # This can only happen when the pricelist is the public user pricelist and this pricelist is not in the available pricelist for this localization
                 # If the user is signed in, and has a special pricelist (different than the public user pricelist),
                 # then this special pricelist is amongs these available pricelists, and therefore it won't fall in this case.
-                pl = available_pricelists[0]
+                pricelist = available_pricelists[0]
 
-        if not pl:
-            _logger.error('Fail to find pricelist for partner "%s" (id %s)', partner.name, partner.id)
-        return pl
+        return pricelist
 
-    @api.multi
     def sale_product_domain(self):
-        return [("sale_ok", "=", True)] + self.get_current_website().website_domain()
+        website_domain = self.get_current_website().website_domain()
+        if not self.env.user._is_internal():
+            website_domain = expression.AND([website_domain, [
+                ('is_published', '=', True),
+                ('service_tracking', 'in', self.env['product.template']._get_saleable_tracking_types()),
+            ]])
+        return expression.AND([self._product_domain(), website_domain])
 
-    @api.model
-    def sale_get_payment_term(self, partner):
-        return (
-            partner.property_payment_term_id or
-            self.env.ref('account.account_payment_term_immediate', False) or
-            self.env['account.payment.term'].sudo().search([('company_id', '=', self.company_id.id)], limit=1)
-        ).id
+    def _product_domain(self):
+        return [('sale_ok', '=', True)]
 
-    @api.multi
-    def _prepare_sale_order_values(self, partner, pricelist):
-        self.ensure_one()
-        affiliate_id = request.session.get('affiliate_id')
-        salesperson_id = affiliate_id if self.env['res.users'].sudo().browse(affiliate_id).exists() else request.website.salesperson_id.id
-        addr = partner.address_get(['delivery'])
-        if len(partner.sale_order_ids):  # first = me
-            addr['delivery'] = partner.sale_order_ids[0].partner_shipping_id.id
-        default_user_id = partner.parent_id.user_id.id or partner.user_id.id
-        values = {
-            'partner_id': partner.id,
-            'pricelist_id': pricelist.id,
-            'payment_term_id': self.sale_get_payment_term(partner),
-            'team_id': self.salesteam_id.id,
-            'partner_invoice_id': partner.id,
-            'partner_shipping_id': addr['delivery'],
-            'user_id': salesperson_id or self.salesperson_id.id or default_user_id,
-            'website_id': self._context.get('website_id'),
-        }
-        company = self.company_id or pricelist.company_id
-        if company:
-            values['company_id'] = company.id
-
-        return values
-
-    @api.multi
-    def sale_get_order(self, force_create=False, code=None, update_pricelist=False, force_pricelist=False):
+    def sale_get_order(self, force_create=False):
         """ Return the current sales order after mofications specified by params.
+
         :param bool force_create: Create sales order if not already existing
-        :param str code: Code to force a pricelist (promo code)
-                         If empty, it's a special case to reset the pricelist with the first available else the default.
-        :param bool update_pricelist: Force to recompute all the lines from sales order to adapt the price with the current pricelist.
-        :param int force_pricelist: pricelist_id - if set,  we change the pricelist with this one
-        :returns: browse record for the current sales order
+
+        :returns: current cart, as a sudoed `sale.order` recordset (might be empty)
         """
         self.ensure_one()
-        partner = self.env.user.partner_id
+
+        self = self.with_company(self.company_id)
+        SaleOrder = self.env['sale.order'].sudo()
+
         sale_order_id = request.session.get('sale_order_id')
-        if not sale_order_id:
-            last_order = partner.last_website_so_id
-            available_pricelists = self.get_pricelist_available()
-            # Do not reload the cart of this user last visit if the cart is no longer draft or uses a pricelist no longer available.
-            sale_order_id = last_order.state == 'draft' and last_order.pricelist_id in available_pricelists and last_order.id
 
-        pricelist_id = request.session.get('website_sale_current_pl') or self.get_current_pricelist().id
-
-        if self.env['product.pricelist'].browse(force_pricelist).exists():
-            pricelist_id = force_pricelist
-            request.session['website_sale_current_pl'] = pricelist_id
-            update_pricelist = True
-
-        if not self._context.get('pricelist'):
-            self = self.with_context(pricelist=pricelist_id)
-
-        # Test validity of the sale_order_id
-        sale_order = self.env['sale.order'].sudo().browse(sale_order_id).exists() if sale_order_id else None
-
-        # create so if needed
-        if not sale_order and (force_create or code):
-            # TODO cache partner_id session
-            pricelist = self.env['product.pricelist'].browse(pricelist_id).sudo()
-            so_data = self._prepare_sale_order_values(partner, pricelist)
-            sale_order = self.env['sale.order'].sudo().create(so_data)
-
-            # set fiscal position
-            if request.website.partner_id.id != partner.id:
-                sale_order.onchange_partner_shipping_id()
-            else: # For public user, fiscal position based on geolocation
-                country_code = request.session['geoip'].get('country_code')
-                if country_code:
-                    country_id = request.env['res.country'].search([('code', '=', country_code)], limit=1).id
-                    fp_id = request.env['account.fiscal.position'].sudo()._get_fpos_by_region(country_id)
-                    sale_order.fiscal_position_id = fp_id
+        if sale_order_id:
+            sale_order_sudo = SaleOrder.browse(sale_order_id).exists()
+        elif self.env.user and not self.env.user._is_public():
+            sale_order_sudo = self.env.user.partner_id.last_website_so_id
+            if sale_order_sudo:
+                available_pricelists = self.get_pricelist_available()
+                so_pricelist_sudo = sale_order_sudo.pricelist_id
+                if so_pricelist_sudo and so_pricelist_sudo not in available_pricelists:
+                    # Do not reload the cart of this user last visit
+                    # if the cart uses a pricelist no longer available.
+                    sale_order_sudo = SaleOrder
                 else:
-                    # if no geolocation, use the public user fp
-                    sale_order.onchange_partner_shipping_id()
-
-            request.session['sale_order_id'] = sale_order.id
-
-            if request.website.partner_id.id != partner.id and partner.last_website_so_id.id != sale_order.id:
-                partner.write({'last_website_so_id': sale_order.id})
-
-        if sale_order:
-            # case when user emptied the cart
-            if not request.session.get('sale_order_id'):
-                request.session['sale_order_id'] = sale_order.id
-
-            # check for change of pricelist with a coupon
-            pricelist_id = pricelist_id or partner.property_product_pricelist.id
-
-            # check for change of partner_id ie after signup
-            if sale_order.partner_id.id != partner.id and request.website.partner_id.id != partner.id:
-                flag_pricelist = False
-                if pricelist_id != sale_order.pricelist_id.id:
-                    flag_pricelist = True
-                fiscal_position = sale_order.fiscal_position_id.id
-
-                # change the partner, and trigger the onchange
-                sale_order.write({'partner_id': partner.id})
-                sale_order.onchange_partner_id()
-                sale_order.write({'partner_invoice_id': partner.id})
-                sale_order.onchange_partner_shipping_id() # fiscal position
-                sale_order['payment_term_id'] = self.sale_get_payment_term(partner)
-
-                # check the pricelist : update it if the pricelist is not the 'forced' one
-                values = {}
-                if sale_order.pricelist_id:
-                    if sale_order.pricelist_id.id != pricelist_id:
-                        values['pricelist_id'] = pricelist_id
-                        update_pricelist = True
-
-                # if fiscal position, update the order lines taxes
-                if sale_order.fiscal_position_id:
-                    sale_order._compute_tax_id()
-
-                # if values, then make the SO update
-                if values:
-                    sale_order.write(values)
-
-                # check if the fiscal position has changed with the partner_id update
-                recent_fiscal_position = sale_order.fiscal_position_id.id
-                if flag_pricelist or recent_fiscal_position != fiscal_position:
-                    update_pricelist = True
-
-            if code and code != sale_order.pricelist_id.code:
-                code_pricelist = self.env['product.pricelist'].sudo().search([('code', '=', code)], limit=1)
-                if code_pricelist:
-                    pricelist_id = code_pricelist.id
-                    update_pricelist = True
-            elif code is not None and sale_order.pricelist_id.code:
-                # code is not None when user removes code and click on "Apply"
-                pricelist_id = partner.property_product_pricelist.id
-                update_pricelist = True
-
-            # update the pricelist
-            if update_pricelist:
-                request.session['website_sale_current_pl'] = pricelist_id
-                values = {'pricelist_id': pricelist_id}
-                sale_order.write(values)
-                for line in sale_order.order_line:
-                    if line.exists():
-                        sale_order._cart_update(product_id=line.product_id.id, line_id=line.id, add_qty=0)
-
+                    # Do not reload the cart of this user last visit
+                    # if the Fiscal Position has changed.
+                    fpos = sale_order_sudo.env['account.fiscal.position'].with_company(
+                        sale_order_sudo.company_id
+                    )._get_fiscal_position(
+                        sale_order_sudo.partner_id,
+                        delivery=sale_order_sudo.partner_shipping_id
+                    )
+                    if fpos.id != sale_order_sudo.fiscal_position_id.id:
+                        sale_order_sudo = SaleOrder
         else:
-            request.session['sale_order_id'] = None
-            return self.env['sale.order']
+            sale_order_sudo = SaleOrder
 
-        return sale_order
+        # Ignore the current order if a payment has been initiated. We don't want to retrieve the
+        # cart and allow the user to update it when the payment is about to confirm it.
+        if sale_order_sudo and sale_order_sudo.get_portal_last_transaction().state in (
+            'pending', 'authorized', 'done'
+        ):
+            sale_order_sudo = None
+
+        if not (sale_order_sudo or force_create):
+            # Do not create a SO record unless needed
+            if request.session.get('sale_order_id'):
+                request.session.pop('sale_order_id')
+                request.session.pop('website_sale_cart_quantity', None)
+            return SaleOrder
+
+        partner_sudo = self.env.user.partner_id
+
+        # cart creation was requested
+        if not sale_order_sudo:
+            so_data = self._prepare_sale_order_values(partner_sudo)
+            sale_order_sudo = SaleOrder.with_user(SUPERUSER_ID).create(so_data)
+
+            request.session['sale_order_id'] = sale_order_sudo.id
+            request.session['website_sale_cart_quantity'] = sale_order_sudo.cart_quantity
+            # The order was created with SUPERUSER_ID, revert back to request user.
+            return sale_order_sudo.with_user(self.env.user).sudo()
+
+        # Existing Cart:
+        #   * For logged user
+        #   * In session, for specified partner
+
+        # case when user emptied the cart
+        if not request.session.get('sale_order_id'):
+            request.session['sale_order_id'] = sale_order_sudo.id
+            request.session['website_sale_cart_quantity'] = sale_order_sudo.cart_quantity
+
+        # check for change of partner_id ie after signup
+        if partner_sudo.id not in (sale_order_sudo.partner_id.id, self.partner_id.id):
+            sale_order_sudo._update_address(partner_sudo.id, ['partner_id'])
+
+        return sale_order_sudo
+
+    def _prepare_sale_order_values(self, partner_sudo):
+        self.ensure_one()
+
+        return {
+            'company_id': self.company_id.id,
+            'fiscal_position_id': self.fiscal_position_id.id,
+            'partner_id': partner_sudo.id,
+            'pricelist_id': self.pricelist_id.id,
+            'team_id': self.salesteam_id.id,
+            'website_id': self.id,
+        }
+
+    def _get_current_fiscal_position(self):
+        AccountFiscalPosition = self.env['account.fiscal.position'].sudo()
+        fpos = AccountFiscalPosition
+        partner_sudo = self.env.user.partner_id
+
+        # If the current user is the website public user, the fiscal position
+        # is computed according to geolocation.
+        if request and request.geoip.country_code and self.partner_id.id == partner_sudo.id:
+            country = self.env['res.country'].search(
+                [('code', '=', request.geoip.country_code)],
+                limit=1,
+            )
+            partner_geoip = self.env["res.partner"].new({'country_id': country.id})
+            fpos = AccountFiscalPosition._get_fiscal_position(partner_geoip)
+
+        if not fpos:
+            fpos = AccountFiscalPosition._get_fiscal_position(partner_sudo)
+
+        return fpos
 
     def sale_reset(self):
-        request.session.update({
-            'sale_order_id': False,
-            'website_sale_current_pl': False,
-        })
+        request.session.pop('sale_order_id', None)
+        request.session.pop('website_sale_current_pl', None)
+        request.session.pop('website_sale_cart_quantity', None)
 
     @api.model
     def action_dashboard_redirect(self):
         if self.env.user.has_group('sales_team.group_sale_salesman'):
-            return self.env.ref('website.backend_dashboard').read()[0]
-        return super(Website, self).action_dashboard_redirect()
+            return self.env['ir.actions.actions']._for_xml_id('website.backend_dashboard')
+        return super().action_dashboard_redirect()
+
+    def get_suggested_controllers(self):
+        suggested_controllers = super().get_suggested_controllers()
+        suggested_controllers.append((_('eCommerce'), self.env['ir.http']._url_for('/shop'), 'website_sale'))
+        return suggested_controllers
+
+    def _search_get_details(self, search_type, order, options):
+        result = super()._search_get_details(search_type, order, options)
+        if not self.has_ecommerce_access():
+            return result
+        if search_type in ['products', 'product_categories_only', 'all']:
+            result.append(self.env['product.public.category']._search_get_detail(self, order, options))
+        if search_type in ['products', 'products_only', 'all']:
+            result.append(self.env['product.template']._search_get_detail(self, order, options))
+        return result
+
+    def _get_product_page_proportions(self):
+        """
+        Returns the number of columns (css) that both the images and the product details should take.
+        """
+        self.ensure_one()
+
+        return {
+            'none': (0, 12),
+            '50_pc': (6, 6),
+            '66_pc': (8, 4),
+            '100_pc': (12, 12),
+        }.get(self.product_page_image_width)
+
+    def _get_product_page_grid_image_spacing_classes(self):
+        spacing_map = {
+            'none': 'm-0',
+            'small': 'm-1',
+            'medium': 'm-2',
+            'big': 'm-3',
+        }
+        return spacing_map.get(self.product_page_image_spacing)
+
+    @api.model
+    def _send_abandoned_cart_email(self):
+        for website in self.search([]):
+            if not website.send_abandoned_cart_email:
+                continue
+            all_abandoned_carts = self.env['sale.order'].search([
+                ('is_abandoned_cart', '=', True),
+                ('cart_recovery_email_sent', '=', False),
+                ('website_id', '=', website.id),
+            ])
+            if not all_abandoned_carts:
+                continue
+
+            abandoned_carts = all_abandoned_carts._filter_can_send_abandoned_cart_mail()
+            # Mark abandoned carts that failed the filter as sent to avoid rechecking them again and again.
+            (all_abandoned_carts - abandoned_carts).cart_recovery_email_sent = True
+            for sale_order in abandoned_carts:
+                template = self.env.ref('website_sale.mail_template_sale_cart_recovery')
+                template.send_mail(sale_order.id, email_values={'email_to': sale_order.partner_id.email})
+                sale_order.cart_recovery_email_sent = True
+
+    def _display_partner_b2b_fields(self):
+        """ This method is to be inherited by localizations and return
+        True if localization should always displayed b2b fields """
+        self.ensure_one()
+
+        return self.is_view_active('website_sale.address_b2b')
+
+    def _get_checkout_step_list(self):
+        """ Return an ordered list of steps according to the current template rendered.
+
+        :rtype: list
+        :return: A list with the following structure:
+            [
+                [xmlid],
+                {
+                    'name': str,
+                    'current_href': str,
+                    'main_button': str,
+                    'main_button_href': str,
+                    'back_button': str,
+                    'back_button_href': str
+                }
+            ]
+        """
+        self.ensure_one()
+        is_extra_step_active = self.viewref('website_sale.extra_info').active
+        redirect_to_sign_in = self.account_on_checkout == 'mandatory' and self.is_public_user()
+
+        steps = [(['website_sale.cart'], {
+            'name': _lt("Review Order"),
+            'current_href': '/shop/cart',
+            'main_button': _lt("Sign In") if redirect_to_sign_in else _lt("Checkout"),
+            'main_button_href': f'{"/web/login?redirect=" if redirect_to_sign_in else ""}/shop/checkout?try_skip_step=true',
+            'back_button':  _lt("Continue shopping"),
+            'back_button_href': '/shop',
+        }), (['website_sale.checkout', 'website_sale.address'], {
+            'name': _lt("Delivery"),
+            'current_href': '/shop/checkout',
+            'main_button': _lt("Confirm"),
+            'main_button_href': f'{"/shop/extra_info" if is_extra_step_active else "/shop/confirm_order"}',
+            'back_button':  _lt("Back to cart"),
+            'back_button_href': '/shop/cart',
+        })]
+        if is_extra_step_active:
+            steps.append((['website_sale.extra_info'], {
+                'name': _lt("Extra Info"),
+                'current_href': '/shop/extra_info',
+                'main_button': _lt("Continue checkout"),
+                'main_button_href': '/shop/confirm_order',
+                'back_button':  _lt("Back to delivery"),
+                'back_button_href': '/shop/checkout',
+            }))
+        steps.append((['website_sale.payment'], {
+            'name': _lt("Payment"),
+            'current_href': '/shop/payment',
+            'back_button':  _lt("Back to delivery"),
+            'back_button_href': '/shop/checkout',
+        }))
+        return steps
+
+    def _get_checkout_steps(self, current_step=None):
+        """ Return an ordered list of steps according to the current template rendered.
+        If `current_step` is provided, returns only the corresponding step.
+        Note: self.ensure_one()
+        :param str current_step: The xmlid of the current step, defaults to None.
+        :rtype: list
+        :return: A list containing the steps generated by :meth:`_get_checkout_step_list`.
+        """
+        self.ensure_one()
+
+        steps = self._get_checkout_step_list()
+
+        if current_step:
+            return next(step for step in steps if current_step in step[0])[1]
+        return steps
+
+    def has_ecommerce_access(self):
+        """ Return whether the current user is allowed to access eCommerce-related content. """
+        return not (self.env.user._is_public() and self.ecommerce_access == 'logged_in')

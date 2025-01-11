@@ -1,0 +1,50 @@
+.orderline {
+    border-top: $border-width solid transparent;
+    border-bottom: $border-width solid transparent;
+    transition: $transition-base;
+
+    &:hover {
+        background-color: $o-gray-200;
+    }
+    
+    @media (hover: none) {
+        &:hover {
+            background-color: $white;
+        }
+    }
+
+    &.selected {
+        background-color: $o-component-active-bg;
+    }
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 6px;
+        height: 66%;
+        transform: translateY(-50%);
+        border-top-right-radius: $border-radius-lg;
+        border-bottom-right-radius: $border-radius-lg;
+    }
+
+    &.skip-change::before {
+        background-color: $o-warning;
+    }
+
+    &.has-change::before {
+        background-color: $o-success;
+    }
+
+    .info-list {
+        margin-left: 3rem;
+    }
+}
+
+
+.orderline-combo {
+    &.skip-change::before, &.has-change::before {
+        left: -3px;
+        border-radius: $border-radius-lg;
+    }
+}

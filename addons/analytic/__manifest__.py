@@ -4,8 +4,8 @@
 {
     'name' : 'Analytic Accounting',
     'version': '1.1',
-    'category': 'Hidden/Dependency',
-    'depends' : ['base', 'decimal_precision', 'mail', 'uom'],
+    'category': 'Accounting/Accounting',
+    'depends' : ['base', 'mail', 'uom'],
     'description': """
 Module for defining analytic accounting object.
 ===============================================
@@ -17,13 +17,28 @@ that have no counterpart in the general financial accounts.
     'data': [
         'security/analytic_security.xml',
         'security/ir.model.access.csv',
+        'views/analytic_line_views.xml',
         'views/analytic_account_views.xml',
-        'views/res_users_views.xml',
+        'views/analytic_plan_views.xml',
+        'views/analytic_distribution_model_views.xml',
+        'data/analytic_data.xml'
     ],
     'demo': [
-        'data/analytic_demo.xml',
-        'data/analytic_account_demo.xml',
+        'data/analytic_account_demo.xml'
     ],
+    'assets': {
+        'web.assets_backend': [
+            'analytic/static/src/components/**/*',
+            'analytic/static/src/services/**/*',
+        ],
+        'web.assets_unit_tests': [
+            'analytic/static/tests/**/*',
+            ('remove', 'analytic/static/tests/analytic_distribution_tests.js'),
+        ],
+        'web.qunit_suite_tests': [
+            'analytic/static/tests/analytic_distribution_tests.js',
+        ],
+    },
     'installable': True,
-    'auto_install': False,
+    'license': 'LGPL-3',
 }

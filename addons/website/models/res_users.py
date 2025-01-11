@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 import logging
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models, _, Command
 from odoo.exceptions import ValidationError
 from odoo.http import request
 
@@ -12,34 +11,29 @@ _logger = logging.getLogger(__name__)
 class ResUsers(models.Model):
     _inherit = 'res.users'
 
-    group_website_user = fields.Selection(
-        selection=lambda self: self._get_group_selection('base.module_category_website'),
-        string='Website Editor', compute='_compute_groups_id', inverse='_inverse_groups_id',
-        category_xml_id='base.module_category_website')
-    has_group_multi_website = fields.Boolean(
-        'Multi-Websites',
-        compute='_compute_groups_id', inverse='_inverse_groups_id',
-        group_xml_id='website.group_multi_website')
+    website_id = fields.Many2one('website', related='partner_id.website_id', store=True, related_sudo=False, readonly=False)
 
-    _sql_constraints = [
-        # this is done in Python because a SQL constraint like UNIQUE
-        # (login, website_id) allows ('abc', NULL) and
-        # ('abc', NULL) to coexist because of how SQL handles NULLs.
-        ('login_key', 'CHECK (1=1)', 'You can not have two users with the same login!')
-    ]
-
-    @api.multi
-    def _has_unsplash_key_rights(self):
-        self.ensure_one()
-        if self.has_group('website.group_website_designer'):
-            return True
-        return super(ResUsers, self)._has_unsplash_key_rights()
+    _login_key = models.Constraint(
+        'unique (login, website_id)',
+        'You can not have two users with the same login!',
+    )
 
     @api.constrains('login', 'website_id')
     def _check_login(self):
-        for user in self:
-            if self.search([('id', '!=', user.id), ('login', '=', user.login)] + user.website_id.website_domain()):
-                raise ValidationError(_('You can not have two users with the same login!'))
+        """ Do not allow two users with the same login without website """
+        self.flush_model(['login', 'website_id'])
+        self.env.cr.execute(
+            """SELECT login
+                 FROM res_users
+                WHERE login IN (SELECT login FROM res_users WHERE id IN %s AND website_id IS NULL)
+                  AND website_id IS NULL
+             GROUP BY login
+               HAVING COUNT(*) > 1
+            """,
+            (tuple(self.ids),)
+        )
+        if self.env.cr.rowcount:
+            raise ValidationError(_('You can not have two users with the same login!'))
 
     @api.model
     def _get_login_domain(self, login):
@@ -47,14 +41,62 @@ class ResUsers(models.Model):
         return super(ResUsers, self)._get_login_domain(login) + website.website_domain()
 
     @api.model
+    def _get_email_domain(self, email):
+        website = self.env['website'].get_current_website()
+        return super()._get_email_domain(email) + website.website_domain()
+
+    @api.model
+    def _get_login_order(self):
+        return 'website_id, ' + super(ResUsers, self)._get_login_order()
+
+    @api.model
     def _signup_create_user(self, values):
-        new_user = super(ResUsers, self)._signup_create_user(values)
         current_website = self.env['website'].get_current_website()
+        # Note that for the moment, portal users can connect to all websites of
+        # all companies as long as the specific_user_account setting is not
+        # activated.
+        values['company_id'] = current_website.company_id.id
+        values['company_ids'] = [Command.link(current_website.company_id.id)]
         if request and current_website.specific_user_account:
-            new_user.website_id = current_website
+            values['website_id'] = current_website.id
+        new_user = super(ResUsers, self)._signup_create_user(values)
         return new_user
 
     @api.model
     def _get_signup_invitation_scope(self):
-        current_website = self.env['website'].get_current_website()
+        current_website = self.env['website'].sudo().get_current_website()
         return current_website.auth_signup_uninvited or super(ResUsers, self)._get_signup_invitation_scope()
+
+    def authenticate(self, credential, user_agent_env):
+        """ Override to link the logged in user's res.partner to website.visitor.
+        If a visitor already exists for that user, assign it data from the
+        current anonymous visitor (if exists).
+        Purpose is to try to aggregate as much sub-records (tracked pages,
+        leads, ...) as possible. """
+        visitor_pre_authenticate_sudo = None
+        if request and request.env:
+            visitor_pre_authenticate_sudo = request.env['website.visitor']._get_visitor_from_request()
+        auth_info = super().authenticate(credential, user_agent_env)
+        if auth_info.get('uid') and visitor_pre_authenticate_sudo:
+            env = self.env(user=auth_info['uid'])
+            user_partner = env.user.partner_id
+            visitor_current_user_sudo = env['website.visitor'].sudo().search([
+                ('partner_id', '=', user_partner.id)
+            ], limit=1)
+            if visitor_current_user_sudo:
+                # A visitor exists for the logged in user, link public
+                # visitor records to it.
+                if visitor_pre_authenticate_sudo != visitor_current_user_sudo:
+                    visitor_pre_authenticate_sudo._merge_visitor(visitor_current_user_sudo)
+                visitor_current_user_sudo._update_visitor_last_visit()
+            else:
+                visitor_pre_authenticate_sudo.access_token = user_partner.id
+                visitor_pre_authenticate_sudo._update_visitor_last_visit()
+        return auth_info
+
+    @api.constrains('groups_id')
+    def _check_one_user_type(self):
+        super()._check_one_user_type()
+        internal_users = self.env.ref('base.group_user').users & self
+        if any(user.website_id for user in internal_users):
+            raise ValidationError(_("Remove website on related partner before they become internal user."))

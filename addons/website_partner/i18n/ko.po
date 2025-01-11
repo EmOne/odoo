@@ -1,16 +1,18 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# * website_partner
+# 	* website_partner
 #
 # Translators:
+# Martin Trigaux, 2022
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo 9.0\n"
+"Project-Id-Version: Odoo Server saas~14.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-18 14:08+0000\n"
-"PO-Revision-Date: 2015-09-08 10:40+0000\n"
-"Last-Translator: Martin Trigaux\n"
-"Language-Team: Korean (http://www.transifex.com/odoo/odoo-9/language/ko/)\n"
+"POT-Creation-Date: 2021-07-12 07:50+0000\n"
+"PO-Revision-Date: 2022-09-22 05:56+0000\n"
+"Last-Translator: Martin Trigaux, 2022\n"
+"Language-Team: Korean (https://app.transifex.com/odoo/teams/41243/ko/)\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,43 +21,52 @@ msgstr ""
 
 #. module: website_partner
 #: model:ir.model,name:website_partner.model_res_partner
-msgid "Partner"
-msgstr "파트너"
+msgid "Contact"
+msgstr "연락처"
 
 #. module: website_partner
-#: model:ir.model.fields,field_description:website_partner.field_res_partner_self
-msgid "Self"
-msgstr ""
+#: model:ir.model.fields,field_description:website_partner.field_res_partner__is_seo_optimized
+msgid "SEO optimized"
+msgstr "SEO 최적화"
 
 #. module: website_partner
-#: model:ir.ui.view,arch_db:website_partner.partner_detail
+#: model:ir.model.fields,field_description:website_partner.field_res_partner__seo_name
+msgid "Seo name"
+msgstr "Seo 이름"
+
+#. module: website_partner
+#: model_terms:ir.ui.view,arch_db:website_partner.partner_detail
 msgid "Short Description for List View"
 msgstr "목록보기에 대한 짧은 설명"
 
 #. module: website_partner
-#: model:ir.model.fields,field_description:website_partner.field_res_partner_website_description
+#: model:ir.model.fields,field_description:website_partner.field_res_partner__website_description
+#: model:ir.model.fields,field_description:website_partner.field_res_users__website_description
 msgid "Website Partner Full Description"
-msgstr "웹 사이트 파트너 설명"
+msgstr "웹사이트 협력사 전체 설명"
 
 #. module: website_partner
-#: model:ir.model.fields,field_description:website_partner.field_res_partner_website_short_description
+#: model:ir.model.fields,field_description:website_partner.field_res_partner__website_short_description
+#: model:ir.model.fields,field_description:website_partner.field_res_users__website_short_description
 msgid "Website Partner Short Description"
-msgstr "웹 사이트 파트너 짧은 설명"
+msgstr "웹사이트 협력사 짧은 설명"
 
-#~ msgid "Visible in Website"
-#~ msgstr "웹사이트 표시"
+#. module: website_partner
+#: model:ir.model.fields,field_description:website_partner.field_res_partner__website_meta_description
+msgid "Website meta description"
+msgstr "웹사이트 메타 설명"
 
-#~ msgid "Website URL"
-#~ msgstr "웹 사이트 URL"
+#. module: website_partner
+#: model:ir.model.fields,field_description:website_partner.field_res_partner__website_meta_keywords
+msgid "Website meta keywords"
+msgstr "웹사이트 메타 핵심어"
 
-#~ msgid "Website meta description"
-#~ msgstr "웹사이트 메타 설명"
+#. module: website_partner
+#: model:ir.model.fields,field_description:website_partner.field_res_partner__website_meta_title
+msgid "Website meta title"
+msgstr "웹사이트 메타 제목"
 
-#~ msgid "Website meta keywords"
-#~ msgstr "웹사이트 메타 핵심어"
-
-#~ msgid "Website meta title"
-#~ msgstr "웹사이트 메타 제목"
-
-#~ msgid "unknown"
-#~ msgstr "알 수 없음"
+#. module: website_partner
+#: model:ir.model.fields,field_description:website_partner.field_res_partner__website_meta_og_img
+msgid "Website opengraph image"
+msgstr "웹사이트 오픈그래프 이미지"

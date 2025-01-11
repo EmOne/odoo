@@ -1,133 +1,170 @@
-odoo.define('mass_mailing.website_integration', function (require) {
-"use strict";
+import { _t } from "@web/core/l10n/translation";
+import publicWidget from "@web/legacy/js/public/public_widget";
+import {ReCaptcha} from "@google_recaptcha/js/recaptcha";
+import { rpc } from "@web/core/network/rpc";
 
-var utils = require('web.utils');
-var sAnimation = require('website.content.snippets.animation');
-
-sAnimation.registry.subscribe = sAnimation.Class.extend({
+publicWidget.registry.subscribe = publicWidget.Widget.extend({
     selector: ".js_subscribe",
+    disabledInEditableMode: false,
+    read_events: {
+        'click .js_subscribe_btn': '_onSubscribeClick',
+    },
+
+    /**
+     * @constructor
+     */
+    init: function () {
+        this._super(...arguments);
+        this._recaptcha = new ReCaptcha();
+        this.notification = this.bindService("notification");
+    },
+    /**
+     * @override
+     */
+    willStart: function () {
+        this._recaptcha.loadLibs();
+        return this._super(...arguments);
+    },
+    /**
+     * @override
+     */
     start: function () {
+        var def = this._super.apply(this, arguments);
+
+        if (this.editableMode) {
+            // Since there is an editor option to choose whether "Thanks" button
+            // should be visible or not, we should not vary its visibility here.
+            return def;
+        }
+        const always = this._updateView.bind(this);
+        const inputName = this.el.querySelector('input').name;
+        return Promise.all([def, rpc('/website_mass_mailing/is_subscriber', {
+            'list_id': this._getListId(),
+            'subscription_type': inputName,
+        }).then(always, always)]);
+    },
+    /**
+     * @override
+     */
+    destroy() {
+        this._updateView({is_subscriber: false});
+        this._super.apply(this, arguments);
+    },
+
+    //--------------------------------------------------------------------------
+    // Private
+    //--------------------------------------------------------------------------
+
+    /**
+     * Modifies the elements to have the view of a subscriber/non-subscriber.
+     *
+     * @todo should probably be merged with _updateSubscribeControlsStatus
+     * @param {Object} data
+     */
+    _updateView(data) {
+        this._updateSubscribeControlsStatus(!!data.is_subscriber);
+
+        // js_subscribe_email is kept by compatibility (it was the old name of js_subscribe_value)
+        const valueInputEl = this.el.querySelector('input.js_subscribe_value, input.js_subscribe_email');
+        valueInputEl.value = data.value || '';
+
+        // Compat: remove d-none for DBs that have the button saved with it.
+        this.el.classList.remove('d-none');
+    },
+    /**
+     * Updates the visibility of the subscribe and subscribed buttons.
+     *
+     * @param {boolean} isSubscriber
+     */
+    _updateSubscribeControlsStatus(isSubscriber) {
+        const thanksWrapEl = this.el.querySelector('.js_subscribed_wrap');
+        const subscribeWrapEl = this.el.querySelector('.js_subscribe_wrap');
+        const subscribeBtnEl = this.el.querySelector('.js_subscribe_btn');
+
+        subscribeBtnEl.disabled = isSubscriber;
+        subscribeWrapEl.classList.toggle('d-none', isSubscriber);
+        thanksWrapEl.classList.toggle('d-none', !isSubscriber);
+
+        // js_subscribe_email is kept by compatibility (it was the old name of js_subscribe_value)
+        const valueInputEl = this.el.querySelector('input.js_subscribe_value, input.js_subscribe_email');
+        valueInputEl.disabled = isSubscriber;
+    },
+
+    _getListId: function () {
+        // TODO this should be improved: we currently have snippets (e.g. the
+        // s_newsletter_block one) who relies on the fact the list-id is saved
+        // on the snippet's main section, and ignores the one saved on the inner
+        // form snippet. Some other (e.g. the s_newsletter_popup one) relies on
+        // the ID of the inner form snippet. We should make it more consistent:
+        // probably always relying on the inner form list-id? (upgrade...)
+        return this.el.closest('section[data-list-id]')?.dataset.listId || this.el.dataset.listId;
+    },
+
+    //--------------------------------------------------------------------------
+    // Handlers
+    //--------------------------------------------------------------------------
+
+    /**
+     * @private
+     */
+    _onSubscribeClick: async function () {
         var self = this;
-
-        // set value and display button
-        self.$target.find("input").removeClass('d-none');
-        this._rpc({
-            route: '/website_mass_mailing/is_subscriber',
-            params: {
-                list_id: this.$target.data('list-id'),
-            },
-        }).always(function (data) {
-            self.$target.find('input.js_subscribe_email')
-                .val(data.email ? data.email : "")
-                .attr("disabled", data.is_subscriber && data.email.length ? "disabled" : false);
-            self.$target.attr("data-subscribe", data.is_subscriber ? 'on' : 'off');
-            self.$target.find('a.js_subscribe_btn')
-                .attr("disabled", data.is_subscriber && data.email.length ? "disabled" : false);
-            self.$target.removeClass('d-none');
-            self.$target.find('.js_subscribe_btn').toggleClass('d-none', !!data.is_subscriber);
-            self.$target.find('.js_subscribed_btn').toggleClass('d-none', !data.is_subscriber);
-        });
-
-        // not if editable mode to allow designer to edit alert field
-        if (!this.editableMode) {
-            $('.js_subscribe > .alert').addClass('d-none');
-            $('.js_subscribe > .input-group-append.d-none').removeClass('d-none');
-            this.$target.find('.js_subscribe_btn').on('click', function (event) {
-                event.preventDefault();
-                self._onClick();
+        const inputName = this.$('input').attr('name');
+        const $input = this.$(".js_subscribe_value:visible, .js_subscribe_email:visible"); // js_subscribe_email is kept by compatibility (it was the old name of js_subscribe_value)
+        if (inputName === 'email' && $input.length && !$input.val().match(/.+@.+/)) {
+            this.$el.addClass('o_has_error').find('.form-control').addClass('is-invalid');
+            return false;
+        }
+        this.$el.removeClass('o_has_error').find('.form-control').removeClass('is-invalid');
+        const tokenObj = await this._recaptcha.getToken('website_mass_mailing_subscribe');
+        if (tokenObj.error) {
+            self.notification.add(tokenObj.error, {
+                type: 'danger',
+                title: _t("Error"),
+                sticky: true,
             });
-        }
-    },
-    _onClick: function () {
-        var self = this;
-        var $email = this.$target.find(".js_subscribe_email:visible");
-
-        if ($email.length && !$email.val().match(/.+@.+/)) {
-            this.$target.addClass('o_has_error').find('.form-control, .custom-select').addClass('is-invalid');
             return false;
         }
-        this.$target.removeClass('o_has_error').find('.form-control, .custom-select').removeClass('is-invalid');
+        rpc('/website_mass_mailing/subscribe', {
+            'list_id': this._getListId(),
+            'value': $input.length ? $input.val() : false,
+            'subscription_type': inputName,
+            recaptcha_token_response: tokenObj.token,
+        }).then(function (result) {
+            let toastType = result.toast_type;
+            if (toastType === 'success') {
+                self._updateSubscribeControlsStatus(true);
 
-        this._rpc({
-            route: '/website_mass_mailing/subscribe',
-            params: {
-                'list_id': this.$target.data('list-id'),
-                'email': $email.length ? $email.val() : false,
-            },
-        }).then(function (subscribe) {
-            self.$target.find(".js_subscribe_email, .input-group-append").addClass('d-none');
-            self.$target.find(".alert").removeClass('d-none');
-            self.$target.find('input.js_subscribe_email').attr("disabled", subscribe ? "disabled" : false);
-            self.$target.attr("data-subscribe", subscribe ? 'on' : 'off');
-        });
-    },
-});
-
-sAnimation.registry.newsletter_popup = sAnimation.Class.extend({
-    selector: ".o_newsletter_popup",
-    start: function () {
-        var self = this;
-        var popupcontent = self.$target.find(".o_popup_content_dev").empty();
-        if (!self.$target.data('list-id')) return;
-
-        this._rpc({
-            route: '/website_mass_mailing/get_content',
-            params: {
-                newsletter_id: self.$target.data('list-id'),
-            },
-        }).then(function (data) {
-            if (data.content) {
-                $('<div></div>').append(data.content).appendTo(popupcontent);
-            }
-            self.$target.find('input.popup_subscribe_email').val(data.email || "");
-            self.redirect_url = data.redirect_url;
-            if (!self.editableMode && !data.is_subscriber) {
-                $(document).on('mouseleave', _.bind(self.show_banner, self));
-
-                self.$target.find('.popup_subscribe_btn').on('click', function (event) {
-                    event.preventDefault();
-                    self._onClickSubscribe();
-                });
-            } else { $(document).off('mouseleave'); }
-        });
-    },
-    _onClickSubscribe: function () {
-        var self = this;
-        var $email = self.$target.find(".popup_subscribe_email:visible");
-
-        if ($email.length && !$email.val().match(/.+@.+/)) {
-            this.$target.addClass('o_has_error').find('.form-control, .custom-select').addClass('is-invalid');
-            return false;
-        }
-        this.$target.removeClass('o_has_error').find('.form-control, .custom-select').removeClass('is-invalid');
-
-        this._rpc({
-            route: '/website_mass_mailing/subscribe',
-            params: {
-                'list_id': self.$target.data('list-id'),
-                'email': $email.length ? $email.val() : false,
-            },
-        }).then(function (subscribe) {
-            self.$target.find('#o_newsletter_popup').modal('hide');
-            $(document).off('mouseleave');
-            if (self.redirect_url) {
-                if (_.contains(self.redirect_url.split('/'), window.location.host) || self.redirect_url.indexOf('/') === 0) {
-                    window.location.href = self.redirect_url;
-                } else {
-                    window.open(self.redirect_url, '_blank');
+                const $popup = self.$el.closest('.o_newsletter_modal');
+                if ($popup.length) {
+                    $popup.modal('hide');
                 }
             }
+            self.notification.add(result.toast_content, {
+                type: toastType,
+                title: toastType === 'success' ? _t('Success') : _t('Error'),
+                sticky: true,
+            });
         });
     },
-    show_banner: function () {
-        var self = this;
-        if (!utils.get_cookie("newsletter-popup-"+ self.$target.data('list-id')) && self.$target) {
-           $('#o_newsletter_popup:first').modal('show').css({
-                'margin-top': '70px',
-                'position': 'fixed'
-            });
-             document.cookie = "newsletter-popup-"+ self.$target.data('list-id') +"=" + true + ";path=/";
-        }
-    }
 });
+
+/**
+ * This widget tries to fix snippets that were malformed because of a missing
+ * upgrade script. Without this, some newsletter snippets coming from users
+ * upgraded from a version lower than 16.0 may not be able to update their
+ * newsletter block.
+ *
+ * TODO an upgrade script should be made to fix databases and get rid of this.
+ */
+publicWidget.registry.fixNewsletterListClass = publicWidget.Widget.extend({
+    selector: '.s_newsletter_subscribe_form:not(.s_subscription_list), .s_newsletter_block',
+
+    /**
+     * @override
+     */
+    start() {
+        this.$target[0].classList.add('s_newsletter_list');
+        return this._super(...arguments);
+    },
 });

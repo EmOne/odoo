@@ -1,34 +1,37 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# * snailmail_account
-# 
+# 	* snailmail_account
+#
 # Translators:
-# Martin Trigaux, 2018
-# Alina Lisnenko <alinasemeniuk1@gmail.com>, 2018
+# Martin Trigaux, 2022
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server saas~11.5\n"
+"Project-Id-Version: Odoo Server 15.5alpha1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-24 09:05+0000\n"
-"PO-Revision-Date: 2018-08-24 09:05+0000\n"
-"Last-Translator: Alina Lisnenko <alinasemeniuk1@gmail.com>, 2018\n"
-"Language-Team: Ukrainian (https://www.transifex.com/odoo/teams/41243/uk/)\n"
+"POT-Creation-Date: 2023-05-16 13:49+0000\n"
+"PO-Revision-Date: 2022-09-22 05:55+0000\n"
+"Last-Translator: Martin Trigaux, 2022\n"
+"Language-Team: Ukrainian (https://app.transifex.com/odoo/teams/41243/uk/)\n"
+"Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Language: uk\n"
 "Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
 
 #. module: snailmail_account
-#: model:ir.ui.view,arch_db:snailmail_account.account_invoice_send_inherit_account_wizard_form
-msgid "<span> to: </span>"
+#: model_terms:ir.ui.view,arch_db:snailmail_account.res_config_settings_view_form
+msgid "<span class=\"fa fa-lg fa-building-o\" title=\"Values set here are company-specific.\"/>"
+msgstr "<span class=\"fa fa-lg fa-building-o\" title=\"Values set here are company-specific.\"/>"
+
+#. module: snailmail_account
+#: model:ir.model,name:snailmail_account.model_account_move_send
+msgid "Account Move Send"
 msgstr ""
 
 #. module: snailmail_account
-#: model:ir.model.fields,help:snailmail_account.field_account_invoice_send__snailmail_is_letter
-msgid ""
-"Allows to send the document by snail mail (coventional posting delivery "
-"service)"
+#: model:ir.model.fields,field_description:snailmail_account.field_account_move_send__checkbox_send_by_post
+msgid "By Post"
 msgstr ""
 
 #. module: snailmail_account
@@ -37,52 +40,33 @@ msgid "Companies"
 msgstr "Компанії"
 
 #. module: snailmail_account
-#: model:ir.model.fields,field_description:snailmail_account.field_account_invoice_send__snailmail_cost
-msgid "Credits"
-msgstr "Кредити"
+#: model:ir.model,name:snailmail_account.model_res_config_settings
+msgid "Config Settings"
+msgstr "Налаштування"
 
 #. module: snailmail_account
-#: model:ir.model.fields,field_description:snailmail_account.field_account_invoice_send__currency_id
-msgid "Currency"
-msgstr "Валюта"
-
-#. module: snailmail_account
-#: model:ir.model.fields,field_description:snailmail_account.field_account_invoice_send__letter_ids
-msgid "Letter"
-msgstr "Лист"
-
-#. module: snailmail_account
-#: model:ir.model.fields,field_description:snailmail_account.field_account_invoice_send__partner_id
-msgid "Partner"
-msgstr "Партнер"
-
-#. module: snailmail_account
-#: model:ir.ui.view,arch_db:snailmail_account.res_config_settings_view_form
-msgid "Print In Color"
+#: model:ir.model.fields,field_description:snailmail_account.field_account_move_send__enable_send_by_post
+msgid "Enable Send By Post"
 msgstr ""
 
 #. module: snailmail_account
-#: model:ir.ui.view,arch_db:snailmail_account.res_config_settings_view_form
-msgid "Print on Both Sides"
+#: model:ir.model,name:snailmail_account.model_account_move
+msgid "Journal Entry"
+msgstr ""
+
+#. module: snailmail_account
+#: model:ir.model.fields,field_description:snailmail_account.field_account_move_send__send_by_post_warning_message
+msgid "Send By Post Warning Message"
 msgstr ""
 
 #. module: snailmail_account
 #: model:ir.model.fields,field_description:snailmail_account.field_res_company__invoice_is_snailmail
-msgid "Send by Letter by default"
-msgstr ""
-
-#. module: snailmail_account
-#: model:ir.model.fields,field_description:snailmail_account.field_account_invoice_send__snailmail_is_letter
 #: model:ir.model.fields,field_description:snailmail_account.field_res_config_settings__invoice_is_snailmail
 msgid "Send by Post"
 msgstr "Надіслати поштою"
 
 #. module: snailmail_account
-#: model:ir.model,name:snailmail_account.model_account_invoice_send
-msgid "account.invoice.send"
+#. odoo-python
+#: code:addons/snailmail_account/wizard/account_move_send.py:0
+msgid "The following customers don't have a valid address: "
 msgstr ""
-
-#. module: snailmail_account
-#: model:ir.model,name:snailmail_account.model_res_config_settings
-msgid "res.config.settings"
-msgstr "res.config.settings"

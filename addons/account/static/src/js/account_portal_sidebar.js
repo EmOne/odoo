@@ -1,38 +1,32 @@
-odoo.define('account.AccountPortalSidebar.instance', function (require) {
-"use strict";
+import { scrollTo } from "@web/core/utils/scrolling";
+import publicWidget from "@web/legacy/js/public/public_widget";
+import PortalSidebar from "@portal/js/portal_sidebar";
 
-require('web.dom_ready');
-var AccountPortalSidebar = require('account.AccountPortalSidebar');
-
-if (!$('.o_portal_invoice_sidebar').length) {
-    return $.Deferred().reject("DOM doesn't contain '.o_portal_invoice_sidebar'");
-}
-
-var account_portal_sidebar = new AccountPortalSidebar();
-return account_portal_sidebar.attachTo($('.o_portal_invoice_sidebar')).then(function () {
-    return account_portal_sidebar;
-});
-});
-
-//==============================================================================
-
-odoo.define('account.AccountPortalSidebar', function (require) {
-"use strict";
-
-var PortalSidebar = require('portal.PortalSidebar');
-
-var AccountPortalSidebar = PortalSidebar.extend({
+publicWidget.registry.AccountPortalSidebar = PortalSidebar.extend({
+    selector: '.o_portal_invoice_sidebar',
     events: {
         'click .o_portal_invoice_print': '_onPrintInvoice',
     },
+
     /**
      * @override
      */
     start: function () {
-        var self = this;
-        this._super.apply(this, arguments);
+        var def = this._super.apply(this, arguments);
+
         var $invoiceHtml = this.$el.find('iframe#invoice_html');
-        $invoiceHtml.on('load', self._onLoadIframe.bind(self, $invoiceHtml));
+        var updateIframeSize = this._updateIframeSize.bind(this, $invoiceHtml);
+
+        $(window).on('resize', updateIframeSize);
+
+        var iframeDoc = $invoiceHtml[0].contentDocument || $invoiceHtml[0].contentWindow.document;
+        if (iframeDoc.readyState === 'complete') {
+            updateIframeSize();
+        } else {
+            $invoiceHtml.on('load', updateIframeSize);
+        }
+
+        return def;
     },
 
     //--------------------------------------------------------------------------
@@ -40,17 +34,28 @@ var AccountPortalSidebar = PortalSidebar.extend({
     //--------------------------------------------------------------------------
 
     /**
-     * Called when the iframe is load on custome portal
-     * here we set height and width of html preview (iframe)
+     * Called when the iframe is loaded or the window is resized on customer portal.
+     * The goal is to expand the iframe height to display the full report without scrollbar.
      *
      * @private
+     * @param {object} $el: the iframe
      */
-    _onLoadIframe: function ($el) {
-        var $body = $el.contents().find('body');
-        // expand iframe height for display full report on the custome portal (no scrollbar in iframe)
-        $el.height($body.scrollParent().height());
-        // removed extra space in html preview (specially left and right margin)
-        $body.width('100%');
+    _updateIframeSize: function ($el) {
+        var $wrapwrap = $el.contents().find('div#wrapwrap');
+        // Set it to 0 first to handle the case where scrollHeight is too big for its content.
+        $el.height(0);
+        $el.height($wrapwrap[0].scrollHeight);
+
+        // scroll to the right place after iframe resize
+        const isAnchor = /^#[\w-]+$/.test(window.location.hash)
+        if (!isAnchor) {
+            return;
+        }
+        var $target = $(window.location.hash);
+        if (!$target.length) {
+            return;
+        }
+        scrollTo($target[0], { behavior: "instant" });
     },
     /**
      * @private
@@ -61,8 +66,4 @@ var AccountPortalSidebar = PortalSidebar.extend({
         var href = $(ev.currentTarget).attr('href');
         this._printIframeContent(href);
     },
-});
-
-
-return AccountPortalSidebar;
 });

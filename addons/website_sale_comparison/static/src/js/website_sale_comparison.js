@@ -1,17 +1,17 @@
-odoo.define('website_sale_comparison.comparison', function (require) {
-'use strict';
+import { cookie } from "@web/core/browser/cookie";
+import { _t } from "@web/core/l10n/translation";
+import { rpc } from "@web/core/network/rpc";
+import { Mutex } from "@web/core/utils/concurrency";
+import { renderToString } from "@web/core/utils/render";
+import publicWidget from "@web/legacy/js/public/public_widget";
+import VariantMixin from "@website_sale/js/sale_variant_mixin";
+import website_sale_utils from "@website_sale/js/website_sale_utils";
 
-var core = require('web.core');
-var utils = require('web.utils');
-var Widget = require('web.Widget');
-var sAnimations = require('website.content.snippets.animation');
-var website_sale_utils = require('website_sale.utils');
 
-var _t = core._t;
-
-var ProductComparison = Widget.extend({
-    xmlDependencies: ['/website_sale_comparison/static/src/xml/comparison.xml'],
-
+// VariantMixin events are overridden on purpose here
+// to avoid registering them more than once since they are already registered
+// in website_sale.js
+var ProductComparison = publicWidget.Widget.extend(VariantMixin, {
     template: 'product_comparison_template',
     events: {
         'click .o_product_panel_header': '_onClickPanelHeader',
@@ -24,21 +24,20 @@ var ProductComparison = Widget.extend({
         this._super.apply(this, arguments);
 
         this.product_data = {};
-        this.comparelist_product_ids = JSON.parse(utils.get_cookie('comparelist_product_ids') || '[]');
+        this.comparelist_product_ids = JSON.parse(cookie.get('comparelist_product_ids') || '[]');
         this.product_compare_limit = 4;
+        this.guard = new Mutex();
     },
     /**
      * @override
      */
     start: function () {
         var self = this;
+
         self._loadProducts(this.comparelist_product_ids).then(function () {
-            self._updateContent(self.comparelist_product_ids, true);
-            if (self.comparelist_product_ids.length) {
-                $('.o_product_feature_panel').show();
-                self._updateComparelistView();
-            }
+            self._updateContent('hide');
         });
+        self._updateComparelistView();
 
         $('#comparelist .o_product_panel_header').popover({
             trigger: 'manual',
@@ -49,19 +48,25 @@ var ProductComparison = Widget.extend({
             },
             container: '.o_product_feature_panel',
             placement: 'top',
-            template: '<div style="width:600px;" class="popover comparator-popover" role="tooltip"><div class="arrow"></div><h3 class="popover-header"></h3><div class="popover-body"></div></div>',
+            template: renderToString('popover'),
             content: function () {
                 return $('#comparelist .o_product_panel_content').html();
             }
         });
+        // We trigger a resize to launch the event that checks if this element hides
+        // a button when the page is loaded.
+        $(window).trigger('resize');
 
         $(document.body).on('click.product_comparaison_widget', '.comparator-popover .o_comparelist_products .o_remove', function (ev) {
+            ev.preventDefault();
             self._removeFromComparelist(ev);
         });
         $(document.body).on('click.product_comparaison_widget', '.o_comparelist_remove', function (ev) {
             self._removeFromComparelist(ev);
-            var new_link = '/shop/compare/?products=' + self.comparelist_product_ids.toString();
-            window.location.href = _.isEmpty(self.comparelist_product_ids) ? '/shop' : new_link;
+            self.guard.exec(function() {
+                const newLink = '/shop/compare?products=' + encodeURIComponent(self.comparelist_product_ids);
+                window.location.href = Object.keys(self.comparelist_product_ids || {}).length === 0 ? '/shop' : newLink;
+            });
         });
 
         return this._super.apply(this, arguments);
@@ -82,20 +87,36 @@ var ProductComparison = Widget.extend({
      * @param {jQuery} $elem
      */
     handleCompareAddition: function ($elem) {
+        var self = this;
         if (this.comparelist_product_ids.length < this.product_compare_limit) {
-            var prod = $elem.data('product-product-id');
+            var productId = $elem.data('product-product-id');
             if ($elem.hasClass('o_add_compare_dyn')) {
-                prod = $elem.parent().find('.product_id').val();
-                if (!prod) { // case List View Variants
-                    prod = $elem.parent().find('input:checked').first().val();
+                productId = $elem.parent().find('.product_id').val();
+                if (!productId) { // case List View Variants
+                    productId = $elem.parent().find('input:checked').first().val();
                 }
-                prod = parseInt(prod, 10);
             }
-            if (!prod) {
-                return;
-            }
-            this._addNewProducts(prod);
-            website_sale_utils.animateClone($('#comparelist .o_product_panel_header'), $elem.closest('form'), -50, 10);
+
+            let $form = $elem.closest('form');
+            $form = $form.length ? $form : $('#product_details > form');
+            this.selectOrCreateProduct(
+                $form,
+                productId,
+                $form.find('.product_template_id').val(),
+            ).then(function (productId) {
+                productId = parseInt(productId, 10) || parseInt($elem.data('product-product-id'), 10);
+                if (!productId) {
+                    return;
+                }
+                self._addNewProducts(productId).then(function () {
+                    website_sale_utils.animateClone(
+                        $('#comparelist .o_product_panel_header'),
+                        $elem.closest('form'),
+                        -50,
+                        10
+                    );
+                });
+            });
         } else {
             this.$('.o_comparelist_limit_warning').show();
             $('#comparelist .o_product_panel_header').popover('show');
@@ -111,18 +132,26 @@ var ProductComparison = Widget.extend({
      */
     _loadProducts: function (product_ids) {
         var self = this;
-        return this._rpc({
-            route: '/shop/get_product_data',
-            params: {
-                product_ids: product_ids,
-                cookies: JSON.parse(utils.get_cookie('comparelist_product_ids') || '[]'),
-            },
+        const cookies = JSON.parse(cookie.get('comparelist_product_ids') || '[]');
+        if (product_ids.length == 0 && cookies.length == 0) {
+            return Promise.resolve(true);
+        }
+        return rpc('/shop/get_product_data', {
+            product_ids: product_ids,
+            cookies: cookies,
         }).then(function (data) {
             self.comparelist_product_ids = JSON.parse(data.cookies);
             delete data.cookies;
-            _.each(data, function (product) {
+            Object.values(data).forEach((product) => {
                 self.product_data[product.product.id] = product;
             });
+            if (product_ids.length > Object.keys(data).length) {
+                /* If some products have been archived
+                they are not displayed but the count & cookie
+                need to be updated.
+                */
+                self._updateCookie();
+            }
         });
     },
     /**
@@ -135,15 +164,19 @@ var ProductComparison = Widget.extend({
      * @private
      */
     _addNewProducts: function (product_id) {
+        return this.guard.exec(this._addNewProductsImpl.bind(this, product_id));
+    },
+    _addNewProductsImpl: function (product_id) {
         var self = this;
-        $('.o_product_feature_panel').show();
-        if (!_.contains(self.comparelist_product_ids, product_id)) {
+        $('.o_product_feature_panel').addClass('d-md-block');
+        if (!self.comparelist_product_ids.includes(product_id)) {
             self.comparelist_product_ids.push(product_id);
-            if (_.has(self.product_data, product_id)){
-                self._updateContent([product_id], false);
+            if (Object.prototype.hasOwnProperty.call(self.product_data, product_id)) {
+                self._updateContent();
             } else {
-                self._loadProducts([product_id]).then(function () {
-                    self._updateContent([product_id], false);
+                return self._loadProducts([product_id]).then(function () {
+                    self._updateContent();
+                    self._updateCookie();
                 });
             }
         }
@@ -152,35 +185,45 @@ var ProductComparison = Widget.extend({
     /**
      * @private
      */
-    _updateContent: function (product_ids, reset) {
+    _updateContent: function (force) {
         var self = this;
-        if (reset) {
-            self.$('.o_comparelist_products .o_product_row').remove();
-        }
-        _.each(product_ids, function (res) {
-            var $template = self.product_data[res].render;
-            self.$('.o_comparelist_products').append($template);
+        this.$('.o_comparelist_products .o_product_row').remove();
+        this.comparelist_product_ids.forEach((res) => {
+            if (self.product_data.hasOwnProperty(res)) {
+                // It is possible that we do not have the required product_data for all IDs in
+                // comparelist_product_ids
+                var $template = self.product_data[res].render;
+                self.$('.o_comparelist_products').append($template);
+            }
         });
-        if ($('.comparator-popover').length) {
+        if (force !== 'hide' && (this.comparelist_product_ids.length > 1 || force === 'show')) {
             $('#comparelist .o_product_panel_header').popover('show');
+        }
+        else {
+            $('#comparelist .o_product_panel_header').popover('hide');
         }
     },
     /**
      * @private
      */
     _removeFromComparelist: function (e) {
-        this.comparelist_product_ids = _.without(this.comparelist_product_ids, $(e.currentTarget).data('product_product_id'));
-        $(e.currentTarget).parents('.o_product_row').remove();
+        this.guard.exec(this._removeFromComparelistImpl.bind(this, e));
+    },
+    _removeFromComparelistImpl: function (e) {
+        var target = $(e.target.closest('.o_comparelist_remove, .o_remove'));
+        this.comparelist_product_ids = this.comparelist_product_ids.filter(
+            (comp) => comp !== target.data("product_product_id")
+        );
+        target.parents('.o_product_row').remove();
         this._updateCookie();
         $('.o_comparelist_limit_warning').hide();
-        // force refresh to reposition popover
-        this._updateContent(this.comparelist_product_ids, true);
+        this._updateContent('show');
     },
     /**
      * @private
      */
     _updateCookie: function () {
-        document.cookie = 'comparelist_product_ids=' + JSON.stringify(this.comparelist_product_ids) + '; path=/';
+        cookie.set('comparelist_product_ids', JSON.stringify(this.comparelist_product_ids), 24 * 60 * 60 * 365, 'required');
         this._updateComparelistView();
     },
     /**
@@ -188,15 +231,16 @@ var ProductComparison = Widget.extend({
      */
     _updateComparelistView: function () {
         this.$('.o_product_circle').text(this.comparelist_product_ids.length);
-        this.$('.o_comparelist_button').hide();
-        if (_.isEmpty(this.comparelist_product_ids)) {
-            $('.o_product_feature_panel').hide();
-            this._togglePanel();
+        this.$('.o_comparelist_button').removeClass('d-md-block');
+        if (Object.keys(this.comparelist_product_ids || {}).length === 0) {
+            $('.o_product_feature_panel').removeClass('d-md-block');
         } else {
-            this.$('.o_comparelist_products').show();
+            $('.o_product_feature_panel').addClass('d-md-block');
+            this.$('.o_comparelist_products').addClass('d-md-block');
             if (this.comparelist_product_ids.length >=2) {
-                this.$('.o_comparelist_button').show();
-                this.$('.o_comparelist_button a').attr('href', '/shop/compare/?products='+this.comparelist_product_ids.toString());
+                this.$('.o_comparelist_button').addClass('d-md-block');
+                this.$('.o_comparelist_button a').attr('href',
+                    '/shop/compare?products=' + encodeURIComponent(this.comparelist_product_ids));
             }
         }
     },
@@ -213,11 +257,12 @@ var ProductComparison = Widget.extend({
     },
 });
 
-sAnimations.registry.ProductComparison = sAnimations.Class.extend({
-    selector: '.oe_website_sale',
-    read_events: {
+publicWidget.registry.ProductComparison = publicWidget.Widget.extend({
+    selector: '.js_sale',
+    events: {
         'click .o_add_compare, .o_add_compare_dyn': '_onClickAddCompare',
         'click #o_comparelist_table tr': '_onClickComparelistTr',
+        'submit .o_add_cart_form_compare': '_onFormSubmit',
     },
 
     /**
@@ -225,12 +270,8 @@ sAnimations.registry.ProductComparison = sAnimations.Class.extend({
      */
     start: function () {
         var def = this._super.apply(this, arguments);
-        if (this.editableMode) {
-            return def;
-        }
-
         this.productComparison = new ProductComparison(this);
-        return $.when(def, this.productComparison.appendTo(this.$el));
+        return Promise.all([def, this.productComparison.appendTo(this.$el)]);
     },
 
     //--------------------------------------------------------------------------
@@ -253,5 +294,23 @@ sAnimations.registry.ProductComparison = sAnimations.Class.extend({
         $($target.data('target')).children().slideToggle(100);
         $target.find('.fa-chevron-circle-down, .fa-chevron-circle-right').toggleClass('fa-chevron-circle-down fa-chevron-circle-right');
     },
+    /**
+     * @private
+     * @param {Event} ev
+     */
+    _onFormSubmit(ev) {
+        ev.preventDefault();
+        const form = ev.currentTarget;
+        const productTemplateId = parseInt(
+            form.querySelector('input[type="hidden"][name="product_template_id"]').value
+        );
+        const productId = parseInt(
+            form.querySelector('input[type="hidden"][name="product_id"]').value
+        );
+        this.call('websiteSale', 'addToCart', {
+            productTemplateId: productTemplateId,
+            productId: productId,
+        });
+    },
 });
-});
+export default ProductComparison;

@@ -1,27 +1,28 @@
-odoo.define('website_rating_project.rating', function (require) {
-'use strict';
+import publicWidget from '@web/legacy/js/public/public_widget';
+import { parseDate } from '@web/core/l10n/dates';
 
-  var time = require('web.time');
-  require('web.dom_ready');
+publicWidget.registry.ProjectRatingImage = publicWidget.Widget.extend({
+    selector: '.o_portal_project_rating .o_rating_image',
 
-  if(!$('.o_portal_project_rating').length) {
-      return $.Deferred().reject("DOM doesn't contain '.o_portal_project_rating'");
-  }
-
-  /**
-   * Rating popover with some informations
-   */
-  $('.o_portal_project_rating .o_rating_image').popover({
-      placement: 'bottom',
-      trigger: 'hover',
-      html: 'true',
-      content: function () {
-          var id = $(this).data('id');
-          var rating_date = $(this).data('rating-date');
-          var base_date = time.auto_str_to_date(rating_date);
-          var duration = moment(base_date).fromNow();
-          $("#rating_"+ id).find(".rating_timeduration").text(duration);
-          return $("#rating_"+ id).html();
-      }
-  });
+    /**
+     * @override
+     */
+    start: function () {
+        this.$el.popover({
+            placement: 'bottom',
+            trigger: 'hover',
+            html: true,
+            content: function () {
+                var $elem = $(this);
+                var id = $elem.data('id');
+                var ratingDate = $elem.data('rating-date');
+                var baseDate = parseDate(ratingDate);
+                var duration = baseDate.toRelative();
+                var $rating = $('#rating_' + id);
+                $rating.find('.rating_timeduration').text(duration);
+                return $rating.html();
+            },
+        });
+        return this._super.apply(this, arguments);
+    },
 });
